@@ -223,6 +223,38 @@
   .plan li::before { content: ""; position: absolute; left: 0; top: .78em; width: 12px; height: 1px; background: var(--line); }
   .plan__extra p { margin: 0 0 12px; font-weight: 300; font-size: 15.5px; line-height: 1.6; }
 
+  /* instagram: link to the page + three embedded posts */
+  .insta { background: #fff; padding: clamp(72px, 10vw, 140px) 16px; }
+  .insta__inner { width: min(100%, 1120px); margin: 0 auto; display: grid; gap: clamp(32px, 4vw, 56px); }
+  .insta__link {
+    justify-self: center; display: inline-flex; align-items: center; gap: .45em;
+    color: var(--pink); text-decoration: none;
+    font-weight: 700; font-size: clamp(26px, 3.4vw, 44px); letter-spacing: -.01em;
+  }
+  .insta__link svg { width: 1em; height: 1em; flex: none; }
+  .insta__link:hover { color: #c97f9f; }
+  .insta__link:focus-visible { outline: 2px solid var(--pink); outline-offset: 6px; }
+  .insta__posts { display: grid; gap: 40px; justify-items: center; align-items: start; }
+  @media (min-width: 1000px) {
+    .insta__posts { grid-template-columns: repeat(3, 1fr); gap: 32px; }
+    /* step down: each phone sits a bit lower than the one before */
+    .phone:nth-child(2) { margin-top: 72px; }
+    .phone:nth-child(3) { margin-top: 144px; }
+    .phone { will-change: transform; }   /* moved by the scroll script: bottoms aligned → staircase → tops aligned */
+  }
+  /* phone frame around each post */
+  .phone {
+    width: min(100%, 320px); padding: 11px; border-radius: 50px; background: #1f1c1d;
+    box-shadow: inset 0 0 0 2px #3b3637, 0 34px 60px -28px rgba(40, 20, 30, .45), 0 10px 24px -12px rgba(0, 0, 0, .25);
+  }
+  .phone__screen {
+    position: relative; overflow: hidden; border-radius: 40px; background: #fff;
+    aspect-ratio: 9 / 19.5; padding-top: 40px;   /* status bar area above the post */
+  }
+  .phone__island { position: absolute; top: 11px; left: 50%; width: 90px; height: 25px; margin-left: -45px; border-radius: 20px; background: #1f1c1d; }
+  /* Instagram's embed script swaps each blockquote for an iframe; let it fill the screen width */
+  .phone .instagram-media { margin: 0 !important; min-width: 0 !important; width: 100% !important; max-width: none !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
+
   /* footer: contact form */
   .contact {
     --pad-bottom: clamp(96px, 10vw, 140px);
@@ -618,6 +650,43 @@
       </div>
     </div>
   </section>
+
+  <section class="insta" aria-label="Instagram">
+    <div class="insta__inner">
+      <a class="insta__link" href="https://www.instagram.com/lisancollective/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r=".6" fill="currentColor"/>
+        </svg>
+        @lisancollective
+      </a>
+      <div class="insta__posts">
+        <div class="phone">
+          <div class="phone__screen">
+            <span class="phone__island" aria-hidden="true"></span>
+            <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DU6bUeOjIwF/" data-instgrm-version="14">
+              <a href="https://www.instagram.com/p/DU6bUeOjIwF/" target="_blank" rel="noopener">Bekijk dit bericht op Instagram</a>
+            </blockquote>
+          </div>
+        </div>
+        <div class="phone">
+          <div class="phone__screen">
+            <span class="phone__island" aria-hidden="true"></span>
+            <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DVLaE5PDBwQ/" data-instgrm-version="14">
+              <a href="https://www.instagram.com/p/DVLaE5PDBwQ/" target="_blank" rel="noopener">Bekijk dit bericht op Instagram</a>
+            </blockquote>
+          </div>
+        </div>
+        <div class="phone">
+          <div class="phone__screen">
+            <span class="phone__island" aria-hidden="true"></span>
+            <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DVqSM5sjLIN/" data-instgrm-version="14">
+              <a href="https://www.instagram.com/p/DVqSM5sjLIN/" target="_blank" rel="noopener">Bekijk dit bericht op Instagram</a>
+            </blockquote>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer class="contact" id="contact" aria-labelledby="contact-title">
@@ -681,6 +750,7 @@
   <span class="visually-hidden">Neem contact op</span>
 </a>
 
+<script async src="https://www.instagram.com/embed.js"></script>
 <script>
   // rope: threads through the punched holes of the step cards (cards are tilted, so measure the real points)
   const ropeList = document.querySelector('.usps');
@@ -710,6 +780,40 @@
 
   // no form service connected yet: keep the page (and the visitor's details) from submitting anywhere
   document.getElementById('contact-form').addEventListener('submit', e => e.preventDefault());
+
+  // instagram phones: while the section scrolls by, they go from bottoms aligned (entering)
+  // to the staircase (middle) to tops aligned (leaving) — desktop only, not for reduced motion
+  const phoneBox = document.querySelector('.insta__posts');
+  const phones = [...document.querySelectorAll('.phone')];
+  const phoneMotion = matchMedia('(min-width: 1000px) and (prefers-reduced-motion: no-preference)');
+  let phoneRange = null;   // per phone: offset when entering / leaving
+  const ease = t => t * t * (3 - 2 * t);
+  function measurePhones() {
+    phones.forEach(ph => ph.style.transform = '');
+    if (!phoneMotion.matches) { phoneRange = null; return; }
+    const boxes = phones.map(ph => ({ top: ph.offsetTop, bottom: ph.offsetTop + ph.offsetHeight }));
+    const lowest = Math.max(...boxes.map(b => b.bottom)), highest = Math.min(...boxes.map(b => b.top));
+    phoneRange = boxes.map(b => ({ enter: lowest - b.bottom, leave: highest - b.top }));
+    movePhones();
+  }
+  function movePhones() {
+    if (!phoneRange) return;
+    const r = phoneBox.getBoundingClientRect(), span = innerHeight * .7;
+    const clamp = t => Math.min(1, Math.max(0, t));
+    const spread = ease(clamp((innerHeight - r.top) / span));   // 0 → 1 while the phones come up into view
+    const gather = ease(clamp((span - r.bottom) / span));       // 0 → 1 while they scroll out at the top
+    phones.forEach((ph, i) => {
+      const { enter, leave } = phoneRange[i];
+      ph.style.transform = `translateY(${(enter * (1 - spread) + leave * gather).toFixed(1)}px)`;
+    });
+  }
+  let phoneTick = false;
+  addEventListener('scroll', () => {
+    if (!phoneTick) { phoneTick = true; requestAnimationFrame(() => { phoneTick = false; movePhones(); }); }
+  }, { passive: true });
+  addEventListener('resize', measurePhones);
+  phoneMotion.addEventListener('change', measurePhones);
+  measurePhones();
 
   // play the about header and footer logo animations once each scrolls into view
   const onView = document.querySelectorAll('.lisan-logo--header, .contact__logo');
