@@ -704,6 +704,13 @@
     }
     .js-reveal .contact.in-view .form ::placeholder { color: #b8b2b4; }
 
+    /* general text reveal: elements with .reveal fade up when they come into view; --step staggers them */
+    .js-reveal .reveal {
+      opacity: 0; translate: 0 22px;
+      transition: opacity .9s ease calc(var(--step, 0) * .14s), translate .9s cubic-bezier(.22, .8, .3, 1) calc(var(--step, 0) * .14s);
+    }
+    .js-reveal .reveal.is-visible { opacity: 1; translate: 0 0; }
+
     /* kick off: heading, paragraph and link fade up one after another */
     .js-reveal .kickoff__intro > * { opacity: 0; translate: 0 22px; transition: opacity .9s ease, translate .9s cubic-bezier(.22, .8, .3, 1); }
     .js-reveal .kickoff__intro > :nth-child(2) { transition-delay: .15s; }
@@ -788,10 +795,10 @@
       </div>
 
       <div class="about__body">
-        <p>Bij Li’San collective draait alles om het vertalen van identiteit naar interieur. Of het nu gaat om een warm thuis of een inspirerende werkomgeving - wij geloven dat een goed interieur laat zien wie je bent en waar je voor staat.</p>
-        <p>Elk ontwerp is persoonlijk, doordacht en in balans. We gaan te werk met aandacht voor sfeer, vorm en detail.</p>
-        <p>Samen creëren we een ruimte waar jij je thuis voelt.</p>
-        <p class="about__sign">Lisanne en Sanne</p>
+        <p class="reveal" style="--step: 0">Bij Li’San collective draait alles om het vertalen van identiteit naar interieur. Of het nu gaat om een warm thuis of een inspirerende werkomgeving - wij geloven dat een goed interieur laat zien wie je bent en waar je voor staat.</p>
+        <p class="reveal" style="--step: 1">Elk ontwerp is persoonlijk, doordacht en in balans. We gaan te werk met aandacht voor sfeer, vorm en detail.</p>
+        <p class="reveal" style="--step: 2">Samen creëren we een ruimte waar jij je thuis voelt.</p>
+        <p class="about__sign reveal" style="--step: 3">Lisanne en Sanne</p>
       </div>
     </div>
   </section>
@@ -868,8 +875,8 @@
   <section class="plans-section" aria-labelledby="plans-title">
     <div class="plans-section__inner">
       <div class="plans-section__intro">
-        <h2 id="plans-title" class="plans-section__title">Built for you</h2>
-        <p>Natuurlijk is het mogelijk om alle soorten pakketten naar eigen wens aan te vullen. We gaan samen op zoek naar de juiste balans en kijken hierbij naar wat nodig, gewenst en haalbaar is.</p>
+        <h2 id="plans-title" class="plans-section__title reveal">Built for you</h2>
+        <p class="reveal" style="--step: 1">Natuurlijk is het mogelijk om alle soorten pakketten naar eigen wens aan te vullen. We gaan samen op zoek naar de juiste balans en kijken hierbij naar wat nodig, gewenst en haalbaar is.</p>
       </div>
 
       <div class="plans">
@@ -1029,7 +1036,7 @@
         <text class="word w-tagline"    x="283" y="175" font-size="25" textLength="214" lengthAdjust="spacing">interior projects</text>
       </svg>
       <h2 id="contact-title" class="visually-hidden">Contact</h2>
-      <p>Welkom bij Li’San collective. Laat je gegevens achter, dan plannen we een vrijblijvende afspraak in!</p>
+      <p class="reveal">Welkom bij Li’San collective. Laat je gegevens achter, dan plannen we een vrijblijvende afspraak in!</p>
     </div>
 
     <!-- TODO: connect to a form service (e.g. Formspree / Netlify Forms) via action + method -->
@@ -1063,10 +1070,10 @@
 
   <div class="contact__bar">
     <ul>
-      <li><a href="mailto:info@lisan.nl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5 12 13l8.5-6.5"/></svg><span>info@lisan.nl</span></a></li>
-      <li><a href="https://www.instagram.com/lisancollective/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r=".6" fill="currentColor"/></svg><span>@lisancollective</span></a></li>
-      <li><a href="tel:0639364940" aria-label="Bel Lisanne: 06 39 36 49 40"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.6 3.5h2.6l1.4 4-2 1.4a11 11 0 0 0 6.5 6.5l1.4-2 4 1.4v2.6a2 2 0 0 1-2.2 2A16.6 16.6 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2z"/></svg><span>Lisanne</span></a></li>
-      <li><a href="tel:0631663638" aria-label="Bel Sanne: 06 31 66 36 38"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.6 3.5h2.6l1.4 4-2 1.4a11 11 0 0 0 6.5 6.5l1.4-2 4 1.4v2.6a2 2 0 0 1-2.2 2A16.6 16.6 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2z"/></svg><span>Sanne</span></a></li>
+      <li class="reveal" style="--step: 0"><a href="mailto:info@lisan.nl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5 12 13l8.5-6.5"/></svg><span>info@lisan.nl</span></a></li>
+      <li class="reveal" style="--step: 1"><a href="https://www.instagram.com/lisancollective/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r=".6" fill="currentColor"/></svg><span>@lisancollective</span></a></li>
+      <li class="reveal" style="--step: 2"><a href="tel:0639364940" aria-label="Bel Lisanne: 06 39 36 49 40"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.6 3.5h2.6l1.4 4-2 1.4a11 11 0 0 0 6.5 6.5l1.4-2 4 1.4v2.6a2 2 0 0 1-2.2 2A16.6 16.6 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2z"/></svg><span>Lisanne</span></a></li>
+      <li class="reveal" style="--step: 3"><a href="tel:0631663638" aria-label="Bel Sanne: 06 31 66 36 38"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.6 3.5h2.6l1.4 4-2 1.4a11 11 0 0 0 6.5 6.5l1.4-2 4 1.4v2.6a2 2 0 0 1-2.2 2A16.6 16.6 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2z"/></svg><span>Sanne</span></a></li>
     </ul>
   </div>
 </footer>
@@ -1142,6 +1149,12 @@
     const el = document.querySelector(`${section} ${part}`) || document.querySelector(section);
     if (el) revealIO.observe(el);
   });
+
+  // general text reveals
+  const textIO = new IntersectionObserver(entries => entries.forEach(entry => {
+    if (entry.isIntersecting) { entry.target.classList.add('is-visible'); textIO.unobserve(entry.target); }
+  }), { threshold: .6 });   // 60% visible: also reachable for the contact links at the very bottom of the page
+  document.querySelectorAll('.reveal').forEach(el => textIO.observe(el));
 
   // kick off cards: a small shake each time a card crosses the middle of the screen
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
