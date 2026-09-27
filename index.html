@@ -396,14 +396,33 @@
   .review figcaption { margin-top: auto; color: var(--pink); font-family: Corinthia, cursive; font-size: 44px; line-height: 1; }
 
   /* footer: contact form */
+  /* contact row along the bottom of the footer */
+  .contact__bar {
+    margin-inline: -16px; padding: 22px 16px max(22px, env(safe-area-inset-bottom));
+    border-top: 1px solid rgba(82, 5, 33, .22);
+  }
+  .contact__bar ul {
+    width: min(100%, 1120px); margin: 0 auto; padding: 0 76px 0 0;   /* keep clear of the floating contact bubble */
+    list-style: none; display: flex; flex-wrap: wrap; gap: 12px 32px;
+  }
+  .contact__bar a {
+    display: inline-flex; align-items: center; gap: 10px;
+    color: var(--brand); text-decoration: none; font-weight: 500; font-size: 15px;
+  }
+  .contact__bar a:hover span { text-decoration: underline; text-underline-offset: 4px; }
+  .contact__bar a:focus-visible { outline: 2px solid var(--brand); outline-offset: 4px; }
+  .contact__bar svg { width: 20px; height: 20px; flex: none; }
+  @media (max-width: 699px) {   /* two tidy columns: online (mail, instagram) | phones (Lisanne, Sanne) */
+    .contact__bar ul { display: grid; grid-template-rows: auto auto; grid-auto-flow: column; justify-content: start; gap: 14px 28px; }
+  }
   .contact {
-    --pad-bottom: clamp(96px, 10vw, 140px);
+    --pad-bottom: clamp(72px, 8vw, 112px);   /* space between the form and the contact row */
     background: var(--pink); color: var(--brand);
-    padding: clamp(72px, 10vw, 140px) 16px var(--pad-bottom);
+    padding: clamp(72px, 10vw, 140px) 16px 0;
     overflow: hidden;
   }
   .contact__inner {
-    width: min(100%, 1120px); margin: 0 auto;
+    width: min(100%, 1120px); margin: 0 auto; padding-bottom: var(--pad-bottom);
     display: grid; gap: clamp(40px, 6vw, 96px); align-items: start;
     grid-template-areas: "intro" "form";
   }
@@ -660,8 +679,26 @@
     .js-reveal .reviews.in-view .review::after { transform: scaleY(1); }
     .js-reveal .reviews.in-view .review > * { opacity: 1; }
 
+    /* footer: the white form boxes slowly fade in one by one */
+    .form__field:nth-of-type(2) { --n: 1; }
+    .form__field:nth-of-type(3) { --n: 2; }
+    .form__field:nth-of-type(4) { --n: 3; }
+    .form__field:nth-of-type(5) { --n: 4; }
+    .js-reveal .form :is(input, textarea) {
+      background-color: rgba(255, 255, 255, 0); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .45);
+    }
+    .js-reveal .form ::placeholder { color: transparent; transition: color .8s ease calc(var(--n, 0) * .22s + 1.4s); }
+    .js-reveal .contact.in-view .form :is(input, textarea) {
+      animation: box-light 1.6s ease calc(var(--n, 0) * .22s + .3s) both;
+    }
+    .js-reveal .contact.in-view .form ::placeholder { color: #b8b2b4; }
+
     /* kick off: each card gives a small swing on its ring as it passes the middle of the screen */
     .usps li.shake { animation: card-shake .8s cubic-bezier(.36, .07, .19, .97); }
+  }
+  @keyframes box-light {
+    from { background-color: rgba(255, 255, 255, 0); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .45); }
+    to   { background-color: #fff; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0); }
   }
   @keyframes card-shake {
     0%, 100% { rotate: 0deg; }
@@ -1006,6 +1043,15 @@
     <img class="contact__hands" src="kaartjeshand-web.png" width="720" height="900" loading="lazy"
          alt="Handen met een waaier visitekaartjes van Li’San collective in de huisstijlkleuren">
   </div>
+
+  <div class="contact__bar">
+    <ul>
+      <li><a href="mailto:info@lisan.nl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5 12 13l8.5-6.5"/></svg><span>info@lisan.nl</span></a></li>
+      <li><a href="https://www.instagram.com/lisancollective/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r=".6" fill="currentColor"/></svg><span>@lisancollective</span></a></li>
+      <li><a href="tel:0639364940" aria-label="Bel Lisanne: 06 39 36 49 40"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.6 3.5h2.6l1.4 4-2 1.4a11 11 0 0 0 6.5 6.5l1.4-2 4 1.4v2.6a2 2 0 0 1-2.2 2A16.6 16.6 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2z"/></svg><span>Lisanne</span></a></li>
+      <li><a href="tel:0631663638" aria-label="Bel Sanne: 06 31 66 36 38"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.6 3.5h2.6l1.4 4-2 1.4a11 11 0 0 0 6.5 6.5l1.4-2 4 1.4v2.6a2 2 0 0 1-2.2 2A16.6 16.6 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2z"/></svg><span>Sanne</span></a></li>
+    </ul>
+  </div>
 </footer>
 
 <a class="cta" href="#contact" title="Neem contact op">
@@ -1068,7 +1114,7 @@
   const revealIO = new IntersectionObserver(entries => entries.forEach(entry => {
     if (entry.isIntersecting) { entry.target.classList.add('in-view'); revealIO.unobserve(entry.target); }
   }), { threshold: .25 });
-  document.querySelectorAll('.about__media, .plans-section, .insta, .reviews').forEach(el => revealIO.observe(el));
+  document.querySelectorAll('.about__media, .plans-section, .insta, .reviews, .contact').forEach(el => revealIO.observe(el));
 
   // kick off cards: a small shake each time a card crosses the middle of the screen
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
