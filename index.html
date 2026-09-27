@@ -42,10 +42,17 @@
             mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
   }
   .site-logo {
-    position: absolute; z-index: 2;
+    position: fixed; z-index: 11;   /* stays in the corner; once you scroll it becomes a "back to top" arrow */
     top: clamp(16px, 3vw, 40px); left: clamp(8px, 2.5vw, 36px);
     width: clamp(200px, 26vw, 380px);
   }
+  .site-logo .logo-extra { transition: opacity .5s ease .75s; }   /* back in once the arrow has become the box again */
+  .site-logo.is-arrow .logo-extra { opacity: 0; transition-duration: .25s; transition-delay: 0s; }   /* out quickly, before the box starts changing */
+  .site-logo.is-arrow { pointer-events: none; }                  /* only the arrow itself stays clickable */
+  .site-logo.is-arrow .block { pointer-events: auto; cursor: pointer; }
+  /* the arrow is drawn as an outline: the fill fades out while the box changes shape (and back in) */
+  .site-logo .block { stroke: var(--lisan-brand); stroke-width: 0; stroke-linejoin: miter; transition: fill-opacity .6s ease .5s, stroke-width .4s ease .5s; }
+  .site-logo.is-arrow .block { fill-opacity: 0; stroke-width: 2.4px; transition-delay: .2s, .2s; }
 
   /* hero line: "een goed interieur begint met" | photo | "een goed gesprek" */
   .hero__quote { margin: 0; }
@@ -735,17 +742,33 @@
 </head>
 <body>
 
-<header class="hero">
+<header class="hero" id="top">
   <img class="hero__img" src="Hero.jpg" alt="Lisanne en Sanne van Li’San collective in gesprek op een houten bank">
 
-  <a class="site-logo" href="/" aria-label="Li’San collective — home">
+  <a class="site-logo" href="#top" aria-label="Li’San collective — home">
     <svg class="lisan-logo lisan-logo--simple" viewBox="0 0 600 200" role="img" aria-label="Li’San collective — interior projects">
-      <line class="line l-top"    x1="14"  y1="37"  x2="312" y2="37"  pathLength="1"/>
-      <line class="line l-left"   x1="55"  y1="10"  x2="55"  y2="172" pathLength="1"/>
+      <!-- with the arrow, these two lines become mirror images across its diagonal and every part
+           sticking out past the arrow is 30 long; on hover both lines slide 30 toward the top-left
+           (the parts at the tip grow to 60, the far parts shrink to 0) -->
+      <line class="line l-top"    x1="14"  y1="37"  x2="312" y2="37"  pathLength="1">
+        <animate attributeName="x1" dur="1.2s" begin="logoToArrow.begin" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".65 0 .35 1" values="14;25"/><animate attributeName="x1" dur="1.2s" begin="logoToRect.begin" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".65 0 .35 1" values="25;14"/><animate attributeName="x2" dur="1.2s" begin="logoToArrow.begin" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".65 0 .35 1" values="312;191"/><animate attributeName="x2" dur="1.2s" begin="logoToRect.begin" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".65 0 .35 1" values="191;312"/><animate class="hover-in" attributeName="x1" dur=".4s" begin="indefinite" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".22 .8 .3 1" values="25;-5"/><animate class="hover-out" attributeName="x1" dur=".4s" begin="indefinite" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".22 .8 .3 1" values="-5;25"/><animate class="hover-in" attributeName="x2" dur=".4s" begin="indefinite" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".22 .8 .3 1" values="191;161"/><animate class="hover-out" attributeName="x2" dur=".4s" begin="indefinite" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".22 .8 .3 1" values="161;191"/>
+      </line>
+      <line class="line l-left"   x1="55"  y1="10"  x2="55"  y2="172" pathLength="1">
+        <animate attributeName="y1" dur="1.2s" begin="logoToArrow.begin" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".65 0 .35 1" values="10;7"/><animate attributeName="y1" dur="1.2s" begin="logoToRect.begin" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".65 0 .35 1" values="7;10"/><animate attributeName="y2" dur="1.2s" begin="logoToArrow.begin" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".65 0 .35 1" values="172;173"/><animate attributeName="y2" dur="1.2s" begin="logoToRect.begin" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".65 0 .35 1" values="173;172"/><animate class="hover-in" attributeName="y1" dur=".4s" begin="indefinite" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".22 .8 .3 1" values="7;-23"/><animate class="hover-out" attributeName="y1" dur=".4s" begin="indefinite" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".22 .8 .3 1" values="-23;7"/><animate class="hover-in" attributeName="y2" dur=".4s" begin="indefinite" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".22 .8 .3 1" values="173;143"/><animate class="hover-out" attributeName="y2" dur=".4s" begin="indefinite" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".22 .8 .3 1" values="143;173"/>
+      </line>
+      <!-- rectangle → square → halved into a triangle → a stubby tail grows out of its long side:
+           an arrow pointing up-left. The tail runs along the square's diagonal and ends exactly on
+           the square's right and bottom edges (every shape uses the same 7 points) -->
+      <path class="block" d="M55 37 L263 37 L263 143 L263 143 L263 143 L263 143 L55 143 Z">
+        <animate id="logoToArrow" class="logo-to-arrow" attributeName="d" dur="1.2s" begin="indefinite" fill="freeze"
+                 calcMode="spline" keyTimes="0;.3;.65;1" keySplines=".65 0 .35 1;.65 0 .35 1;.65 0 .35 1" values="M55 37 L263 37 L263 143 L263 143 L263 143 L263 143 L55 143 Z;M55 37 L161 37 L161 143 L161 143 L161 143 L161 143 L55 143 Z;M55 37 L161 37 L125 73 L125 73 L91 107 L91 107 L55 143 Z;M55 37 L161 37 L125 73 L161 109 L127 143 L91 107 L55 143 Z"/>
+        <animate id="logoToRect" class="logo-to-rect" attributeName="d" dur="1.2s" begin="indefinite" fill="freeze"
+                 calcMode="spline" keyTimes="0;.35;.7;1" keySplines=".65 0 .35 1;.65 0 .35 1;.65 0 .35 1" values="M55 37 L161 37 L125 73 L161 109 L127 143 L91 107 L55 143 Z;M55 37 L161 37 L125 73 L125 73 L91 107 L91 107 L55 143 Z;M55 37 L161 37 L161 143 L161 143 L161 143 L161 143 L55 143 Z;M55 37 L263 37 L263 143 L263 143 L263 143 L263 143 L55 143 Z"/>
+      </path>
+
+      <g class="logo-extra">   <!-- fades out while the box is an arrow -->
       <line class="line l-bottom" x1="35"  y1="143" x2="292" y2="143" pathLength="1"/>
       <line class="line l-right"  x1="263" y1="10"  x2="263" y2="178" pathLength="1"/>
-      <rect class="block" x="55" y="37" width="208" height="106"/>
-
       <g font-size="54" letter-spacing="0.5" aria-hidden="true">
         <text class="word name n-li" x="90" y="124">Li</text>
         <g class="word n-rest">
@@ -755,6 +778,7 @@
       </g>
       <text class="word w-collective" x="270" y="124" font-size="54" letter-spacing="1.5">collective</text>
       <text class="word w-tagline"    x="283" y="175" font-size="25" textLength="214" lengthAdjust="spacing">interior projects</text>
+      </g>
     </svg>
   </a>
 
@@ -1168,6 +1192,32 @@
       shakeIO.observe(li);
       li.addEventListener('animationend', () => li.classList.remove('shake'));
     });
+  }
+
+  // logo → arrow: once you scroll away from the top, the box morphs into an arrow pointing up-left
+  // ("back to top"); near the top again it morphs back into the logo
+  const siteLogo = document.querySelector('.site-logo');
+  const toArrow = siteLogo.querySelector('.logo-to-arrow'), toRect = siteLogo.querySelector('.logo-to-rect');
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) siteLogo.querySelectorAll('animate').forEach(a => a.setAttribute('dur', '.01s'));
+  let logoIsArrow = false, logoTick = false;
+  function updateLogo() {
+    logoTick = false;
+    const arrow = scrollY > innerHeight * .3;
+    if (arrow === logoIsArrow) return;
+    logoIsArrow = arrow;
+    siteLogo.classList.toggle('is-arrow', arrow);
+    siteLogo.setAttribute('aria-label', arrow ? 'Terug naar boven' : 'Li’San collective — home');
+    (arrow ? toArrow : toRect).beginElement();
+  }
+  addEventListener('scroll', () => { if (!logoTick) { logoTick = true; requestAnimationFrame(updateLogo); } }, { passive: true });
+  updateLogo();
+
+  // hovering the arrow: the construction lines reach further toward the top-left corner
+  if (matchMedia('(hover: hover)').matches) {
+    const hoverIn = siteLogo.querySelectorAll('.hover-in'), hoverOut = siteLogo.querySelectorAll('.hover-out');
+    const block = siteLogo.querySelector('.block');
+    block.addEventListener('mouseenter', () => { if (logoIsArrow) hoverIn.forEach(a => a.beginElement()); });
+    block.addEventListener('mouseleave', () => { if (logoIsArrow) hoverOut.forEach(a => a.beginElement()); });
   }
 
   // play the about header and footer logo animations once each scrolls into view
