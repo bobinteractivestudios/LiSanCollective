@@ -12,9 +12,11 @@
   :root {
     --brand: #520521;
     --ink:   #1c1a1b;
+    --ink-soft: #55585c;   /* softer grey for the about section */
     --paper: #f5f4f2;
     --accent: rgb(194, 121, 25);
     --accent-blue: rgb(148, 170, 178);
+    --pink: #db9bb6;
   }
   *, *::before, *::after { box-sizing: border-box; }
   html, body { margin: 0; }
@@ -97,6 +99,27 @@
     padding: clamp(22px, 2.6vw, 32px);
     background: var(--accent); color: #fff; border-radius: 18px;
     box-shadow: 0 1px 2px rgba(50, 30, 20, .12), 0 12px 28px -12px rgba(50, 30, 20, .45);
+    position: relative; isolation: isolate;
+    padding-right: clamp(48px, 5vw, 64px);   /* keep the text clear of the punched hole */
+  }
+  /* sample-card texture: fine grain + faint linen weave, blended into the card colour */
+  .usps li::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+      repeating-linear-gradient(0deg, rgba(255, 255, 255, .05) 0 1px, transparent 1px 3px),
+      repeating-linear-gradient(90deg, rgba(0, 0, 0, .08) 0 1px, transparent 1px 3px);
+    mix-blend-mode: soft-light; opacity: .9;
+  }
+  /* punched hole with a brass grommet, top right */
+  .usps li::after {
+    content: ""; position: absolute; top: 16px; right: 16px; width: 24px; height: 24px; border-radius: 50%;
+    background: radial-gradient(circle at 50% 45%,
+      rgb(232, 229, 226) 0 6.5px,          /* section background showing through the hole */
+      rgba(0, 0, 0, .35) 6.5px 7.5px,      /* shadowed inner edge */
+      #8a6d3b 7.5px 8.5px, #e2c992 8.5px 10px, #b08f55 10px 11.5px,
+      transparent 12px);
+    box-shadow: 0 1px 1.5px rgba(0, 0, 0, .3);
   }
   .usps li:nth-child(1) { transform: rotate(-1.2deg); }
   .usps li:nth-child(2) { transform: rotate(.8deg); }
@@ -129,7 +152,6 @@
 
   /* footer: contact form */
   .contact {
-    --pink: #db9bb6;
     background: var(--pink); color: var(--brand);
     padding: clamp(72px, 10vw, 140px) 16px clamp(96px, 10vw, 140px);
   }
@@ -173,12 +195,13 @@
     right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom));
     width: 60px; height: 60px; border-radius: 50%;
     display: grid; place-items: center;
-    background: var(--brand); color: #fff;
-    box-shadow: 0 6px 20px rgba(82, 5, 33, .3);
+    background: var(--pink); color: var(--brand);
+    border: 1px solid var(--brand);   /* keeps it visible on top of the pink footer */
+    box-shadow: 0 6px 20px rgba(82, 5, 33, .25);
     transition: background-color .2s, transform .2s;
   }
   .cta svg { width: 26px; height: 26px; }
-  .cta:hover { background: #6b0a2d; transform: scale(1.06); }
+  .cta:hover { background: #d386a7; transform: scale(1.06); }
   .cta:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }
   .visually-hidden {
     position: absolute; width: 1px; height: 1px; overflow: hidden;
@@ -230,7 +253,7 @@
     display: block; width: 100%; aspect-ratio: 3 / 4;
     object-fit: cover; object-position: 50% 0;   /* keep all the headroom, trim only the floor strip at the bottom */
   }
-  .about__body { max-width: 34em; margin: 0 auto; text-align: center; font-weight: 300; font-size: clamp(17px, 1.6vw, 20px); line-height: 1.75; }
+  .about__body { color: var(--ink-soft); max-width: 34em; margin: 0 auto; text-align: center; font-weight: 300; font-size: clamp(17px, 1.6vw, 20px); line-height: 1.75; }
   .about__body p { margin: 0 0 1.4em; }
   .about__sign { margin-top: 2em !important; font-weight: 400; color: var(--accent-blue); }
   .about__sign::before { content: ""; display: block; width: 32px; height: 1px; background: currentColor; margin: 0 auto 1.4em; }
@@ -295,7 +318,7 @@
 
   /* ---------- about header (B without box/tagline): Lisanne → Li’Sanne → Li’San · collective ----------
      plays when scrolled into view (.in-view is added by the script below) */
-  .lisan-logo--header { --lisan-text: var(--ink); }
+  .lisan-logo--header { --lisan-text: var(--ink-soft); }
   .lisan-logo--header:not(.in-view) * { animation: none !important; }
   /* four equal moves (0.6s, same easing), each followed by an equal 0.6s pause:
      Lisanne .2s → Li’Sanne 1.4s → Li’San 2.6s → collective 3.8s */
