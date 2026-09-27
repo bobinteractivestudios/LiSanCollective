@@ -80,7 +80,7 @@
   /* hero entry: the photo zooms out straight away (alongside the logo); once the logo has finished
      (--hero-start, ~6.2s) the handwriting writes itself line by line, then "Scroll verder" appears */
   .hero { --hero-start: 6.2s; }
-  .hero__img { animation: hero-zoom 2.4s ease .1s both; }
+  .hero__img { animation: hero-zoom 1.4s cubic-bezier(.77, 0, .18, 1) .2s both; }   /* accelerate, move, decelerate: clicks into place */
   @keyframes hero-zoom { from { scale: 1.25; } to { scale: 1; } }
   .hq-line {
     display: inline-block;
