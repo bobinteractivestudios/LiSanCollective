@@ -285,6 +285,12 @@
     .plan { grid-row: span 4; grid-template-rows: subgrid; scroll-snap-align: start; border-left: 1px solid var(--line); }
     .plan:last-child { border-right: 1px solid var(--line); }
     .plan > * + * { border-top: 1px solid var(--line); }
+    /* carry the row lines through the strip's 16px side padding, so they run edge to edge of the screen */
+    .plan:first-child > * + *::before, .plan:last-child > * + *::after {
+      content: ""; position: absolute; top: -1px; width: 16px; height: 1px; background: var(--line);
+    }
+    .plan:first-child > * + *::before { left: -17px; }
+    .plan:last-child > * + *::after { right: -17px; }
   }
 
   /* instagram: link to the page + three embedded posts */
