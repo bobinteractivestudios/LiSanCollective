@@ -200,20 +200,25 @@
   }
   .plans::before { top: 0; }
   .plans::after { bottom: 0; }
-  .plan { display: grid; row-gap: 20px; padding: clamp(24px, 2.6vw, 32px) clamp(20px, 2.4vw, 32px); }
+  .plan { display: grid; }
   .plan + .plan { position: relative; }   /* stacked: full-width line between packages */
   .plan + .plan::before { top: 0; }
   @media (min-width: 900px) {
     /* rows are shared across the columns (subgrid), so the content lines up */
-    .plans { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, auto); row-gap: 20px; }
+    .plans { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, auto); }
     .plan { grid-row: span 4; grid-template-rows: subgrid; }
     .plan + .plan { border-left: 1px solid var(--line); }
     .plan + .plan::before { content: none; }
+    .plan + .plan > * + *::before { content: none; }   /* the first column draws the shared row lines */
   }
-  .plan > * { margin: 0; }
+  .plan > * { margin: 0; padding: clamp(20px, 2.2vw, 28px) clamp(20px, 2.4vw, 32px); }
+  /* lines between name, description, list and guidance, also running the full page width */
+  .plan > * + * { position: relative; }
+  .plan > * + *::before { content: ""; position: absolute; top: 0; left: -100vw; width: 300vw; height: 1px; background: var(--line); }
   .plan__name { margin: 0; color: var(--line); font-size: 13px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
   .plan__desc { font-weight: 300; font-size: 16px; line-height: 1.7; }
-  .plan ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; align-content: start; }
+  .plan ul { list-style: none; margin: 0; display: grid; gap: 10px; align-content: start; }
+  .plan__extra ul { padding: 0; }
   .plan li { position: relative; padding-left: 22px; font-size: 15.5px; line-height: 1.55; }
   .plan li::before { content: ""; position: absolute; left: 0; top: .78em; width: 12px; height: 1px; background: var(--line); }
   .plan__extra p { margin: 0 0 12px; font-weight: 300; font-size: 15.5px; line-height: 1.6; }
