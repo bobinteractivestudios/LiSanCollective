@@ -54,22 +54,24 @@
   .hero__quote-l { top: 36%; right: calc(50% + 29vh); text-align: right; }
   .hero__quote-r { top: 58%; left:  calc(50% + 29vh); }
 
-  /* narrow / portrait screens: no room beside the photo, so the photo drops down
-     and the sentence sits in the open backdrop between logo and heads */
+  /* narrow / portrait screens: no room beside the photo, so the sentence is split
+     top (between logo and heads) and bottom (under their feet), photo in between */
   @media (max-aspect-ratio: 5/4) {
     .hero__img {
-      top: auto; bottom: -2%; height: 80%;
+      top: auto; bottom: 10%; height: 70%;
       -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent),
-                          linear-gradient(to bottom, transparent, #000 12%);
+                          linear-gradient(to bottom, transparent, #000 12%, #000 84%, transparent 97%);   /* fully fades the floor strip at the bottom of the photo */
       -webkit-mask-composite: source-in;
               mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent),
-                          linear-gradient(to bottom, transparent, #000 12%);
+                          linear-gradient(to bottom, transparent, #000 12%, #000 84%, transparent 97%);   /* fully fades the floor strip at the bottom of the photo */
               mask-composite: intersect;
     }
     .hero__quote span { font-size: clamp(40px, 11.5vw, 74px); }
-    .hero__quote-l { top: 15%; right: auto; left: clamp(16px, 5vw, 48px); text-align: left; }
-    .hero__quote-r { top: calc(15% + 2.2em); left: auto; right: clamp(16px, 5vw, 48px); }
+    .hero__quote span { left: 16px; right: 16px; text-align: center; }
+    .hero__quote-l { top: 14%; }
+    .hero__quote-r { top: auto; bottom: 4%; }
   }
+
 
   /* kick off: intro left, steps stacked right */
   .kickoff {
