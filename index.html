@@ -236,11 +236,9 @@
   .insta__link:focus-visible { outline: 2px solid var(--pink); outline-offset: 6px; }
   .insta__posts { display: grid; gap: 40px; justify-items: center; align-items: start; }
   @media (min-width: 1000px) {
-    .insta__posts { grid-template-columns: repeat(3, 1fr); gap: 32px; }
-    /* step down: each phone sits a bit lower than the one before */
-    .phone:nth-child(2) { margin-top: 72px; }
-    .phone:nth-child(3) { margin-top: 144px; }
-    .phone { will-change: transform; }   /* moved by the scroll script: bottoms aligned → staircase → tops aligned */
+    /* phones start lined up; the scroll script steps them down 72px each (sticky-style), so leave room for 144px */
+    .insta__posts { grid-template-columns: repeat(3, 1fr); gap: 32px; padding-bottom: 144px; }
+    .phone { will-change: transform; }
   }
   /* phone frame around each post */
   .phone {
@@ -781,30 +779,37 @@
   // no form service connected yet: keep the page (and the visitor's details) from submitting anywhere
   document.getElementById('contact-form').addEventListener('submit', e => e.preventDefault());
 
-  // instagram phones: while the section scrolls by, they go from bottoms aligned (entering)
-  // to the staircase (middle) to tops aligned (leaving) — desktop only, not for reduced motion
-  const phoneBox = document.querySelector('.insta__posts');
+  // instagram phones (desktop): they behave as if sticky, one after the other.
+  // Entering: when their bottoms reach the bottom of the screen, phones 2 and 3 stick there; phone 2 lets go
+  // after 72px, phone 3 after 144px → staircase. Leaving: each phone's top sticks to the top of the screen
+  // when it gets there; once phone 3 arrives they're lined up again and scroll away together.
+  // With reduced motion the staircase is simply shown still.
+  const STEP = 72;
   const phones = [...document.querySelectorAll('.phone')];
-  const phoneMotion = matchMedia('(min-width: 1000px) and (prefers-reduced-motion: no-preference)');
-  let phoneRange = null;   // per phone: offset when entering / leaving
-  const ease = t => t * t * (3 - 2 * t);
+  const phoneLayout = matchMedia('(min-width: 1000px)');
+  const reduceMotionPhones = matchMedia('(prefers-reduced-motion: reduce)');
+  let phoneData = null;   // per phone: page position, height and how far it steps down
+  const clampTo = (v, max) => Math.min(max, Math.max(0, v));
   function measurePhones() {
     phones.forEach(ph => ph.style.transform = '');
-    if (!phoneMotion.matches) { phoneRange = null; return; }
-    const boxes = phones.map(ph => ({ top: ph.offsetTop, bottom: ph.offsetTop + ph.offsetHeight }));
-    const lowest = Math.max(...boxes.map(b => b.bottom)), highest = Math.min(...boxes.map(b => b.top));
-    phoneRange = boxes.map(b => ({ enter: lowest - b.bottom, leave: highest - b.top }));
+    if (!phoneLayout.matches) { phoneData = null; return; }
+    phoneData = phones.map((ph, i) => {
+      const r = ph.getBoundingClientRect();
+      return { top: r.top + scrollY, height: r.height, step: i * STEP };
+    });
     movePhones();
   }
   function movePhones() {
-    if (!phoneRange) return;
-    const r = phoneBox.getBoundingClientRect(), span = innerHeight * .7;
-    const clamp = t => Math.min(1, Math.max(0, t));
-    const spread = ease(clamp((innerHeight - r.top) / span));   // 0 → 1 while the phones come up into view
-    const gather = ease(clamp((span - r.bottom) / span));       // 0 → 1 while they scroll out at the top
-    phones.forEach((ph, i) => {
-      const { enter, leave } = phoneRange[i];
-      ph.style.transform = `translateY(${(enter * (1 - spread) + leave * gather).toFixed(1)}px)`;
+    if (!phoneData) return;
+    const y = scrollY, maxStep = (phones.length - 1) * STEP;
+    phoneData.forEach(({ top, height, step }, i) => {
+      let offset = step;   // reduced motion: static staircase
+      if (!reduceMotionPhones.matches) {
+        const bottomHitsScreenBottom = top + height - innerHeight;
+        offset = clampTo(y - bottomHitsScreenBottom, step)             // stuck to the bottom of the screen
+               + clampTo(y - (top + step), maxStep - step);           // stuck to the top of the screen
+      }
+      phones[i].style.transform = `translateY(${offset}px)`;
     });
   }
   let phoneTick = false;
@@ -812,7 +817,9 @@
     if (!phoneTick) { phoneTick = true; requestAnimationFrame(() => { phoneTick = false; movePhones(); }); }
   }, { passive: true });
   addEventListener('resize', measurePhones);
-  phoneMotion.addEventListener('change', measurePhones);
+  phoneLayout.addEventListener('change', measurePhones);
+  reduceMotionPhones.addEventListener('change', measurePhones);
+  addEventListener('load', measurePhones);   // re-measure once fonts, images and embeds have settled
   measurePhones();
 
   // play the about header and footer logo animations once each scrolls into view
