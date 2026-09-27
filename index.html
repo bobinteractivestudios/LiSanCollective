@@ -615,6 +615,17 @@
     .lisan-logo * { animation-duration: .01s !important; animation-delay: 0s !important; }
   }
 
+  /* ---------- a thin top border in each section's accent colour (not on reviews) ---------- */
+  :is(.about, .kickoff, .plans-section, .insta, .contact) {
+    --rule: 1.5px;
+    border-top: var(--rule) solid var(--section-accent);
+  }
+  .about         { --section-accent: var(--accent-blue); }
+  .kickoff       { --section-accent: rgb(82, 54, 41); }
+  .plans-section { --section-accent: rgb(187, 205, 212); }
+  .insta         { --section-accent: var(--pink); }
+  .contact       { --section-accent: var(--brand); }
+
   /* ---------- scroll reveals (only with JS, see js-reveal in <head>, and without reduced motion) ---------- */
   @media (prefers-reduced-motion: no-preference) {
     /* built for you, desktop: raster lines grow out from the page centre, then the columns, then the text */
