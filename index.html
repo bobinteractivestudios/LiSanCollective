@@ -127,7 +127,47 @@
   .kickoff__cta:hover span { transform: translateX(4px); }
   .kickoff__cta:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 
-  /* floating contact bubble (links to #contact until the form exists) */
+  /* footer: contact form */
+  .contact {
+    --pink: #db9bb6;
+    background: var(--pink); color: var(--brand);
+    padding: clamp(72px, 10vw, 140px) 16px clamp(96px, 10vw, 140px);
+  }
+  .contact__inner {
+    width: min(100%, 1120px); margin: 0 auto;
+    display: grid; gap: clamp(40px, 6vw, 96px); align-items: start;
+  }
+  @media (min-width: 960px) { .contact__inner { grid-template-columns: 5fr 7fr; } }
+  .contact__logo { display: block; width: clamp(220px, 26vw, 340px); margin: 0 0 clamp(24px, 3vw, 40px) -8px; }
+  .contact__intro p { margin: 0; max-width: 24em; font-size: clamp(18px, 1.8vw, 22px); line-height: 1.6; font-weight: 400; }
+
+  .form { display: grid; gap: 18px; }
+  @media (min-width: 600px) { .form { grid-template-columns: 1fr 1fr; } .form__field--full { grid-column: 1 / -1; } }
+  .form__field { display: grid; gap: 8px; }
+  .form label { font-weight: 700; font-size: 15px; }
+  .form input, .form textarea {
+    width: 100%; border: 0; border-radius: 12px; background: #fff;
+    padding: 14px 16px; font: 700 16px/1.4 Poppins, sans-serif; color: var(--ink);
+  }
+  .form textarea { min-height: 140px; resize: vertical; }
+  .form ::placeholder { color: #b8b2b4; font-weight: 500; opacity: 1; }
+  .form input:focus-visible, .form textarea:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+  .form__submit {
+    justify-self: start; display: inline-flex; align-items: center; gap: .6em;
+    border: 0; border-radius: 12px; padding: 15px 26px; cursor: pointer;
+    background: var(--brand); color: #fff; font: 700 16px/1 Poppins, sans-serif; letter-spacing: .02em;
+    transition: background-color .2s;
+  }
+  .form__submit:hover { background: #6b0a2d; }
+  .form__submit:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }
+
+  /* finished logo, no animation (footer) */
+  .lisan-logo.lisan-logo--static { --lisan-text-outside: var(--brand); }
+  .lisan-logo.lisan-logo--static :is(.line, .block, .word) {
+    animation: none; opacity: 1; stroke-dashoffset: 0; clip-path: none;
+  }
+
+  /* floating contact bubble (links to the #contact footer) */
   .cta {
     position: fixed; z-index: 10;
     right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom));
@@ -398,6 +438,54 @@
   </section>
 </main>
 
+<footer class="contact" id="contact" aria-labelledby="contact-title">
+  <div class="contact__inner">
+    <div class="contact__intro">
+      <svg class="lisan-logo lisan-logo--static contact__logo" viewBox="0 0 600 200" role="img" aria-label="Li’San collective — interior projects">
+        <line class="line" x1="14"  y1="37"  x2="312" y2="37"  pathLength="1"/>
+        <line class="line" x1="55"  y1="10"  x2="55"  y2="172" pathLength="1"/>
+        <line class="line" x1="35"  y1="143" x2="292" y2="143" pathLength="1"/>
+        <line class="line" x1="263" y1="10"  x2="263" y2="178" pathLength="1"/>
+        <rect class="block" x="55" y="37" width="208" height="106"/>
+        <g font-size="54" letter-spacing="0.5">
+          <text class="word name" x="90" y="124">Li</text>
+          <text class="word name" x="132.7" y="124">’</text>
+          <text class="word name" x="150.1" y="124">San</text>
+        </g>
+        <text class="word w-collective" x="270" y="124" font-size="54" letter-spacing="1.5">collective</text>
+        <text class="word w-tagline"    x="283" y="175" font-size="25" textLength="214" lengthAdjust="spacing">interior projects</text>
+      </svg>
+      <h2 id="contact-title" class="visually-hidden">Contact</h2>
+      <p>Welkom bij Li’San collective. Laat je gegevens achter, dan plannen we een vrijblijvende afspraak in!</p>
+    </div>
+
+    <!-- TODO: connect to a form service (e.g. Formspree / Netlify Forms) via action + method -->
+    <form class="form" id="contact-form" method="post">
+      <div class="form__field form__field--full">
+        <label for="f-name">Naam:</label>
+        <input id="f-name" name="naam" type="text" autocomplete="name" required placeholder="Zoals het op je deurbel staat">
+      </div>
+      <div class="form__field">
+        <label for="f-email">E-mail:</label>
+        <input id="f-email" name="email" type="email" autocomplete="email" required placeholder="jij@jouwdroomhuis.nl">
+      </div>
+      <div class="form__field">
+        <label for="f-phone">Telefoonnummer:</label>
+        <input id="f-phone" name="telefoon" type="tel" autocomplete="tel" placeholder="Voor een gezellig belletje">
+      </div>
+      <div class="form__field form__field--full">
+        <label for="f-city">Woonplaats:</label>
+        <input id="f-city" name="woonplaats" type="text" autocomplete="address-level2" placeholder="Waar staat je (toekomstige) bank?">
+      </div>
+      <div class="form__field form__field--full">
+        <label for="f-wish">Waar ben je naar op zoek?</label>
+        <textarea id="f-wish" name="wens" rows="5" placeholder="Een woonkamer die eindelijk af voelt, een keuken om in te dansen of gewoon hulp bij die ene lege muur…"></textarea>
+      </div>
+      <button class="form__submit" type="submit">Verstuur <span aria-hidden="true">→</span></button>
+    </form>
+  </div>
+</footer>
+
 <a class="cta" href="#contact" title="Neem contact op">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <path d="M4 5.5h16v10H9.5L5.5 19v-3.5H4z"/>
@@ -407,6 +495,9 @@
 </a>
 
 <script>
+  // no form service connected yet: keep the page (and the visitor's details) from submitting anywhere
+  document.getElementById('contact-form').addEventListener('submit', e => e.preventDefault());
+
   // play the about header animation once it scrolls into view
   const header = document.querySelector('.lisan-logo--header');
   if ('IntersectionObserver' in window) {
