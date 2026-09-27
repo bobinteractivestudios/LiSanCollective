@@ -6,13 +6,15 @@
 <title>Li'San collective — interior projects</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Corinthia&family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Corinthia&family=Nothing+You+Could+Do&family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
   /* ---------- page ---------- */
   :root {
     --brand: #520521;
     --ink:   #1c1a1b;
     --paper: #f5f4f2;
+    --accent: rgb(194, 121, 25);
+    --accent-blue: rgb(148, 170, 178);
   }
   *, *::before, *::after { box-sizing: border-box; }
   html, body { margin: 0; }
@@ -67,8 +69,71 @@
     .hero__quote-r { top: calc(15% + 2.2em); left: auto; right: clamp(16px, 5vw, 48px); }
   }
 
+  /* kick off */
+  .kickoff {
+    background: rgba(194, 121, 25, .08);
+    padding: clamp(80px, 12vw, 160px) 16px;
+    display: grid; justify-items: center; gap: clamp(48px, 6vw, 80px);
+  }
+  .kickoff__intro { max-width: 36em; text-align: center; }
+  .kickoff__title {
+    margin: 0 0 .9em; font-weight: 700; letter-spacing: -.01em; line-height: 1;
+    font-size: clamp(36px, 5vw, 64px);
+  }
+  .kickoff__title::after { content: ""; display: block; width: 40px; height: 1px; background: var(--accent); margin: .45em auto 0; }
+  .kickoff__intro p { margin: 0; font-weight: 300; font-size: clamp(17px, 1.6vw, 20px); line-height: 1.75; }
+
+  .usps {
+    list-style: none; margin: 0; padding: 0; counter-reset: usp;
+    width: min(100%, 1120px);
+    display: grid; gap: clamp(40px, 5vw, 64px);
+  }
+  .usps li { counter-increment: usp; border-top: 1px solid var(--accent); padding-top: 24px; }
+  .usps li::before {
+    content: counter(usp, decimal-leading-zero);
+    display: block; margin-bottom: 16px;
+    color: var(--accent); font-size: 13px; letter-spacing: .14em;
+  }
+  .usps h3 { margin: 0 0 .5em; font-weight: 500; font-size: 20px; }
+  .usps p  { margin: 0; font-weight: 300; font-size: 17px; line-height: 1.7; }
+  @media (min-width: 860px) {
+    .usps { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .kickoff__cta {
+    display: inline-flex; align-items: center; gap: .6em;
+    color: var(--accent); text-decoration: none;
+    font-weight: 500; font-size: 17px; letter-spacing: .02em;
+    padding-bottom: 4px; border-bottom: 1px solid currentColor;
+  }
+  .kickoff__cta span { transition: transform .2s; }
+  .kickoff__cta:hover span { transform: translateX(4px); }
+  .kickoff__cta:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+  /* floating contact bubble (links to #contact until the form exists) */
+  .cta {
+    position: fixed; z-index: 10;
+    right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom));
+    width: 60px; height: 60px; border-radius: 50%;
+    display: grid; place-items: center;
+    background: var(--brand); color: #fff;
+    box-shadow: 0 6px 20px rgba(82, 5, 33, .3);
+    transition: background-color .2s, transform .2s;
+  }
+  .cta svg { width: 26px; height: 26px; }
+  .cta:hover { background: #6b0a2d; transform: scale(1.06); }
+  .cta:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }
+  .visually-hidden {
+    position: absolute; width: 1px; height: 1px; overflow: hidden;
+    clip-path: inset(50%); white-space: nowrap;
+  }
+  @media (min-width: 860px) {
+    .cta { right: 32px; bottom: 32px; width: 64px; height: 64px; }
+  }
+
   /* about */
   .about {
+    background: rgba(148, 170, 178, .12);
     padding: clamp(80px, 12vw, 160px) 16px clamp(96px, 14vw, 180px);
     display: grid; justify-items: center; gap: clamp(40px, 6vw, 72px);
   }
@@ -77,13 +142,40 @@
     width: min(100%, 1120px);
     display: grid; gap: clamp(40px, 6vw, 96px); align-items: center;
   }
+  /* printed photo card: paper frame, slight tilt, soft shadow */
+  .about__photo {
+    margin: 0; padding: clamp(10px, 1.4vw, 16px) clamp(10px, 1.4vw, 16px) clamp(36px, 4.5vw, 56px);
+    background: #fdfcf9;
+    transform: rotate(-2deg);
+    box-shadow:
+      0 1px 2px rgba(40, 30, 20, .08),
+      0 10px 24px -8px rgba(40, 30, 20, .22),
+      0 28px 56px -24px rgba(40, 30, 20, .25);
+    transition: transform .5s cubic-bezier(.2,.8,.2,1);
+  }
+  .about__photo:hover { transform: rotate(-.8deg) translateY(-3px); }
+  @media (max-width: 859px) {
+    .about__media { width: min(88%, 480px); justify-self: center; }   /* room for the tilted corners */
+  }
+
+  /* names written on the bottom border, like a Polaroid */
+  .about__photo { position: relative; }
+  .about__caption {
+    position: absolute; left: 0; right: 0; bottom: 0; height: clamp(36px, 4.5vw, 56px);
+    font-family: "Nothing You Could Do", cursive; font-size: clamp(15px, 1.7vw, 22px);
+    color: #2e2b2c;
+  }
+  .about__caption span { position: absolute; top: 50%; white-space: nowrap; }
+  .about__caption span:first-child { left: 35%; transform: translate(-50%, -50%) rotate(-2deg); }
+  .about__caption span:last-child  { left: 69%; transform: translate(-50%, -45%) rotate(1.5deg); }
   .about__img {
-    display: block; width: 100%; aspect-ratio: 4 / 5;
-    object-fit: cover; object-position: 50% 20%;   /* trims the floor strip at the bottom */
+    box-shadow: 0 0 0 1px rgba(40, 30, 20, .05);   /* faint print edge against the white frame */
+    display: block; width: 100%; aspect-ratio: 3 / 4;
+    object-fit: cover; object-position: 50% 0;   /* keep all the headroom, trim only the floor strip at the bottom */
   }
   .about__body { max-width: 34em; margin: 0 auto; text-align: center; font-weight: 300; font-size: clamp(17px, 1.6vw, 20px); line-height: 1.75; }
   .about__body p { margin: 0 0 1.4em; }
-  .about__sign { margin-top: 2em !important; font-weight: 400; color: rgb(148, 170, 178); }
+  .about__sign { margin-top: 2em !important; font-weight: 400; color: var(--accent-blue); }
   .about__sign::before { content: ""; display: block; width: 32px; height: 1px; background: currentColor; margin: 0 auto 1.4em; }
 
   @media (min-width: 860px) {
@@ -210,7 +302,12 @@
     </h2>
 
     <div class="about__grid">
-      <img class="about__img" src="About.jpg" alt="Lisanne en Sanne met een kop koffie op een zachte bank" loading="lazy">
+      <div class="about__media">
+        <figure class="about__photo">
+          <img class="about__img" src="About.jpg" alt="Sanne en Lisanne met een kop koffie op een zachte bank" loading="lazy">
+          <figcaption class="about__caption"><span>Sanne</span> <span>Lisanne</span></figcaption>
+        </figure>
+      </div>
 
       <div class="about__body">
         <p>Bij Li’San collective draait alles om het vertalen van identiteit naar interieur. Of het nu gaat om een warm thuis of een inspirerende werkomgeving - wij geloven dat een goed interieur laat zien wie je bent en waar je voor staat.</p>
@@ -220,7 +317,39 @@
       </div>
     </div>
   </section>
+
+  <section class="kickoff" aria-labelledby="kickoff-title">
+    <div class="kickoff__intro">
+      <h2 id="kickoff-title" class="kickoff__title">Kick Off</h2>
+      <p>We gaan aan de slag met een ontwerpvoorstel voor een interieur. Jullie identiteit en woonwensen vormen hierbij het uitgangspunt. Zo krijgen jullie een ontwerp op maat!</p>
+    </div>
+
+    <ol class="usps">
+      <li>
+        <h3>Bel gezellig op</h3>
+        <p>We horen jullie verhaal aan en plannen een eerste afspraak in, geheel vrijblijvend!</p>
+      </li>
+      <li>
+        <h3>We komen graag langs</h3>
+        <p>Samen doorlopen we de ruimtes en bespreken we jullie wensenlijst.</p>
+      </li>
+      <li>
+        <h3>Advies op maat</h3>
+        <p>We inventariseren de behoeften en stellen op basis daarvan een maatwerkofferte samen.</p>
+      </li>
+    </ol>
+
+    <a class="kickoff__cta" href="#contact">Neem contact op <span aria-hidden="true">→</span></a>
+  </section>
 </main>
+
+<a class="cta" href="#contact" title="Neem contact op">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M4 5.5h16v10H9.5L5.5 19v-3.5H4z"/>
+    <path d="M8 9.5h8M8 12.5h5"/>
+  </svg>
+  <span class="visually-hidden">Neem contact op</span>
+</a>
 
 <script>
   // play the about header animation once it scrolls into view
