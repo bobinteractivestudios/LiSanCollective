@@ -35,7 +35,7 @@
       rgb(238,242,245) 60%, rgb(234,237,242) 80%, rgb(233,235,240) 100%);
   }
   .hero__img {
-    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    position: absolute; top: 0; left: 50%; translate: -50% 0;   /* separate from the entry zoom, so the zoom stays centred */
     height: 102.5%; width: auto; max-width: none;   /* extra 2.5% pushes the floor strip out of view */
     -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
             mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
@@ -48,11 +48,13 @@
 
   /* hero line: "een goed interieur begint met" | photo | "een goed gesprek" */
   .hero__quote { margin: 0; }
-  .hero__quote span {
+  .hero__quote > span {
     position: absolute; z-index: 1;
     font-family: Corinthia, cursive;
     color: var(--brand); font-weight: 400; line-height: 1; letter-spacing: 0;
-    font-size: clamp(40px, 5.6vw, 92px);
+    /* fits beside the photo: the widest line ("een goed interieur") is ~4.1em, the space per side is 50vw − 29vh */
+    font-size: min(clamp(40px, 5.6vw, 92px), calc((50vw - 29vh - 40px) / 4.3));
+    white-space: nowrap;
   }
   .hero__quote-l { top: 36%; right: calc(50% + 29vh); text-align: right; }
   .hero__quote-r { top: 58%; left:  calc(50% + 29vh); }
@@ -69,11 +71,48 @@
                           linear-gradient(to bottom, transparent, #000 12%, #000 84%, transparent 97%);   /* fully fades the floor strip at the bottom of the photo */
               mask-composite: intersect;
     }
-    .hero__quote span { font-size: clamp(40px, 11.5vw, 74px); }
-    .hero__quote span { left: 16px; right: 16px; text-align: center; }
+    .hero__quote > span { font-size: clamp(40px, 11.5vw, 74px); }
+    .hero__quote > span { left: 16px; right: 16px; text-align: center; }
     .hero__quote-l { top: 14%; }
-    .hero__quote-r { top: auto; bottom: 4%; }
+    .hero__quote-r { top: auto; bottom: 84px; }   /* leaves room for the scroll label */
   }
+  /* hero entry, after the logo has finished (~6.2s): the photo zooms out, the handwriting writes itself
+     line by line, then "Scroll verder" appears. Every step is timed from --hero-start. */
+  .hero { --hero-start: 6.2s; }
+  .hero__img { animation: hero-zoom 1.8s cubic-bezier(.22, .8, .3, 1) var(--hero-start) both; }   /* rests zoomed in until then */
+  @keyframes hero-zoom { from { scale: 1.25; } to { scale: 1; } }
+  .hq-line {
+    display: inline-block;
+    clip-path: inset(-30% 100% -40% -15%);   /* extra room so the swashes of the script aren't cut */
+    animation: hq-write var(--d) cubic-bezier(.45, .05, .55, .95) var(--t) forwards;
+  }
+  .hq-1 { --t: calc(var(--hero-start) + 2s);   --d: 1.2s; }   /* een goed interieur */
+  .hq-2 { --t: calc(var(--hero-start) + 3.2s); --d: .7s; }    /* begint met */
+  .hq-3 { --t: calc(var(--hero-start) + 4.1s); --d: 1.1s; }   /* een goed gesprek */
+  @keyframes hq-write { to { clip-path: inset(-30% -15% -40% -15%); } }
+
+  .hero__scroll {
+    position: absolute; z-index: 2; left: 50%; bottom: clamp(14px, 3vh, 32px); transform: translateX(-50%);
+    display: flex; align-items: center; gap: 10px;
+    color: var(--brand); opacity: 0; text-decoration: none; white-space: nowrap;
+    font-size: 13px; font-weight: 500; letter-spacing: .04em;
+    animation: hero-scroll-in 1s ease calc(var(--hero-start) + 5.5s) forwards;
+  }
+  .hero__scroll svg { width: 16px; height: 24px; flex: none; }
+  .hero__scroll .wheel { animation: hero-wheel 1.8s ease-in-out calc(var(--hero-start) + 6.2s) infinite; }
+  .hero__scroll:focus-visible { outline: 2px solid var(--brand); outline-offset: 6px; }
+  @keyframes hero-scroll-in { to { opacity: .5; } }
+  @keyframes hero-wheel {
+    0%   { transform: translateY(0); opacity: 1; }
+    70%  { transform: translateY(6px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero__img, .hq-line, .hero__scroll, .hero__scroll .wheel { animation: none; }
+    .hq-line { clip-path: none; }
+    .hero__scroll { opacity: .5; }
+  }
+
 
 
   /* kick off: intro left, steps stacked right */
@@ -572,13 +611,20 @@
   </a>
 
   <p class="hero__quote">
-    <span class="hero__quote-l">een goed interieur<br>begint met</span>
-    <span class="hero__quote-r">een goed gesprek</span>
+    <span class="hero__quote-l"><span class="hq-line hq-1">een goed interieur</span><br><span class="hq-line hq-2">begint met</span></span>
+    <span class="hero__quote-r"><span class="hq-line hq-3">een goed gesprek</span></span>
   </p>
+
+  <a class="hero__scroll" href="#about">
+    Scroll verder
+    <svg viewBox="0 0 16 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+      <rect x="1" y="1" width="14" height="22" rx="7"/><line class="wheel" x1="8" y1="6" x2="8" y2="9" stroke-linecap="round"/>
+    </svg>
+  </a>
 </header>
 
 <main>
-  <section class="about" aria-labelledby="about-title">
+  <section class="about" id="about" aria-labelledby="about-title">
     <h2 id="about-title" class="about__title">
       <svg class="lisan-logo lisan-logo--header" viewBox="84 66 478 76" role="img" aria-label="Li’San collective">
         <g font-size="54" letter-spacing="0.5" aria-hidden="true">
