@@ -80,8 +80,14 @@
   .kickoff {
     --accent: rgb(82, 54, 41);   /* section accent: deep brown */
     overflow-x: clip;            /* the rope may swing past the edge on small screens */
-    background: rgba(82, 54, 41, .08);
+    --wash: 241, 236, 229;
+    background:
+      linear-gradient(to right, rgba(var(--wash), .94), rgba(var(--wash), .88) 40%, rgba(var(--wash), .6)),
+      url("KickOff-web.jpg") center / cover;
     padding: clamp(80px, 12vw, 160px) 16px;
+  }
+  @media (max-width: 1099px) {   /* stacked layout: text sits over the whole width, so wash evenly */
+    .kickoff { background: linear-gradient(rgba(var(--wash), .88), rgba(var(--wash), .88)), url("KickOff-web.jpg") center / cover; }
   }
   .kickoff__inner {
     width: min(100%, 1120px); margin: 0 auto;
@@ -104,7 +110,7 @@
     display: grid; grid-template-columns: var(--icon-h) 1fr;
     gap: clamp(20px, 2.5vw, 32px); align-items: center;
     padding: clamp(22px, 2.6vw, 32px);
-    background: var(--accent); color: #fff; border-radius: 18px;
+    color: #fff; border-radius: 18px;
     box-shadow: 0 1px 2px rgba(50, 30, 20, .12), 0 12px 28px -12px rgba(50, 30, 20, .45);
     position: relative; isolation: isolate;
     padding-right: clamp(48px, 5vw, 64px);   /* keep the text clear of the punched hole */
@@ -127,24 +133,21 @@
   .rope__twist { stroke: #8c6c44; stroke-width: 3.2; stroke-dasharray: 1.6 2.6; opacity: .75; }
   .rope__fray  { stroke: #c9a978; stroke-width: 1.2; }
 
-  /* sample-card texture: fine grain + faint linen weave, blended into the card colour */
-  .usps li::before {
+  /* card colour and texture as two layers, both with a real hole punched through (top right);
+     the brass grommet around it is drawn together with the rope */
+  .usps li::before, .usps li::after {
     content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
+    -webkit-mask: radial-gradient(circle at calc(100% - 28px) 28px, transparent 6.5px, #000 7.2px);
+            mask: radial-gradient(circle at calc(100% - 28px) 28px, transparent 6.5px, #000 7.2px);
+  }
+  .usps li::before { background: var(--accent); }
+  /* sample-card texture: fine grain + faint linen weave, blended into the card colour */
+  .usps li::after {
     background-image:
       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
       repeating-linear-gradient(0deg, rgba(255, 255, 255, .05) 0 1px, transparent 1px 3px),
       repeating-linear-gradient(90deg, rgba(0, 0, 0, .08) 0 1px, transparent 1px 3px);
     mix-blend-mode: soft-light; opacity: .9;
-  }
-  /* punched hole with a brass grommet, top right */
-  .usps li::after {
-    content: ""; position: absolute; top: 16px; right: 16px; width: 24px; height: 24px; border-radius: 50%;
-    background: radial-gradient(circle at 50% 45%,
-      rgb(232, 229, 226) 0 6.5px,          /* section background showing through the hole */
-      rgba(0, 0, 0, .35) 6.5px 7.5px,      /* shadowed inner edge */
-      #8a6d3b 7.5px 8.5px, #e2c992 8.5px 10px, #b08f55 10px 11.5px,
-      transparent 12px);
-    box-shadow: 0 1px 1.5px rgba(0, 0, 0, .3);
   }
   .usps li:nth-child(1) { transform: rotate(-1.2deg); }
   .usps li:nth-child(2) { transform: rotate(.8deg); }
@@ -568,7 +571,8 @@
     const e = edges[edges.length - 1], end = { x: e.x + swing * 0.7, y: e.y + 130 };
     d += ` M${e.x} ${e.y} C${e.x + swing} ${e.y + 30}, ${e.x - 4} ${e.y + 80}, ${end.x} ${end.y}`;
     const fray = [-9, -3, 3, 8].map(dx => `M${end.x} ${end.y} q${dx / 2} 6 ${dx} ${10 + Math.abs(dx) / 2}`).join(' ');
-    const rings = holes.map(h => `<circle cx="${h.x}" cy="${h.y}" r="9.3" fill="none" stroke="#c9ad74" stroke-width="3"/>` +
+    const rings = holes.map(h => `<circle cx="${h.x}" cy="${h.y}" r="7" fill="none" stroke="rgba(0,0,0,.35)" stroke-width="1.2"/>` +
+      `<circle cx="${h.x}" cy="${h.y}" r="9.3" fill="none" stroke="#c9ad74" stroke-width="3"/>` +
       `<circle cx="${h.x}" cy="${h.y}" r="10.9" fill="none" stroke="#8a6d3b" stroke-width=".8"/>`).join('');
     rope.innerHTML = `<path class="rope__base" d="${d}"/><path class="rope__twist" d="${d}"/><path class="rope__fray" d="${fray}"/>${rings}`;
   }
