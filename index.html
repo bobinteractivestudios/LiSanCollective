@@ -20,6 +20,9 @@
   }
   *, *::before, *::after { box-sizing: border-box; }
   html, body { margin: 0; }
+  @media (prefers-reduced-motion: no-preference) {
+    html { scroll-behavior: smooth; }   /* CTAs glide down to the #contact form */
+  }
   body { background: var(--paper); color: var(--ink); font-family: Poppins, sans-serif; }
 
   /* hero: photo cropped to fill the screen, faces kept in frame */
@@ -205,11 +208,8 @@
   .form__submit:hover { background: #6b0a2d; }
   .form__submit:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }
 
-  /* finished logo, no animation (footer) */
-  .lisan-logo.lisan-logo--static { --lisan-text-outside: var(--brand); }
-  .lisan-logo.lisan-logo--static :is(.line, .block, .word) {
-    animation: none; opacity: 1; stroke-dashoffset: 0; clip-path: none;
-  }
+  /* footer logo: same animation as the hero logo, purple words on the pink background */
+  .lisan-logo.contact__logo { --lisan-text-outside: var(--brand); }
 
   /* floating contact bubble (links to the #contact footer) */
   .cta {
@@ -341,7 +341,8 @@
   /* ---------- about header (B without box/tagline): Lisanne → Li’Sanne → Li’San · collective ----------
      plays when scrolled into view (.in-view is added by the script below) */
   .lisan-logo--header { --lisan-text: var(--ink-soft); }
-  .lisan-logo--header:not(.in-view) * { animation: none !important; }
+  /* logos further down the page wait until they scroll into view (.in-view is added by the script below) */
+  :is(.lisan-logo--header, .contact__logo):not(.in-view) * { animation: none !important; }
   /* four equal moves (0.6s, same easing), each followed by an equal 0.6s pause:
      Lisanne .2s → Li’Sanne 1.4s → Li’San 2.6s → collective 3.8s */
   .lisan-logo--header { --move: .6s cubic-bezier(.4,0,.2,1) forwards; }
@@ -493,16 +494,18 @@
 <footer class="contact" id="contact" aria-labelledby="contact-title">
   <div class="contact__inner">
     <div class="contact__intro">
-      <svg class="lisan-logo lisan-logo--static contact__logo" viewBox="0 0 600 200" role="img" aria-label="Li’San collective — interior projects">
-        <line class="line" x1="14"  y1="37"  x2="312" y2="37"  pathLength="1"/>
-        <line class="line" x1="55"  y1="10"  x2="55"  y2="172" pathLength="1"/>
-        <line class="line" x1="35"  y1="143" x2="292" y2="143" pathLength="1"/>
-        <line class="line" x1="263" y1="10"  x2="263" y2="178" pathLength="1"/>
+      <svg class="lisan-logo lisan-logo--simple contact__logo" viewBox="0 0 600 200" role="img" aria-label="Li’San collective — interior projects">
+        <line class="line l-top"    x1="14"  y1="37"  x2="312" y2="37"  pathLength="1"/>
+        <line class="line l-left"   x1="55"  y1="10"  x2="55"  y2="172" pathLength="1"/>
+        <line class="line l-bottom" x1="35"  y1="143" x2="292" y2="143" pathLength="1"/>
+        <line class="line l-right"  x1="263" y1="10"  x2="263" y2="178" pathLength="1"/>
         <rect class="block" x="55" y="37" width="208" height="106"/>
-        <g font-size="54" letter-spacing="0.5">
-          <text class="word name" x="90" y="124">Li</text>
-          <text class="word name" x="132.7" y="124">’</text>
-          <text class="word name" x="150.1" y="124">San</text>
+        <g font-size="54" letter-spacing="0.5" aria-hidden="true">
+          <text class="word name n-li" x="90" y="124">Li</text>
+          <g class="word n-rest">
+            <text class="name" x="132.7" y="124">’</text>
+            <text class="name" x="150.1" y="124">San</text>
+          </g>
         </g>
         <text class="word w-collective" x="270" y="124" font-size="54" letter-spacing="1.5">collective</text>
         <text class="word w-tagline"    x="283" y="175" font-size="25" textLength="214" lengthAdjust="spacing">interior projects</text>
@@ -575,14 +578,15 @@
   // no form service connected yet: keep the page (and the visitor's details) from submitting anywhere
   document.getElementById('contact-form').addEventListener('submit', e => e.preventDefault());
 
-  // play the about header animation once it scrolls into view
-  const header = document.querySelector('.lisan-logo--header');
+  // play the about header and footer logo animations once each scrolls into view
+  const onView = document.querySelectorAll('.lisan-logo--header, .contact__logo');
   if ('IntersectionObserver' in window) {
-    new IntersectionObserver((entries, io) => {
-      if (entries[0].isIntersecting) { header.classList.add('in-view'); io.disconnect(); }
-    }, { threshold: 0.6 }).observe(header);
+    const io = new IntersectionObserver(entries => entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.classList.add('in-view'); io.unobserve(entry.target); }
+    }), { threshold: 0.6 });
+    onView.forEach(el => io.observe(el));
   } else {
-    header.classList.add('in-view');
+    onView.forEach(el => el.classList.add('in-view'));
   }
 </script>
 </body>
