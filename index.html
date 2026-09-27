@@ -273,6 +273,50 @@
   /* Instagram's embed script swaps each blockquote for an iframe; let it fill the screen width */
   .phone .instagram-media { margin: 0 !important; min-width: 0 !important; width: 100% !important; max-width: none !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
 
+  /* reviews: horizontal slider of joined, black-outlined cards; names in pink handwriting */
+  .reviews {
+    background: #fff; color: var(--ink-soft);
+    padding: clamp(72px, 10vw, 140px) 16px clamp(96px, 12vw, 160px);
+    overflow-x: clip;   /* the track runs to the page edges (100vw) */
+  }
+  .reviews__inner { width: min(100%, 1120px); margin: 0 auto; display: grid; gap: clamp(32px, 4vw, 48px); }
+  /* small black heading centred; arrows on the right of the same row */
+  .reviews__head { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px; }
+  .reviews__title {
+    grid-column: 2; margin: 0; color: var(--ink);
+    font-size: 14px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase;
+  }
+  .reviews__nav { grid-column: 3; justify-self: end; display: flex; gap: 10px; }
+  .reviews__btn {
+    width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
+    background: transparent; border: 1px solid var(--ink); color: var(--ink);
+    transition: background-color .2s, opacity .2s;
+  }
+  .reviews__btn:hover { background: rgba(28, 26, 27, .06); }
+  .reviews__btn:disabled { opacity: .35; cursor: default; background: transparent; }
+  .reviews__btn:focus-visible { outline: 2px solid var(--ink-soft); outline-offset: 2px; }
+  .reviews__btn svg { width: 18px; height: 18px; }
+
+  /* the track spans the full page width; its padding lines the first card up with the content */
+  .reviews__track {
+    --edge: max(16px, calc(50vw - 560px));
+    margin-inline: calc(50% - 50vw); padding: 4px var(--edge);
+    display: flex; gap: 0; list-style: none;
+    overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--edge);
+    scrollbar-width: none; overscroll-behavior-x: contain;
+  }
+  .reviews__track::-webkit-scrollbar { display: none; }
+  .reviews__track:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .reviews__track > li { flex: 0 0 min(86%, 440px); scroll-snap-align: start; display: flex; }
+  .reviews__track > li + li .review { border-left: 0; }   /* shared edge: one line between cards */
+  .review {
+    flex: 1; margin: 0; padding: clamp(24px, 3vw, 36px);
+    border: 1px solid var(--ink);   /* square cards joined into one outlined strip */
+    display: flex; flex-direction: column; gap: 20px;
+  }
+  .review blockquote { margin: 0; font-weight: 300; font-size: clamp(17px, 1.5vw, 19px); line-height: 1.65; }
+  .review figcaption { margin-top: auto; color: var(--pink); font-family: Corinthia, cursive; font-size: 44px; line-height: 1; }
+
   /* footer: contact form */
   .contact {
     --pad-bottom: clamp(96px, 10vw, 140px);
@@ -711,6 +755,44 @@
       </div>
     </div>
   </section>
+
+  <section class="reviews" aria-labelledby="reviews-title">
+    <div class="reviews__inner">
+      <div class="reviews__head">
+        <h2 id="reviews-title" class="reviews__title">Reviews</h2>
+        <div class="reviews__nav">
+          <button class="reviews__btn" type="button" data-dir="-1" aria-label="Vorige review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <button class="reviews__btn" type="button" data-dir="1" aria-label="Volgende review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+        </div>
+      </div>
+      <ul class="reviews__track" tabindex="0" aria-label="Reviews, scroll horizontaal">
+        <li>
+          <figure class="review">
+            <blockquote>“We zijn wel echt super blij met jullie advies, dus super bedankt daarvoor! Superleuke én mooie ideeën!”</blockquote>
+            <figcaption>Anouk</figcaption>
+          </figure>
+        </li>
+        <li>
+          <figure class="review">
+            <blockquote>“Vond het heel leuk om een uurtje met jullie te sparren. Creatieve en goed uitvoerbare ideeën opgedaan waar ik goed mee aan de slag kan. Hartstikke leuk! Bedankt voor jullie enthousiasme!”</blockquote>
+            <figcaption>Sophie &amp; Daan</figcaption>
+          </figure>
+        </li>
+        <li>
+          <figure class="review">
+            <blockquote lang="en">“We absolutely loved the presentation you sent us! It was beautiful, very thoughtful, and perfectly aligned with the styles I shared with you. The structure and placement you proposed for the living room and dining area are honestly what is guiding all our decisions now.”</blockquote>
+            <figcaption>Emma</figcaption>
+          </figure>
+        </li>
+        <li>
+          <figure class="review">
+            <blockquote>“Prachtige presentatie, hele professionele en smaakvolle uitwerking. Dank jullie wel!”</blockquote>
+            <figcaption>Lotte</figcaption>
+          </figure>
+        </li>
+      </ul>
+    </div>
+  </section>
 </main>
 
 <footer class="contact" id="contact" aria-labelledby="contact-title">
@@ -804,6 +886,23 @@
 
   // no form service connected yet: keep the page (and the visitor's details) from submitting anywhere
   document.getElementById('contact-form').addEventListener('submit', e => e.preventDefault());
+
+  // reviews slider: arrow buttons scroll one card; they fade out at the start / end
+  const track = document.querySelector('.reviews__track');
+  const navButtons = document.querySelectorAll('.reviews__btn');
+  const updateNav = () => {
+    const max = track.scrollWidth - track.clientWidth - 2;
+    navButtons[0].disabled = track.scrollLeft <= 2;
+    navButtons[1].disabled = track.scrollLeft >= max;
+  };
+  navButtons.forEach(btn => btn.addEventListener('click', () => {
+    const card = track.querySelector('li');
+    const stepX = card.getBoundingClientRect().width + parseFloat(getComputedStyle(track).columnGap);
+    track.scrollBy({ left: stepX * btn.dataset.dir, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  }));
+  track.addEventListener('scroll', updateNav, { passive: true });
+  addEventListener('resize', updateNav);
+  updateNav();
 
   // play the about header and footer logo animations once each scrolls into view
   const onView = document.querySelectorAll('.lisan-logo--header, .contact__logo');
