@@ -180,14 +180,37 @@
 
   /* footer: contact form */
   .contact {
+    --pad-bottom: clamp(96px, 10vw, 140px);
     background: var(--pink); color: var(--brand);
-    padding: clamp(72px, 10vw, 140px) 16px clamp(96px, 10vw, 140px);
+    padding: clamp(72px, 10vw, 140px) 16px var(--pad-bottom);
+    overflow: hidden;
   }
   .contact__inner {
     width: min(100%, 1120px); margin: 0 auto;
     display: grid; gap: clamp(40px, 6vw, 96px); align-items: start;
+    grid-template-areas: "intro" "form" "hands";
   }
-  @media (min-width: 960px) { .contact__inner { grid-template-columns: 5fr 7fr; } }
+  @media (min-width: 960px) {
+    .contact__inner { grid-template-columns: 5fr 7fr; grid-template-rows: auto 1fr; grid-template-areas: "intro form" "hands form"; }
+  }
+  .contact__intro { grid-area: intro; }
+  .contact .form { grid-area: form; }
+  /* hands holding the business cards, rising from the bottom edge of the footer;
+     the box is cut to the cards (the empty top strip of the image is hidden) */
+  .contact__hands {
+    grid-area: hands; align-self: end; justify-self: center;
+    display: block; width: min(78%, 300px); height: auto;
+    aspect-ratio: 720 / 828; object-fit: cover; object-position: 50% 100%;
+    margin-bottom: calc(-1 * var(--pad-bottom));
+  }
+  @media (min-width: 960px) {
+    /* fill the space from just under the paragraph down to the footer's bottom edge */
+    .contact__inner { row-gap: 12px; }
+    .contact__hands {
+      justify-self: start; align-self: stretch;
+      width: auto; max-width: 100%; height: 0; min-height: calc(100% + var(--pad-bottom));
+    }
+  }
   .contact__logo { display: block; width: clamp(220px, 26vw, 340px); margin: 0 0 clamp(24px, 3vw, 40px) -8px; }
   .contact__intro p { margin: 0; max-width: 24em; font-size: clamp(18px, 1.8vw, 22px); line-height: 1.6; font-weight: 400; }
 
@@ -541,6 +564,9 @@
       </div>
       <button class="form__submit" type="submit">Verstuur <span aria-hidden="true">→</span></button>
     </form>
+
+    <img class="contact__hands" src="kaartjeshand-web.png" width="720" height="900" loading="lazy"
+         alt="Handen met een waaier visitekaartjes van Li’San collective in de huisstijlkleuren">
   </div>
 </footer>
 
