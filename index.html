@@ -178,6 +178,46 @@
   .kickoff__cta:hover span { transform: translateX(4px); }
   .kickoff__cta:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 
+  /* built for you: packages as a plans table, light-blue raster lines running the full page width */
+  .plans-section {
+    --line: rgb(187, 205, 212);   /* light blue for lines, headings and labels */
+    --ink-light: #75787c;         /* softer text colour for this section */
+    color: var(--ink-light);
+    padding: clamp(80px, 12vw, 160px) 16px;
+    overflow-x: clip;             /* the full-width lines use 100vw */
+  }
+  .plans-section__inner { width: min(100%, 1120px); margin: 0 auto; display: grid; gap: clamp(40px, 5vw, 64px); }
+  .plans-section__title {
+    margin: 0 0 .6em; color: var(--line); font-weight: 700; letter-spacing: -.01em; line-height: 1;
+    font-size: clamp(36px, 5vw, 64px);
+  }
+  .plans-section__intro p { margin: 0; max-width: 34em; font-weight: 300; font-size: clamp(17px, 1.6vw, 20px); line-height: 1.75; }
+
+  .plans { position: relative; display: grid; border-inline: 1px solid var(--line); }
+  /* horizontal raster lines: run edge to edge across the page */
+  .plans::before, .plans::after, .plan + .plan::before {
+    content: ""; position: absolute; left: 50%; width: 100vw; height: 1px; margin-left: -50vw; background: var(--line);
+  }
+  .plans::before { top: 0; }
+  .plans::after { bottom: 0; }
+  .plan { display: grid; row-gap: 20px; padding: clamp(24px, 2.6vw, 32px) clamp(20px, 2.4vw, 32px); }
+  .plan + .plan { position: relative; }   /* stacked: full-width line between packages */
+  .plan + .plan::before { top: 0; }
+  @media (min-width: 900px) {
+    /* rows are shared across the columns (subgrid), so the content lines up */
+    .plans { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, auto); row-gap: 20px; }
+    .plan { grid-row: span 4; grid-template-rows: subgrid; }
+    .plan + .plan { border-left: 1px solid var(--line); }
+    .plan + .plan::before { content: none; }
+  }
+  .plan > * { margin: 0; }
+  .plan__name { margin: 0; color: var(--line); font-size: 13px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+  .plan__desc { font-weight: 300; font-size: 16px; line-height: 1.7; }
+  .plan ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; align-content: start; }
+  .plan li { position: relative; padding-left: 22px; font-size: 15.5px; line-height: 1.55; }
+  .plan li::before { content: ""; position: absolute; left: 0; top: .78em; width: 12px; height: 1px; background: var(--line); }
+  .plan__extra p { margin: 0 0 12px; font-weight: 300; font-size: 15.5px; line-height: 1.6; }
+
   /* footer: contact form */
   .contact {
     --pad-bottom: clamp(96px, 10vw, 140px);
@@ -188,27 +228,23 @@
   .contact__inner {
     width: min(100%, 1120px); margin: 0 auto;
     display: grid; gap: clamp(40px, 6vw, 96px); align-items: start;
-    grid-template-areas: "intro" "form" "hands";
+    grid-template-areas: "intro" "form";
   }
   @media (min-width: 960px) {
     .contact__inner { grid-template-columns: 5fr 7fr; grid-template-rows: auto 1fr; grid-template-areas: "intro form" "hands form"; }
   }
   .contact__intro { grid-area: intro; }
   .contact .form { grid-area: form; }
-  /* hands holding the business cards, rising from the bottom edge of the footer;
-     the box is cut to the cards (the empty top strip of the image is hidden) */
-  .contact__hands {
-    grid-area: hands; align-self: end; justify-self: center;
-    display: block; width: min(78%, 300px); height: auto;
-    aspect-ratio: 720 / 828; object-fit: cover; object-position: 50% 100%;
-    margin-bottom: calc(-1 * var(--pad-bottom));
-  }
+  /* hands holding the business cards (desktop only, beside the form): they fill the space from
+     just under the paragraph down to the footer's bottom edge; the empty top strip of the image is hidden */
+  .contact__hands { display: none; }
   @media (min-width: 960px) {
-    /* fill the space from just under the paragraph down to the footer's bottom edge */
     .contact__inner { row-gap: 12px; }
     .contact__hands {
-      justify-self: start; align-self: stretch;
-      width: auto; max-width: 100%; height: 0; min-height: calc(100% + var(--pad-bottom));
+      grid-area: hands; justify-self: start; align-self: stretch;
+      display: block; width: auto; max-width: 100%; height: 0; min-height: calc(100% + var(--pad-bottom));
+      aspect-ratio: 720 / 828; object-fit: cover; object-position: 50% 100%;
+      margin-bottom: calc(-1 * var(--pad-bottom));
     }
   }
   .contact__logo { display: block; width: clamp(220px, 26vw, 340px); margin: 0 0 clamp(24px, 3vw, 40px) -8px; }
@@ -515,6 +551,68 @@
       </ol>
     </div>
   </section>
+
+  <section class="plans-section" aria-labelledby="plans-title">
+    <div class="plans-section__inner">
+      <div class="plans-section__intro">
+        <h2 id="plans-title" class="plans-section__title">Built for you</h2>
+        <p>Natuurlijk is het mogelijk om alle soorten pakketten naar eigen wens aan te vullen. We gaan samen op zoek naar de juiste balans en kijken hierbij naar wat nodig, gewenst en haalbaar is.</p>
+      </div>
+
+      <div class="plans">
+        <article class="plan" aria-labelledby="plan-1">
+          <h3 id="plan-1" class="plan__name">Compact &amp; Complete</h3>
+          <p class="plan__desc">Een 3 uur durende brainstorm die leidt tot een interieurplan waarmee je zelf aan de slag kan. Keuze uit:</p>
+          <ul>
+            <li>Ruimte indeling (2D)</li>
+            <li>Kleurplan</li>
+            <li>Materiaalkeuze</li>
+            <li>Verlichtingsplan</li>
+          </ul>
+          <div class="plan__extra">
+            <p>Wij zorgen voor stalen en een kleurwaaier tijdens de afspraak.</p>
+            <ul><li>Achteraf ontvang je een digitale uitwerking</li></ul>
+          </div>
+        </article>
+
+        <article class="plan" aria-labelledby="plan-2">
+          <h3 id="plan-2" class="plan__name">Essential Living</h3>
+          <p class="plan__desc">Een compact plan met alle essenties voor een sfeervol interieur.</p>
+          <ul>
+            <li>Ruimte indeling (2D)</li>
+            <li>Kleurplan</li>
+            <li>Stalenpakket – onderdelen van aankleding</li>
+            <li>Productlijst</li>
+          </ul>
+          <div class="plan__extra">
+            <ul>
+              <li>2 online check-in momenten</li>
+              <li>1 afspraak op locatie</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="plan" aria-labelledby="plan-3">
+          <h3 id="plan-3" class="plan__name">Collector’s Choice</h3>
+          <p class="plan__desc">De perfecte keuze om een totaalconcept te creëren.</p>
+          <ul>
+            <li>Ruimte indeling (2D) &amp; intekenen maatwerk</li>
+            <li>Kleurplan</li>
+            <li>Stalenpakket – onderdelen van aankleding</li>
+            <li>Materiaalkeuze – onderdelen van de woning</li>
+            <li>Lichtplan</li>
+            <li>Productlijst</li>
+          </ul>
+          <div class="plan__extra">
+            <ul>
+              <li>4 online check-in momenten</li>
+              <li>2 afspraken op locatie</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer class="contact" id="contact" aria-labelledby="contact-title">
@@ -544,15 +642,15 @@
     <form class="form" id="contact-form" method="post">
       <div class="form__field form__field--full">
         <label for="f-name">Naam:</label>
-        <input id="f-name" name="naam" type="text" autocomplete="name" required placeholder="Zoals het op je deurbel staat">
+        <input id="f-name" name="naam" type="text" autocomplete="name" required>
       </div>
       <div class="form__field">
         <label for="f-email">E-mail:</label>
-        <input id="f-email" name="email" type="email" autocomplete="email" required placeholder="jij@jouwdroomhuis.nl">
+        <input id="f-email" name="email" type="email" autocomplete="email" required>
       </div>
       <div class="form__field">
         <label for="f-phone">Telefoonnummer:</label>
-        <input id="f-phone" name="telefoon" type="tel" autocomplete="tel" placeholder="Voor een gezellig belletje">
+        <input id="f-phone" name="telefoon" type="tel" autocomplete="tel">
       </div>
       <div class="form__field form__field--full">
         <label for="f-city">Woonplaats:</label>
