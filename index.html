@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Li'San collective — interior projects</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Corinthia&family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  /* ---------- page ---------- */
+  :root {
+    --brand: #520521;
+    --ink:   #1c1a1b;
+    --paper: #f5f4f2;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--paper); color: var(--ink); font-family: Poppins, sans-serif; }
+
+  /* hero: photo cropped to fill the screen, faces kept in frame */
+  /* hero: whole photo in view, backdrop continued sideways with its own colours */
+  .hero {
+    position: relative; height: 100vh; height: 100svh; overflow: hidden;
+    /* sampled from the photo's left/right edges, top to bottom */
+    background: linear-gradient(to bottom,
+      rgb(213,214,216) 0%, rgb(218,220,219) 20%, rgb(224,225,227) 40%,
+      rgb(238,242,245) 60%, rgb(234,237,242) 80%, rgb(233,235,240) 100%);
+  }
+  .hero__img {
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    height: 102.5%; width: auto; max-width: none;   /* extra 2.5% pushes the floor strip out of view */
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+            mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+  }
+  .site-logo {
+    position: absolute; z-index: 2;
+    top: clamp(16px, 3vw, 40px); left: clamp(8px, 2.5vw, 36px);
+    width: clamp(200px, 26vw, 380px);
+  }
+
+  /* hero line: "een goed interieur begint met" | photo | "een goed gesprek" */
+  .hero__quote { margin: 0; }
+  .hero__quote span {
+    position: absolute; z-index: 1;
+    font-family: Corinthia, cursive;
+    color: var(--brand); font-weight: 400; line-height: 1; letter-spacing: 0;
+    font-size: clamp(40px, 5.6vw, 92px);
+  }
+  .hero__quote-l { top: 36%; right: calc(50% + 29vh); text-align: right; }
+  .hero__quote-r { top: 58%; left:  calc(50% + 29vh); }
+
+  /* narrow / portrait screens: no room beside the photo, so the photo drops down
+     and the sentence sits in the open backdrop between logo and heads */
+  @media (max-aspect-ratio: 5/4) {
+    .hero__img {
+      top: auto; bottom: -2%; height: 80%;
+      -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent),
+                          linear-gradient(to bottom, transparent, #000 12%);
+      -webkit-mask-composite: source-in;
+              mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent),
+                          linear-gradient(to bottom, transparent, #000 12%);
+              mask-composite: intersect;
+    }
+    .hero__quote span { font-size: clamp(40px, 11.5vw, 74px); }
+    .hero__quote-l { top: 15%; right: auto; left: clamp(16px, 5vw, 48px); text-align: left; }
+    .hero__quote-r { top: calc(15% + 2.2em); left: auto; right: clamp(16px, 5vw, 48px); }
+  }
+
+  /* about */
+  .about {
+    padding: clamp(80px, 12vw, 160px) 16px clamp(96px, 14vw, 180px);
+    display: grid; justify-items: center; gap: clamp(40px, 6vw, 72px);
+  }
+  .about__title { width: min(100%, 620px); margin: 0; }
+  .about__grid {
+    width: min(100%, 1120px);
+    display: grid; gap: clamp(40px, 6vw, 96px); align-items: center;
+  }
+  .about__img {
+    display: block; width: 100%; aspect-ratio: 4 / 5;
+    object-fit: cover; object-position: 50% 20%;   /* trims the floor strip at the bottom */
+  }
+  .about__body { max-width: 34em; margin: 0 auto; text-align: center; font-weight: 300; font-size: clamp(17px, 1.6vw, 20px); line-height: 1.75; }
+  .about__body p { margin: 0 0 1.4em; }
+  .about__sign { margin-top: 2em !important; font-weight: 400; color: rgb(148, 170, 178); }
+  .about__sign::before { content: ""; display: block; width: 32px; height: 1px; background: currentColor; margin: 0 auto 1.4em; }
+
+  @media (min-width: 860px) {
+    .about__grid { grid-template-columns: 5fr 6fr; }
+    .about__body { text-align: left; margin: 0; }
+    .about__sign::before { margin-left: 0; }
+  }
+
+  /* ---------- logo: shared ---------- */
+  .lisan-logo {
+    --lisan-brand: #520521;   /* rectangle */
+    --lisan-lines: #3b0418;   /* construction lines */
+    --lisan-text:  #ffffff;   /* text on the block */
+    --lisan-text-outside: var(--lisan-text);   /* "collective" + tagline */
+    display: block; width: 100%; height: auto; overflow: visible;
+  }
+  .lisan-logo .line {
+    fill: none; stroke: var(--lisan-lines); stroke-width: 1.4;
+    stroke-linecap: square;
+    stroke-dasharray: 1; stroke-dashoffset: 1;   /* pathLength="1" on each line */
+    animation: lisan-draw .7s cubic-bezier(.65,0,.35,1) forwards;
+  }
+  .lisan-logo .l-top    { animation-delay: .10s; }
+  .lisan-logo .l-left   { animation-delay: .30s; }
+  .lisan-logo .l-bottom { animation-delay: .50s; }
+  .lisan-logo .l-right  { animation-delay: .70s; }
+
+  .lisan-logo .block {
+    fill: var(--lisan-brand);
+    clip-path: inset(0 100% 0 0);
+    animation: lisan-wipe .8s cubic-bezier(.77,0,.18,1) 1.2s forwards;
+  }
+  .lisan-logo .word {
+    font-family: Poppins, sans-serif; fill: var(--lisan-text);
+    opacity: 0;
+    animation: lisan-rise .9s cubic-bezier(.16,1,.3,1) forwards;
+  }
+  .lisan-logo .name         { font-weight: 700; }
+  .lisan-logo .w-collective { font-weight: 700; fill: var(--lisan-text-outside); animation-name: lisan-slide; }
+  .lisan-logo .w-tagline    { font-weight: 300; fill: var(--lisan-text-outside); animation-name: lisan-fade; animation-duration: 1.1s; }
+
+  @keyframes lisan-draw  { to { stroke-dashoffset: 0; } }
+  @keyframes lisan-wipe  { to { clip-path: inset(0 0 0 0); } }
+  @keyframes lisan-rise  { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  @keyframes lisan-slide { from { opacity: 0; transform: translateX(-18px); } to { opacity: 1; transform: none; } }
+  @keyframes lisan-fade  { to { opacity: 1; } }
+  /* 17.4 = room for the apostrophe (S at 150.1 in the final logo, s at 132.7 right after "Li") */
+  @keyframes lisan-shift-out { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateX(17.4px); } }
+  @keyframes lisan-shift-in  { from { opacity: 0; transform: translateX(-17.4px); } to { opacity: 1; transform: none; } }
+  @keyframes lisan-drop-out  { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(12px); } }
+  @keyframes lisan-drop-in   { from { opacity: 0; transform: translateY(-22px); } to { opacity: 1; transform: none; } }
+
+  /* ---------- site logo (A): box → Li + ’San collective → interior projects ---------- */
+  .lisan-logo--simple { --lisan-text-outside: var(--ink); }   /* photo background is light */
+  .lisan-logo--simple .n-li   { animation-duration: .45s; animation-delay: 2.75s; }
+  .lisan-logo--simple .n-rest { animation: lisan-join .4s cubic-bezier(.16,1,.3,1) 2.95s forwards; }
+  .lisan-logo--simple .w-collective { animation-delay: 3.75s; }
+  .lisan-logo--simple .w-tagline    { animation-delay: 5.1s; }
+  @keyframes lisan-join { from { opacity: 0; transform: translateX(22px); } to { opacity: 1; transform: none; } }
+
+  /* ---------- about header (B without box/tagline): Lisanne → Li’Sanne → Li’San · collective ----------
+     plays when scrolled into view (.in-view is added by the script below) */
+  .lisan-logo--header { --lisan-text: var(--ink); }
+  .lisan-logo--header:not(.in-view) * { animation: none !important; }
+  /* four equal moves (0.6s, same easing), each followed by an equal 0.6s pause:
+     Lisanne .2s → Li’Sanne 1.4s → Li’San 2.6s → collective 3.8s */
+  .lisan-logo--header { --move: .6s cubic-bezier(.4,0,.2,1) forwards; }
+  .lisan-logo--header .n-li         { animation: lisan-rise var(--move) .2s; }
+  .lisan-logo--header .n-sanne      { animation: lisan-rise var(--move) .2s, lisan-shift-out var(--move) 1.4s; }
+  .lisan-logo--header .n-san        { animation: lisan-shift-in var(--move) 1.4s; }
+  .lisan-logo--header .n-apos       { animation: lisan-drop-in var(--move) 1.4s; }
+  .lisan-logo--header .n-ne         { animation: lisan-shift-in var(--move) 1.4s, lisan-drop-out var(--move) 2.6s; }
+  .lisan-logo--header .w-collective { animation: lisan-slide var(--move) 3.8s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lisan-logo * { animation-duration: .01s !important; animation-delay: 0s !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <img class="hero__img" src="Hero.jpg" alt="Lisanne en Sanne van Li’San collective in gesprek op een houten bank">
+
+  <a class="site-logo" href="/" aria-label="Li’San collective — home">
+    <svg class="lisan-logo lisan-logo--simple" viewBox="0 0 600 200" role="img" aria-label="Li’San collective — interior projects">
+      <line class="line l-top"    x1="14"  y1="37"  x2="312" y2="37"  pathLength="1"/>
+      <line class="line l-left"   x1="55"  y1="10"  x2="55"  y2="172" pathLength="1"/>
+      <line class="line l-bottom" x1="35"  y1="143" x2="292" y2="143" pathLength="1"/>
+      <line class="line l-right"  x1="263" y1="10"  x2="263" y2="178" pathLength="1"/>
+      <rect class="block" x="55" y="37" width="208" height="106"/>
+
+      <g font-size="54" letter-spacing="0.5" aria-hidden="true">
+        <text class="word name n-li" x="90" y="124">Li</text>
+        <g class="word n-rest">
+          <text class="name" x="132.7" y="124">’</text>
+          <text class="name" x="150.1" y="124">San</text>
+        </g>
+      </g>
+      <text class="word w-collective" x="270" y="124" font-size="54" letter-spacing="1.5">collective</text>
+      <text class="word w-tagline"    x="283" y="175" font-size="25" textLength="214" lengthAdjust="spacing">interior projects</text>
+    </svg>
+  </a>
+
+  <p class="hero__quote">
+    <span class="hero__quote-l">een goed interieur<br>begint met</span>
+    <span class="hero__quote-r">een goed gesprek</span>
+  </p>
+</header>
+
+<main>
+  <section class="about" aria-labelledby="about-title">
+    <h2 id="about-title" class="about__title">
+      <svg class="lisan-logo lisan-logo--header" viewBox="84 66 478 76" role="img" aria-label="Li’San collective">
+        <g font-size="54" letter-spacing="0.5" aria-hidden="true">
+          <text class="word name n-li"    x="90"    y="124">Li</text>
+          <text class="word name n-sanne" x="132.7" y="124">sanne</text>
+          <text class="word name n-san"   x="150.1" y="124">San</text>
+          <text class="word name n-ne"    x="257.9" y="124">ne</text>
+          <text class="word name n-apos"  x="132.7" y="124">’</text>
+        </g>
+        <text class="word w-collective" x="270" y="124" font-size="54" letter-spacing="1.5" aria-hidden="true">collective</text>
+      </svg>
+    </h2>
+
+    <div class="about__grid">
+      <img class="about__img" src="About.jpg" alt="Lisanne en Sanne met een kop koffie op een zachte bank" loading="lazy">
+
+      <div class="about__body">
+        <p>Bij Li’San collective draait alles om het vertalen van identiteit naar interieur. Of het nu gaat om een warm thuis of een inspirerende werkomgeving - wij geloven dat een goed interieur laat zien wie je bent en waar je voor staat.</p>
+        <p>Elk ontwerp is persoonlijk, doordacht en in balans. We gaan te werk met aandacht voor sfeer, vorm en detail.</p>
+        <p>Samen creëren we een ruimte waar jij je thuis voelt.</p>
+        <p class="about__sign">Lisanne en Sanne</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+  // play the about header animation once it scrolls into view
+  const header = document.querySelector('.lisan-logo--header');
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver((entries, io) => {
+      if (entries[0].isIntersecting) { header.classList.add('in-view'); io.disconnect(); }
+    }, { threshold: 0.6 }).observe(header);
+  } else {
+    header.classList.add('in-view');
+  }
+</script>
+</body>
+</html>

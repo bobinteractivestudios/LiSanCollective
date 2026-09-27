@@ -9,21 +9,23 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;700&display=swap" rel="stylesheet">
 <style>
   /* ---------- demo page only ---------- */
-  html, body { margin: 0; height: 100%; }
+  html, body { margin: 0; }
   body {
-    display: grid; place-items: center; gap: 24px;
+    min-height: 100vh; box-sizing: border-box; padding: 48px 16px;
+    display: flex; flex-direction: column; align-items: center; gap: 56px;
     background: linear-gradient(135deg, #d6d6d4, #bfc0bd);
-    font-family: Poppins, sans-serif;
+    font-family: Poppins, sans-serif; color: #520521;
   }
-  .demo { width: min(92vw, 720px); }
+  .demo { width: min(100%, 720px); display: grid; gap: 12px; justify-items: center; }
+  .demo h2 { margin: 0; font: 300 13px/1 Poppins, sans-serif; letter-spacing: .14em; text-transform: uppercase; }
   .replay {
-    font: 300 14px/1 Poppins, sans-serif; letter-spacing: .08em;
-    padding: 10px 18px; border: 1px solid #520521; background: transparent;
+    font: 300 13px/1 Poppins, sans-serif; letter-spacing: .08em;
+    padding: 9px 16px; border: 1px solid #520521; background: transparent;
     color: #520521; cursor: pointer;
   }
   .replay:hover { background: #520521; color: #fff; }
 
-  /* ---------- logo (copy from here) ---------- */
+  /* ---------- logo: shared (copy from here) ---------- */
   .lisan-logo {
     --lisan-brand: #520521;   /* rectangle */
     --lisan-lines: #3b0418;   /* construction lines */
@@ -51,9 +53,9 @@
     opacity: 0;
     animation: lisan-rise .9s cubic-bezier(.16,1,.3,1) forwards;
   }
-  .lisan-logo .w-lisan      { font-weight: 700; animation-delay: 1.75s; }
-  .lisan-logo .w-collective { font-weight: 700; animation-name: lisan-slide; animation-delay: 2.05s; }
-  .lisan-logo .w-tagline    { font-weight: 300; animation-name: lisan-fade; animation-duration: 1.1s; animation-delay: 2.5s; }
+  .lisan-logo .name         { font-weight: 700; }
+  .lisan-logo .w-collective { font-weight: 700; animation-name: lisan-slide; }
+  .lisan-logo .w-tagline    { font-weight: 300; animation-name: lisan-fade; animation-duration: 1.1s; }
 
   @keyframes lisan-draw  { to { stroke-dashoffset: 0; } }
   @keyframes lisan-wipe  { to { clip-path: inset(0 0 0 0); } }
@@ -64,38 +66,95 @@
   @media (prefers-reduced-motion: reduce) {
     .lisan-logo * { animation-duration: .01s !important; animation-delay: 0s !important; }
   }
+
+  /* ---------- timing: three breaths, identical in both variants ----------
+     1. box            0.1s – 2.0s   (lines + block)
+     2. Li’San + collective  – name by 3.4s, short beat, "collective" at 3.75s
+     3. interior projects    5.1s                                          */
+  .lisan-logo .w-collective { animation-delay: 3.75s; }
+  .lisan-logo .w-tagline    { animation-delay: 5.1s; }
+
+  /* ---------- variant A: simple — Li + ’San (ends at 3.35s) ---------- */
+  .lisan-logo--simple .n-li   { animation-duration: .45s; animation-delay: 2.75s; }
+  .lisan-logo--simple .n-rest { animation: lisan-join .4s cubic-bezier(.16,1,.3,1) 2.95s forwards; }
+
+  @keyframes lisan-join { from { opacity: 0; transform: translateX(22px); } to { opacity: 1; transform: none; } }
+
+  /* ---------- variant B: story — Lisanne → Li’Sanne → Li’San (2.3s – 3.4s) ---------- */
+  /* 1. "Lisanne" */
+  .lisan-logo--story .n-li    { animation-duration: .45s; animation-delay: 2.3s; }
+  .lisan-logo--story .n-sanne { animation: lisan-rise .45s cubic-bezier(.16,1,.3,1) 2.3s forwards,
+                                           lisan-shift-out .3s cubic-bezier(.65,0,.35,1) 2.75s forwards; }
+  /* 2. "Li’Sanne": s becomes S, slides over to make room for the apostrophe */
+  .lisan-logo--story .n-san   { animation: lisan-shift-in .3s cubic-bezier(.65,0,.35,1) 2.75s forwards; }
+  .lisan-logo--story .n-ne    { animation: lisan-shift-in .3s cubic-bezier(.65,0,.35,1) 2.75s forwards,
+                                           lisan-drop-out .25s cubic-bezier(.55,0,1,.45) 3.15s forwards; }
+  .lisan-logo--story .n-apos  { animation: lisan-drop-in .35s cubic-bezier(.34,1.4,.64,1) 2.85s forwards; }
+  /* 3. "Li’San": "ne" drops away, clearing the way for "collective" */
+
+  /* 17.4 = room for the apostrophe (S at 150.1 in the final logo, s at 132.7 right after "Li") */
+  @keyframes lisan-shift-out { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateX(17.4px); } }
+  @keyframes lisan-shift-in  { from { opacity: 0; transform: translateX(-17.4px); } to { opacity: 1; transform: none; } }
+  @keyframes lisan-drop-out  { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(12px); } }
+  @keyframes lisan-drop-in   { from { opacity: 0; transform: translateY(-22px); } to { opacity: 1; transform: none; } }
 </style>
 </head>
 <body>
 
-<div class="demo">
-  <!-- ---------- logo (copy from here) ---------- -->
-  <svg class="lisan-logo" viewBox="0 0 600 200" role="img" aria-label="Li'San collective — interior projects">
-    <!-- architectural construction lines, drawn first -->
+<section class="demo">
+  <h2>A — Li + ’San</h2>
+  <!-- ---------- logo A (copy from here) ---------- -->
+  <svg class="lisan-logo lisan-logo--simple" viewBox="0 0 600 200" role="img" aria-label="Li'San collective — interior projects">
     <line class="line l-top"    x1="14"  y1="37"  x2="312" y2="37"  pathLength="1"/>
     <line class="line l-left"   x1="55"  y1="10"  x2="55"  y2="172" pathLength="1"/>
     <line class="line l-bottom" x1="35"  y1="143" x2="292" y2="143" pathLength="1"/>
     <line class="line l-right"  x1="263" y1="10"  x2="263" y2="178" pathLength="1"/>
-
-    <!-- brand block, wiped in along the lines -->
     <rect class="block" x="55" y="37" width="208" height="106"/>
 
-    <!-- wordmark -->
-    <text class="word w-lisan"      x="90"  y="124" font-size="54" letter-spacing="0.5">Li’San</text>
+    <g font-size="54" letter-spacing="0.5" aria-hidden="true">
+      <text class="word name n-li" x="90" y="124">Li</text>
+      <g class="word n-rest">
+        <text class="name" x="132.7" y="124">’</text>
+        <text class="name" x="150.1" y="124">San</text>
+      </g>
+    </g>
     <text class="word w-collective" x="270" y="124" font-size="54" letter-spacing="1.5">collective</text>
     <text class="word w-tagline"    x="283" y="175" font-size="25" textLength="214" lengthAdjust="spacing">interior projects</text>
   </svg>
-  <!-- ---------- /logo ---------- -->
-</div>
+  <!-- ---------- /logo A ---------- -->
+  <button class="replay" type="button">REPLAY</button>
+</section>
 
-<button class="replay" type="button">REPLAY</button>
+<section class="demo">
+  <h2>B — Lisanne · Li’Sanne · Li’San</h2>
+  <!-- ---------- logo B (copy from here) ---------- -->
+  <svg class="lisan-logo lisan-logo--story" viewBox="0 0 600 200" role="img" aria-label="Li'San collective — interior projects">
+    <line class="line l-top"    x1="14"  y1="37"  x2="312" y2="37"  pathLength="1"/>
+    <line class="line l-left"   x1="55"  y1="10"  x2="55"  y2="172" pathLength="1"/>
+    <line class="line l-bottom" x1="35"  y1="143" x2="292" y2="143" pathLength="1"/>
+    <line class="line l-right"  x1="263" y1="10"  x2="263" y2="178" pathLength="1"/>
+    <rect class="block" x="55" y="37" width="208" height="106"/>
+
+    <g font-size="54" letter-spacing="0.5" aria-hidden="true">
+      <text class="word name n-li"    x="90"    y="124">Li</text>
+      <text class="word name n-sanne" x="132.7" y="124">sanne</text>
+      <text class="word name n-san"   x="150.1" y="124">San</text>
+      <text class="word name n-ne"    x="257.9" y="124">ne</text>
+      <text class="word name n-apos"  x="132.7" y="124">’</text>
+    </g>
+    <text class="word w-collective" x="270" y="124" font-size="54" letter-spacing="1.5">collective</text>
+    <text class="word w-tagline"    x="283" y="175" font-size="25" textLength="214" lengthAdjust="spacing">interior projects</text>
+  </svg>
+  <!-- ---------- /logo B ---------- -->
+  <button class="replay" type="button">REPLAY</button>
+</section>
 
 <script>
-  // demo only: restart the animation
-  document.querySelector('.replay').addEventListener('click', () => {
-    const svg = document.querySelector('.lisan-logo');
+  // demo only: restart an animation by swapping in a fresh copy
+  document.querySelectorAll('.replay').forEach(btn => btn.addEventListener('click', () => {
+    const svg = btn.parentElement.querySelector('.lisan-logo');
     svg.replaceWith(svg.cloneNode(true));
-  });
+  }));
 </script>
 </body>
 </html>
