@@ -1127,11 +1127,21 @@
   addEventListener('resize', updateNav);
   updateNav();
 
-  // scroll reveals: sections get .in-view once they're a quarter on screen
+  // scroll reveals: a section gets .in-view once the part that animates has come ~15% up into the screen.
+  // Watching that part (not the whole section) keeps it right on phones, where sections are much taller.
+  const revealParts = {
+    '.about__media': '.about__photo', '.kickoff': '.kickoff__intro', '.plans-section': '.plans',
+    '.insta': '.insta__posts', '.reviews': '.reviews__track', '.contact': '.form',
+  };
   const revealIO = new IntersectionObserver(entries => entries.forEach(entry => {
-    if (entry.isIntersecting) { entry.target.classList.add('in-view'); revealIO.unobserve(entry.target); }
-  }), { threshold: .25 });
-  document.querySelectorAll('.about__media, .kickoff, .plans-section, .insta, .reviews, .contact').forEach(el => revealIO.observe(el));
+    if (!entry.isIntersecting) return;
+    entry.target.closest(Object.keys(revealParts).join(',')).classList.add('in-view');
+    revealIO.unobserve(entry.target);
+  }), { rootMargin: '0px 0px -15% 0px' });
+  Object.entries(revealParts).forEach(([section, part]) => {
+    const el = document.querySelector(`${section} ${part}`) || document.querySelector(section);
+    if (el) revealIO.observe(el);
+  });
 
   // kick off cards: a small shake each time a card crosses the middle of the screen
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
