@@ -458,6 +458,13 @@
     opacity: 0; translate: 0 12px;
     transition: opacity .9s ease, translate 1.1s cubic-bezier(.16, 1, .3, 1);
   }
+  /* like a business card: the logo (in white) plays its entrance once the door is down, with the thanks below */
+  .contact__card { display: grid; justify-items: center; gap: clamp(20px, 3vw, 32px); }
+  .lisan-logo.thanks__logo {
+    display: block; width: clamp(240px, 30vw, 400px);
+    --lisan-brand: var(--f-on-accent); --lisan-lines: var(--f-on-accent);
+    --lisan-text: var(--f-accent); --lisan-text-outside: var(--f-on-accent);
+  }
   .contact.is-sent .contact__thanks { visibility: visible; transition: none; }
   .contact.is-sent .contact__thanks::before { transform: scaleY(1); }
   .contact.is-sent .contact__thanks p { opacity: 1; translate: 0 0; transition-delay: .9s; }
@@ -513,7 +520,7 @@
   .lisan-logo.contact__logo { --lisan-brand: var(--f-accent); --lisan-lines: var(--f-accent); --lisan-text: var(--f-on-accent); --lisan-text-outside: var(--f-ink); }
 
   /* the four business-card palettes: card colour (background) + its second colour */
-  .contact[data-palette="bruin"] { --f-bg: #584a4a; --f-accent: var(--accent-blue); --f-ink: #fff; }
+  .contact[data-palette="bruin"] { --f-bg: #584a4a; --f-accent: var(--accent-blue); --f-ink: #fff; --f-on-accent: var(--ink); }   /* dark on the light blue (button, thank-you card) */
   .contact[data-palette="blauw"] { --f-bg: var(--accent-blue); --f-accent: var(--accent); --f-ink: var(--ink); }   /* dark text: white is too faint on this blue */
   .contact[data-palette="beige"] { --f-bg: #d7d5c8; --f-accent: var(--brand); --f-ink: var(--brand); }
 
@@ -673,7 +680,7 @@
      plays when scrolled into view (.in-view is added by the script below) */
   .lisan-logo--header { --lisan-text: var(--ink-soft); }
   /* logos further down the page wait until they scroll into view (.in-view is added by the script below) */
-  :is(.lisan-logo--header, .contact__logo):not(.in-view) * { animation: none !important; }
+  :is(.lisan-logo--header, .contact__logo, .thanks__logo):not(.in-view) * { animation: none !important; }
   /* four equal moves (0.6s, same easing), each followed by an equal 0.6s pause:
      Lisanne .2s → Li’Sanne 1.4s → Li’San 2.6s → collective 3.8s */
   .lisan-logo--header { --move: .6s cubic-bezier(.4,0,.2,1) forwards; }
@@ -1191,7 +1198,25 @@
   </div>
 
   <div class="contact__thanks" role="status" aria-live="polite">
-    <p hidden>Bedankt, jouw woonavontuur begint hier.</p>
+    <div class="contact__card">
+      <svg class="lisan-logo lisan-logo--simple thanks__logo" viewBox="0 0 600 200" aria-hidden="true">
+        <line class="line l-top"    x1="14"  y1="37"  x2="312" y2="37"  pathLength="1"/>
+        <line class="line l-left"   x1="55"  y1="10"  x2="55"  y2="172" pathLength="1"/>
+        <line class="line l-bottom" x1="35"  y1="143" x2="292" y2="143" pathLength="1"/>
+        <line class="line l-right"  x1="263" y1="10"  x2="263" y2="178" pathLength="1"/>
+        <rect class="block" x="55" y="37" width="208" height="106"/>
+        <g font-size="54" letter-spacing="0.5" aria-hidden="true">
+          <g class="word n-li">
+            <text class="name" x="90" y="124">Li</text>
+            <text class="name" x="132.7" y="124">’</text>
+          </g>
+          <text class="word name n-san" x="150.1" y="124">San</text>
+        </g>
+        <text class="word w-collective" x="270" y="124" font-size="54" letter-spacing="1.5">collective</text>
+        <text class="word w-tagline"    x="283" y="175" font-size="25" textLength="214" lengthAdjust="spacing">interior projects</text>
+      </svg>
+      <p hidden>Bedankt, jouw woonavontuur begint hier.</p>
+    </div>
   </div>
 
   <div class="contact__bar">
@@ -1258,6 +1283,7 @@
     void thanks.offsetWidth;   // start the fade from the hidden state
     footer.querySelector('.contact__inner').inert = true;
     footer.classList.add('is-sent');
+    setTimeout(() => footer.querySelector('.thanks__logo').classList.add('in-view'), 1000);   // once the door is down
   });
 
   // reviews slider: arrow buttons scroll one card; they fade out at the start / end
