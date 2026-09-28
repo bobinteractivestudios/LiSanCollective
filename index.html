@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Corinthia&family=Nothing+You+Could+Do&family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400&text=%E2%80%9C&display=swap" rel="stylesheet">   <!-- only the “ glyph, for the review quote marks -->
 <script>document.documentElement.classList.add('js-reveal');   /* scroll reveals are armed only when JS runs */</script>
 <style>
   /* ---------- page ---------- */
@@ -383,6 +384,7 @@
   .reviews__track {
     --edge: max(16px, calc(50vw - 560px));
     margin-inline: calc(50% - 50vw); padding: 4px var(--edge);
+    padding-top: 64px; margin-top: -60px;   /* room for the quote marks sticking out above the cards */
     display: flex; gap: 0; list-style: none;
     overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--edge);
     scrollbar-width: none; overscroll-behavior-x: contain;
@@ -400,11 +402,19 @@
   .review::after { border-inline: 1px solid var(--ink); }
   .reviews__track > li + li .review::after { border-left: 0; }   /* shared edge: one line between cards */
   .review blockquote { margin: 0; font-weight: 300; font-size: clamp(17px, 1.5vw, 19px); line-height: 1.65; }
+  /* a big pink serif opening quote mark straddling each card's top line */
+  .review blockquote::before {
+    content: "\201C"; position: absolute; top: 0; left: clamp(16px, 2.2vw, 26px);
+    font-family: "Playfair Display", Didot, serif; font-weight: 400;   /* a Didot-style high-contrast serif */
+    font-size: 200px; line-height: 1; color: var(--pink);
+    translate: 0 -23%; pointer-events: none;   /* centres the glyph on the line */
+  }
   .review figcaption { margin-top: auto; color: var(--pink); font-family: Corinthia, cursive; font-size: 44px; line-height: 1; }
 
   /* footer: contact form */
   /* contact row along the bottom of the footer */
   .contact__bar {
+    position: relative; z-index: 2; background: var(--pink);   /* stays visible above the thank-you overlay */
     margin-inline: -16px; padding: 22px 16px max(22px, env(safe-area-inset-bottom));
     border-top: 1px solid rgba(82, 5, 33, .22);
   }
@@ -426,7 +436,31 @@
     --pad-bottom: clamp(72px, 8vw, 112px);   /* space between the form and the contact row */
     background: var(--pink); color: var(--brand);
     padding: clamp(72px, 10vw, 140px) 16px 0;
-    overflow: hidden;
+    overflow: hidden; position: relative;
+  }
+  /* after sending: a purple panel rolls down over the footer like a garage door, then the thank-you appears */
+  .contact__thanks {
+    position: absolute; inset: 0; z-index: 1; padding: 24px 16px 96px;
+    display: grid; place-items: center; text-align: center; color: #fff;
+    visibility: hidden; transition: visibility 0s 1.2s;
+  }
+  /* the door itself: a purple layer scaled from the top edge, so the GPU animates it (no clip-path repaints) */
+  .contact__thanks::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; background: var(--brand);
+    transform: scaleY(0); transform-origin: 50% 0; will-change: transform;
+    transition: transform 1.2s cubic-bezier(.7, 0, .2, 1);   /* speeds up, then settles softly at the bottom */
+  }
+  .contact__thanks p {
+    margin: 0; font-weight: 400; line-height: 1.6;
+    font-size: clamp(18px, 1.8vw, 22px);   /* same as the footer intro text */
+    opacity: 0; translate: 0 12px;
+    transition: opacity .9s ease, translate 1.1s cubic-bezier(.16, 1, .3, 1);
+  }
+  .contact.is-sent .contact__thanks { visibility: visible; transition: none; }
+  .contact.is-sent .contact__thanks::before { transform: scaleY(1); }
+  .contact.is-sent .contact__thanks p { opacity: 1; translate: 0 0; transition-delay: .9s; }
+  @media (prefers-reduced-motion: reduce) {
+    .contact__thanks, .contact__thanks::before, .contact__thanks p { transition: none !important; }
   }
   .contact__inner {
     width: min(100%, 1120px); margin: 0 auto; padding-bottom: var(--pad-bottom);
@@ -1019,25 +1053,25 @@
       <ul class="reviews__track" tabindex="0" aria-label="Reviews, scroll horizontaal">
         <li>
           <figure class="review">
-            <blockquote>“We zijn wel echt super blij met jullie advies, dus super bedankt daarvoor! Superleuke én mooie ideeën!”</blockquote>
+            <blockquote>We zijn wel echt super blij met jullie advies, dus super bedankt daarvoor! Superleuke én mooie ideeën!</blockquote>
             <figcaption>Anouk</figcaption>
           </figure>
         </li>
         <li>
           <figure class="review">
-            <blockquote>“Vond het heel leuk om een uurtje met jullie te sparren. Creatieve en goed uitvoerbare ideeën opgedaan waar ik goed mee aan de slag kan. Hartstikke leuk! Bedankt voor jullie enthousiasme!”</blockquote>
+            <blockquote>Vond het heel leuk om een uurtje met jullie te sparren. Creatieve en goed uitvoerbare ideeën opgedaan waar ik goed mee aan de slag kan. Hartstikke leuk! Bedankt voor jullie enthousiasme!</blockquote>
             <figcaption>Sophie &amp; Daan</figcaption>
           </figure>
         </li>
         <li>
           <figure class="review">
-            <blockquote lang="en">“We absolutely loved the presentation you sent us! It was beautiful, very thoughtful, and perfectly aligned with the styles I shared with you. The structure and placement you proposed for the living room and dining area are honestly what is guiding all our decisions now.”</blockquote>
+            <blockquote lang="en">We absolutely loved the presentation you sent us! It was beautiful, very thoughtful, and perfectly aligned with the styles I shared with you. The structure and placement you proposed for the living room and dining area are honestly what is guiding all our decisions now.</blockquote>
             <figcaption>Emma</figcaption>
           </figure>
         </li>
         <li>
           <figure class="review">
-            <blockquote>“Prachtige presentatie, hele professionele en smaakvolle uitwerking. Dank jullie wel!”</blockquote>
+            <blockquote>Prachtige presentatie, hele professionele en smaakvolle uitwerking. Dank jullie wel!</blockquote>
             <figcaption>Lotte</figcaption>
           </figure>
         </li>
@@ -1098,6 +1132,10 @@
          alt="Handen met een waaier visitekaartjes van Li’San collective in de huisstijlkleuren">
   </div>
 
+  <div class="contact__thanks" role="status" aria-live="polite">
+    <p hidden>Bedankt, jouw woonavontuur begint hier.</p>
+  </div>
+
   <div class="contact__bar">
     <ul>
       <li class="reveal" style="--step: 0"><a href="mailto:info@lisan.nl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5 12 13l8.5-6.5"/></svg><span>info@lisan.nl</span></a></li>
@@ -1145,7 +1183,17 @@
   new ResizeObserver(drawRope).observe(ropeList);
 
   // no form service connected yet: keep the page (and the visitor's details) from submitting anywhere
-  document.getElementById('contact-form').addEventListener('submit', e => e.preventDefault());
+  // no form service connected yet: keep the page (and the visitor's details) from submitting anywhere,
+  // just roll the purple thank-you panel down over the footer
+  document.getElementById('contact-form').addEventListener('submit', e => {
+    e.preventDefault();
+    const footer = document.getElementById('contact');
+    const thanks = footer.querySelector('.contact__thanks p');
+    thanks.hidden = false;   // announced by the live region
+    void thanks.offsetWidth;   // start the fade from the hidden state
+    footer.querySelector('.contact__inner').inert = true;
+    footer.classList.add('is-sent');
+  });
 
   // reviews slider: arrow buttons scroll one card; they fade out at the start / end
   const track = document.querySelector('.reviews__track');
