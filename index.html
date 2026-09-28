@@ -501,11 +501,11 @@
   .form__field { display: grid; gap: 8px; }
   .form label { font-weight: 700; font-size: 15px; }
   .form input, .form textarea {
-    width: 100%; border: 0; border-radius: 12px; background: #fff;
-    padding: 14px 16px; font: 700 16px/1.4 Poppins, sans-serif; color: var(--ink);
+    width: 100%; border: 1.5px solid var(--f-accent); border-radius: 12px; background: transparent;
+    padding: 14px 16px; font: 700 16px/1.4 Poppins, sans-serif; color: var(--f-ink);
   }
   .form textarea { min-height: 140px; resize: vertical; }
-  .form ::placeholder { color: #b8b2b4; font-weight: 500; opacity: 1; }
+  .form ::placeholder { color: color-mix(in srgb, var(--f-ink) 55%, transparent); font-weight: 500; opacity: 1; }
   .form input:focus-visible, .form textarea:focus-visible { outline: 2px solid var(--f-accent); outline-offset: 2px; }
   .form__submit {
     justify-self: start; display: inline-flex; align-items: center; gap: .6em;
@@ -794,20 +794,6 @@
     .js-reveal .reviews.in-view .review blockquote::before { opacity: 1; scale: 1; }
     .js-reveal .reviews.in-view .review figcaption { opacity: 1; translate: 0 0; }
 
-    /* footer: the white form boxes slowly fade in one by one */
-    .form__field:nth-of-type(2) { --n: 1; }
-    .form__field:nth-of-type(3) { --n: 2; }
-    .form__field:nth-of-type(4) { --n: 3; }
-    .form__field:nth-of-type(5) { --n: 4; }
-    .js-reveal .form :is(input, textarea) {
-      background-color: rgba(255, 255, 255, 0); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .45);
-    }
-    .js-reveal .form ::placeholder { color: transparent; transition: color .8s ease calc(var(--n, 0) * .22s + 1.4s); }
-    .js-reveal .contact.in-view .form :is(input, textarea) {
-      animation: box-light 1.6s ease calc(var(--n, 0) * .22s + .3s) both;
-    }
-    .js-reveal .contact.in-view .form ::placeholder { color: #b8b2b4; }
-
     /* general text reveal: elements with .reveal fade up when they come into view; --step staggers them */
     .js-reveal .reveal {
       opacity: 0; translate: 0 22px;
@@ -823,10 +809,6 @@
 
     /* kick off: each card gives a small swing on its ring as it passes the middle of the screen */
     .usps li.shake { animation: card-shake .8s cubic-bezier(.36, .07, .19, .97); }
-  }
-  @keyframes box-light {
-    from { background-color: rgba(255, 255, 255, 0); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .45); }
-    to   { background-color: #fff; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0); }
   }
   @keyframes card-shake {
     0%, 100% { rotate: 0deg; }
@@ -1307,7 +1289,7 @@
   // Watching that part (not the whole section) keeps it right on phones, where sections are much taller.
   const revealParts = {
     '.about__media': '.about__photo', '.kickoff': '.kickoff__intro', '.plans-section': '.plans',
-    '.insta': '.insta__posts', '.reviews': '.reviews__track', '.contact': '.form',
+    '.insta': '.insta__posts', '.reviews': '.reviews__track',
   };
   const revealIO = new IntersectionObserver(entries => entries.forEach(entry => {
     if (!entry.isIntersecting) return;
