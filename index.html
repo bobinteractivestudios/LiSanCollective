@@ -720,10 +720,18 @@
       .js-reveal .plans-section.in-view .plan:first-child > * + *::before { transform: scaleX(1); }
       .js-reveal .plans-section.in-view .plan::after,
       .js-reveal .plans-section.in-view .plans > .plan:last-child::before { transform: scaleY(1); }
-      .js-reveal .plan > * { opacity: 0; transition: opacity .8s ease 1.1s; }
-      .js-reveal .plan:nth-child(2) > * { transition-delay: 1.2s; }
-      .js-reveal .plan:nth-child(3) > * { transition-delay: 1.3s; }
-      .js-reveal .plans-section.in-view .plan > * { opacity: 1; }
+      /* then the text, row by row (names, descriptions, lists, extras), each row sweeping left to right */
+      .js-reveal .plan > * {
+        opacity: 0; translate: 0 10px;
+        transition: opacity .7s ease, translate .8s cubic-bezier(.22, .8, .3, 1);
+        transition-delay: calc(1.1s + var(--row, 0) * .3s + var(--col, 0) * .1s);
+      }
+      .js-reveal .plan:nth-child(2) { --col: 1; }
+      .js-reveal .plan:nth-child(3) { --col: 2; }
+      .js-reveal .plan > :nth-child(2) { --row: 1; }
+      .js-reveal .plan > :nth-child(3) { --row: 2; }
+      .js-reveal .plan > :nth-child(4) { --row: 3; }
+      .js-reveal .plans-section.in-view .plan > * { opacity: 1; translate: 0 0; }
     }
     @media (max-width: 899px) {
       .js-reveal .plans { opacity: 0; translate: 0 24px; transition: opacity .9s ease, translate .9s cubic-bezier(.22, .8, .3, 1); }
@@ -756,10 +764,26 @@
       transform: scaleY(0); transform-origin: 0 0;
       transition: transform .6s cubic-bezier(.65, 0, .35, 1) calc(var(--i, 0) * .2s + .35s);
     }
-    .js-reveal .review > * { opacity: 0; transition: opacity .7s ease calc(var(--i, 0) * .2s + .7s); }
+    /* then in phases per card: the quote mark, the review text, the name */
+    .js-reveal .review blockquote::before {
+      opacity: 0; scale: .85; transform-origin: 30% 30%;
+      transition: opacity .6s ease, scale .8s cubic-bezier(.16, 1, .3, 1);
+      transition-delay: calc(var(--i, 0) * .2s + .6s);
+    }
+    .js-reveal .review blockquote {   /* fades its text colour, so the quote mark (its ::before) can go first */
+      color: transparent;
+      transition: color .8s ease calc(var(--i, 0) * .2s + .9s);
+    }
+    .js-reveal .review figcaption {
+      opacity: 0; translate: 0 10px;
+      transition: opacity .7s ease, translate .8s cubic-bezier(.22, .8, .3, 1);
+      transition-delay: calc(var(--i, 0) * .2s + 1.25s);
+    }
     .js-reveal .reviews.in-view .review::before { transform: scaleX(1); }
     .js-reveal .reviews.in-view .review::after { transform: scaleY(1); }
-    .js-reveal .reviews.in-view .review > * { opacity: 1; }
+    .js-reveal .reviews.in-view .review blockquote { color: var(--ink-soft); }
+    .js-reveal .reviews.in-view .review blockquote::before { opacity: 1; scale: 1; }
+    .js-reveal .reviews.in-view .review figcaption { opacity: 1; translate: 0 0; }
 
     /* footer: the white form boxes slowly fade in one by one */
     .form__field:nth-of-type(2) { --n: 1; }
