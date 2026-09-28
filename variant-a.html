@@ -15,7 +15,7 @@
     --brand: #520521;
     --ink:   #1c1a1b;
     --ink-soft: #55585c;   /* softer grey for the about section */
-    --paper: #fff;
+    --paper: #f5f4f2;
     --accent: rgb(194, 121, 25);
     --accent-blue: rgb(148, 170, 178);
     --pink: #db9bb6;
@@ -128,7 +128,14 @@
   .kickoff {
     --accent: rgb(82, 54, 41);   /* section accent: deep brown */
     overflow-x: clip;            /* the rope may swing past the edge on small screens */
+    --wash: 241, 236, 229;
+    background:
+      linear-gradient(to right, rgba(var(--wash), .94), rgba(var(--wash), .88) 40%, rgba(var(--wash), .6)),
+      url("KickOff-web.jpg") center / cover;
     padding: clamp(80px, 12vw, 160px) 16px;
+  }
+  @media (max-width: 1099px) {   /* stacked layout: text sits over the whole width, so wash evenly */
+    .kickoff { background: linear-gradient(rgba(var(--wash), .88), rgba(var(--wash), .88)), url("KickOff-web.jpg") center / cover; }
   }
   .kickoff__inner {
     width: min(100%, 1120px); margin: 0 auto;
@@ -427,7 +434,8 @@
   }
   .contact {
     --pad-bottom: clamp(72px, 8vw, 112px);   /* space between the form and the contact row */
-    --f-bg: #d6d5d3; --f-accent: #4a4948; --f-ink: #3a3938; --f-on-accent: #fff;
+    /* colour palette, one per business card (switched with the swatches, see .palette) */
+    --f-bg: var(--pink); --f-accent: var(--brand); --f-ink: var(--brand); --f-on-accent: #fff;
     background: var(--f-bg); color: var(--f-ink);
     padding: clamp(72px, 10vw, 140px) 16px 0;
     overflow: hidden; position: relative;
@@ -488,37 +496,52 @@
   .contact__logo { display: block; width: clamp(220px, 26vw, 340px); margin: 0 0 clamp(24px, 3vw, 40px) -8px; }
   .contact__intro p { margin: 0; max-width: 24em; font-size: clamp(18px, 1.8vw, 22px); line-height: 1.6; font-weight: 400; }
 
-  /* the form: a single sheet of paper (napkin) with a faint fibre texture, sitting on the grey footer */
-  .form {
-    display: grid; gap: 18px;
-    background-color: #fdfcf9;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    border-radius: 6px;
-    padding: clamp(28px, 4vw, 48px);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, .06), 0 20px 44px -24px rgba(0, 0, 0, .3);
-  }
+  .form { display: grid; gap: 18px; }
   @media (min-width: 600px) { .form { grid-template-columns: 1fr 1fr; } .form__field--full { grid-column: 1 / -1; } }
-  .form__field { display: grid; gap: 6px; }
-  .form label { font-weight: 700; font-size: 13px; letter-spacing: .02em; color: #8a8683; }
+  .form__field { display: grid; gap: 8px; }
+  .form label { font-weight: 700; font-size: 15px; }
   .form input, .form textarea {
-    width: 100%; border: 0; border-bottom: 1.5px solid rgba(20, 18, 17, .18); border-radius: 0; background: transparent;
-    padding: 4px 2px 10px; font: 400 21px/1.4 "Nothing You Could Do", cursive; color: #171514;
+    width: 100%; border: 1.5px solid var(--f-accent); border-radius: 12px; background: transparent;
+    padding: 14px 16px; font: 700 16px/1.4 Poppins, sans-serif; color: var(--f-ink);
   }
-  .form textarea { min-height: 120px; resize: vertical; }
-  .form ::placeholder { color: rgba(20, 18, 17, .3); font-weight: 400; opacity: 1; }
-  .form input:focus-visible, .form textarea:focus-visible { outline: none; border-bottom-color: #171514; }
-  .form__actions { display: flex; align-items: center; gap: 16px; }
+  .form textarea { min-height: 140px; resize: vertical; }
+  .form ::placeholder { color: color-mix(in srgb, var(--f-ink) 55%, transparent); font-weight: 500; opacity: 1; }
+  .form input:focus-visible, .form textarea:focus-visible { outline: 2px solid var(--f-accent); outline-offset: 2px; }
   .form__submit {
     justify-self: start; display: inline-flex; align-items: center; gap: .6em;
-    border: 1.5px solid #171514; border-radius: 999px; padding: 12px 24px; cursor: pointer;
-    background: transparent; color: #171514; font: 700 15px/1 Poppins, sans-serif; letter-spacing: .02em;
-    transition: background-color .2s, color .2s;
+    border: 0; border-radius: 12px; padding: 15px 26px; cursor: pointer;
+    background: var(--f-accent); color: var(--f-on-accent); font: 700 16px/1 Poppins, sans-serif; letter-spacing: .02em;
+    transition: filter .2s;
   }
-  .form__submit:hover { background: #171514; color: #fdfcf9; }
-  .form__submit:focus-visible { outline: 2px solid #171514; outline-offset: 3px; }
+  .form__submit:hover { filter: brightness(1.15); }
+  .form__submit:focus-visible { outline: 2px solid var(--f-accent); outline-offset: 3px; }
 
   /* footer logo: same animation as the hero logo, in the footer's palette */
   .lisan-logo.contact__logo { --lisan-brand: var(--f-accent); --lisan-lines: var(--f-accent); --lisan-text: var(--f-on-accent); --lisan-text-outside: var(--f-ink); }
+
+  /* the four business-card palettes: card colour (background) + its second colour */
+  .contact[data-palette="bruin"] { --f-bg: #584a4a; --f-accent: var(--accent-blue); --f-ink: #fff; --f-on-accent: var(--ink); }   /* dark on the light blue (button, thank-you card) */
+  .contact[data-palette="blauw"] { --f-bg: var(--accent-blue); --f-accent: var(--accent); --f-ink: var(--ink); }   /* dark text: white is too faint on this blue */
+  .contact[data-palette="beige"] { --f-bg: #d7d5c8; --f-accent: var(--brand); --f-ink: var(--brand); }
+
+  /* colour picker: four card-coloured dots, stacked vertically on the right of the footer */
+  /* narrower screens: a row at the right end of the submit button's line */
+  .form__actions { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .palette { display: flex; gap: 12px; }
+  @media (min-width: 1260px) {   /* room beside the content: stacked vertically, lined up with its top */
+    .palette {
+      position: absolute; z-index: 3; flex-direction: column;
+      top: clamp(72px, 10vw, 140px); right: calc(50% - 560px - 56px);
+    }
+  }
+  .palette button {
+    width: 22px; height: 22px; padding: 0; border-radius: 50%; cursor: pointer;
+    background: var(--swatch); border: 1px solid color-mix(in srgb, var(--f-ink) 40%, transparent);
+    outline-offset: 3px;
+  }
+  .palette button[aria-pressed="true"] { outline: 1.5px solid var(--f-ink); }
+  .palette button:focus-visible { outline: 2px solid var(--f-ink); }
+  .contact.is-sent .palette { visibility: hidden; }
 
   /* floating contact bubble (links to the #contact footer) */
   .cta {
@@ -544,6 +567,7 @@
 
   /* about */
   .about {
+    background: rgba(148, 170, 178, .12);
     padding: clamp(80px, 12vw, 160px) 16px clamp(96px, 14vw, 180px);
     display: grid; justify-items: center; gap: clamp(40px, 6vw, 72px);
   }
@@ -670,6 +694,17 @@
   @media (prefers-reduced-motion: reduce) {
     .lisan-logo * { animation-duration: .01s !important; animation-delay: 0s !important; }
   }
+
+  /* ---------- a thin top border in each section's accent colour (not on reviews) ---------- */
+  :is(.about, .kickoff, .plans-section, .insta, .contact) {
+    --rule: 1.5px;
+    border-top: var(--rule) solid var(--section-accent);
+  }
+  .about         { --section-accent: var(--accent-blue); }
+  .kickoff       { --section-accent: rgb(82, 54, 41); }
+  .plans-section { --section-accent: rgb(187, 205, 212); }
+  .insta         { --section-accent: var(--pink); }
+  .contact       { --section-accent: var(--f-accent); }
 
   /* ---------- scroll reveals (only with JS, see js-reveal in <head>, and without reduced motion) ---------- */
   @media (prefers-reduced-motion: no-preference) {
@@ -1131,6 +1166,12 @@
       </div>
       <div class="form__actions form__field--full">
         <button class="form__submit" type="submit">Verstuur <span aria-hidden="true">→</span></button>
+        <div class="palette" role="group" aria-label="Kleuren van de footer">
+          <button type="button" data-palette="roze"  style="--swatch: var(--pink)"        aria-pressed="true"  aria-label="Roze"  title="Roze"></button>
+          <button type="button" data-palette="bruin" style="--swatch: #584a4a"            aria-pressed="false" aria-label="Bruin" title="Bruin"></button>
+          <button type="button" data-palette="blauw" style="--swatch: var(--accent-blue)" aria-pressed="false" aria-label="Blauw" title="Blauw"></button>
+          <button type="button" data-palette="beige" style="--swatch: #d7d5c8"            aria-pressed="false" aria-label="Beige" title="Beige"></button>
+        </div>
       </div>
     </form>
 
@@ -1205,6 +1246,13 @@
   }
   document.fonts.ready.then(drawRope);
   new ResizeObserver(drawRope).observe(ropeList);
+
+  // footer colour picker: each dot switches the footer to that business card's palette
+  const paletteButtons = document.querySelectorAll('.palette button');
+  paletteButtons.forEach(btn => btn.addEventListener('click', () => {
+    document.getElementById('contact').dataset.palette = btn.dataset.palette;
+    paletteButtons.forEach(b => b.setAttribute('aria-pressed', b === btn));
+  }));
 
   // no form service connected yet: keep the page (and the visitor's details) from submitting anywhere
   // no form service connected yet: keep the page (and the visitor's details) from submitting anywhere,
