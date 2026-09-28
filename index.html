@@ -414,9 +414,9 @@
   /* footer: contact form */
   /* contact row along the bottom of the footer */
   .contact__bar {
-    position: relative; z-index: 2; background: var(--pink);   /* stays visible above the thank-you overlay */
+    position: relative; z-index: 2; background: var(--f-bg);   /* stays visible above the thank-you overlay */
     margin-inline: -16px; padding: 22px 16px max(22px, env(safe-area-inset-bottom));
-    border-top: 1px solid rgba(82, 5, 33, .22);
+    border-top: 1px solid color-mix(in srgb, var(--f-ink) 22%, transparent);
   }
   .contact__bar ul {
     width: min(100%, 1120px); margin: 0 auto; padding: 0 76px 0 0;   /* keep clear of the floating contact bubble */
@@ -424,29 +424,31 @@
   }
   .contact__bar a {
     display: inline-flex; align-items: center; gap: 10px;
-    color: var(--brand); text-decoration: none; font-weight: 500; font-size: 15px;
+    color: var(--f-ink); text-decoration: none; font-weight: 500; font-size: 15px;
   }
   .contact__bar a:hover span { text-decoration: underline; text-underline-offset: 4px; }
-  .contact__bar a:focus-visible { outline: 2px solid var(--brand); outline-offset: 4px; }
+  .contact__bar a:focus-visible { outline: 2px solid var(--f-ink); outline-offset: 4px; }
   .contact__bar svg { width: 20px; height: 20px; flex: none; }
   @media (max-width: 699px) {   /* two tidy columns: online (mail, instagram) | phones (Lisanne, Sanne) */
     .contact__bar ul { display: grid; grid-template-rows: auto auto; grid-auto-flow: column; justify-content: start; gap: 14px 28px; }
   }
   .contact {
     --pad-bottom: clamp(72px, 8vw, 112px);   /* space between the form and the contact row */
-    background: var(--pink); color: var(--brand);
+    /* colour palette, one per business card (switched with the swatches, see .palette) */
+    --f-bg: var(--pink); --f-accent: var(--brand); --f-ink: var(--brand); --f-on-accent: #fff;
+    background: var(--f-bg); color: var(--f-ink);
     padding: clamp(72px, 10vw, 140px) 16px 0;
     overflow: hidden; position: relative;
   }
   /* after sending: a purple panel rolls down over the footer like a garage door, then the thank-you appears */
   .contact__thanks {
     position: absolute; inset: 0; z-index: 1; padding: 24px 16px 96px;
-    display: grid; place-items: center; text-align: center; color: #fff;
+    display: grid; place-items: center; text-align: center; color: var(--f-on-accent);
     visibility: hidden; transition: visibility 0s 1.2s;
   }
   /* the door itself: a purple layer scaled from the top edge, so the GPU animates it (no clip-path repaints) */
   .contact__thanks::before {
-    content: ""; position: absolute; inset: 0; z-index: -1; background: var(--brand);
+    content: ""; position: absolute; inset: 0; z-index: -1; background: var(--f-accent);
     transform: scaleY(0); transform-origin: 50% 0; will-change: transform;
     transition: transform 1.2s cubic-bezier(.7, 0, .2, 1);   /* speeds up, then settles softly at the bottom */
   }
@@ -497,18 +499,40 @@
   }
   .form textarea { min-height: 140px; resize: vertical; }
   .form ::placeholder { color: #b8b2b4; font-weight: 500; opacity: 1; }
-  .form input:focus-visible, .form textarea:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+  .form input:focus-visible, .form textarea:focus-visible { outline: 2px solid var(--f-accent); outline-offset: 2px; }
   .form__submit {
     justify-self: start; display: inline-flex; align-items: center; gap: .6em;
     border: 0; border-radius: 12px; padding: 15px 26px; cursor: pointer;
-    background: var(--brand); color: #fff; font: 700 16px/1 Poppins, sans-serif; letter-spacing: .02em;
-    transition: background-color .2s;
+    background: var(--f-accent); color: var(--f-on-accent); font: 700 16px/1 Poppins, sans-serif; letter-spacing: .02em;
+    transition: filter .2s;
   }
-  .form__submit:hover { background: #6b0a2d; }
-  .form__submit:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }
+  .form__submit:hover { filter: brightness(1.15); }
+  .form__submit:focus-visible { outline: 2px solid var(--f-accent); outline-offset: 3px; }
 
-  /* footer logo: same animation as the hero logo, purple words on the pink background */
-  .lisan-logo.contact__logo { --lisan-text-outside: var(--brand); }
+  /* footer logo: same animation as the hero logo, in the footer's palette */
+  .lisan-logo.contact__logo { --lisan-brand: var(--f-accent); --lisan-lines: var(--f-accent); --lisan-text: var(--f-on-accent); --lisan-text-outside: var(--f-ink); }
+
+  /* the four business-card palettes: card colour (background) + its second colour */
+  .contact[data-palette="bruin"] { --f-bg: #584a4a; --f-accent: var(--accent-blue); --f-ink: #fff; }
+  .contact[data-palette="blauw"] { --f-bg: var(--accent-blue); --f-accent: var(--accent); --f-ink: #fff; }
+  .contact[data-palette="beige"] { --f-bg: #d7d5c8; --f-accent: var(--brand); --f-ink: var(--brand); }
+
+  /* colour picker: four card-coloured dots, stacked vertically on the right of the footer */
+  .palette {
+    position: absolute; z-index: 3; top: 24px; right: 16px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  @media (min-width: 1260px) {   /* room beside the content: line the dots up with its top */
+    .palette { top: clamp(72px, 10vw, 140px); right: calc(50% - 560px - 56px); }
+  }
+  .palette button {
+    width: 22px; height: 22px; padding: 0; border-radius: 50%; cursor: pointer;
+    background: var(--swatch); border: 1px solid color-mix(in srgb, var(--f-ink) 40%, transparent);
+    outline-offset: 3px;
+  }
+  .palette button[aria-pressed="true"] { outline: 1.5px solid var(--f-ink); }
+  .palette button:focus-visible { outline: 2px solid var(--f-ink); }
+  .contact.is-sent .palette { visibility: hidden; }
 
   /* floating contact bubble (links to the #contact footer) */
   .cta {
@@ -671,7 +695,7 @@
   .kickoff       { --section-accent: rgb(82, 54, 41); }
   .plans-section { --section-accent: rgb(187, 205, 212); }
   .insta         { --section-accent: var(--pink); }
-  .contact       { --section-accent: var(--brand); }
+  .contact       { --section-accent: var(--f-accent); }
 
   /* ---------- scroll reveals (only with JS, see js-reveal in <head>, and without reduced motion) ---------- */
   @media (prefers-reduced-motion: no-preference) {
@@ -1132,6 +1156,13 @@
          alt="Handen met een waaier visitekaartjes van Li’San collective in de huisstijlkleuren">
   </div>
 
+  <div class="palette" role="group" aria-label="Kleuren van de footer">
+    <button type="button" data-palette="roze"  style="--swatch: var(--pink)"        aria-pressed="true"  aria-label="Roze"  title="Roze"></button>
+    <button type="button" data-palette="bruin" style="--swatch: #584a4a"            aria-pressed="false" aria-label="Bruin" title="Bruin"></button>
+    <button type="button" data-palette="blauw" style="--swatch: var(--accent-blue)" aria-pressed="false" aria-label="Blauw" title="Blauw"></button>
+    <button type="button" data-palette="beige" style="--swatch: #d7d5c8"            aria-pressed="false" aria-label="Beige" title="Beige"></button>
+  </div>
+
   <div class="contact__thanks" role="status" aria-live="polite">
     <p hidden>Bedankt, jouw woonavontuur begint hier.</p>
   </div>
@@ -1181,6 +1212,13 @@
   }
   document.fonts.ready.then(drawRope);
   new ResizeObserver(drawRope).observe(ropeList);
+
+  // footer colour picker: each dot switches the footer to that business card's palette
+  const paletteButtons = document.querySelectorAll('.palette button');
+  paletteButtons.forEach(btn => btn.addEventListener('click', () => {
+    document.getElementById('contact').dataset.palette = btn.dataset.palette;
+    paletteButtons.forEach(b => b.setAttribute('aria-pressed', b === btn));
+  }));
 
   // no form service connected yet: keep the page (and the visitor's details) from submitting anywhere
   // no form service connected yet: keep the page (and the visitor's details) from submitting anywhere,
