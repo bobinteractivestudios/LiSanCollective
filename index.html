@@ -518,12 +518,14 @@
   .contact[data-palette="beige"] { --f-bg: #d7d5c8; --f-accent: var(--brand); --f-ink: var(--brand); }
 
   /* colour picker: four card-coloured dots, stacked vertically on the right of the footer */
-  .palette {
-    position: absolute; z-index: 3; top: 24px; right: 16px;
-    display: flex; flex-direction: column; gap: 12px;
-  }
-  @media (min-width: 1260px) {   /* room beside the content: line the dots up with its top */
-    .palette { top: clamp(72px, 10vw, 140px); right: calc(50% - 560px - 56px); }
+  /* narrower screens: a row at the right end of the submit button's line */
+  .form__actions { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .palette { display: flex; gap: 12px; }
+  @media (min-width: 1260px) {   /* room beside the content: stacked vertically, lined up with its top */
+    .palette {
+      position: absolute; z-index: 3; flex-direction: column;
+      top: clamp(72px, 10vw, 140px); right: calc(50% - 560px - 56px);
+    }
   }
   .palette button {
     width: 22px; height: 22px; padding: 0; border-radius: 50%; cursor: pointer;
@@ -1173,18 +1175,19 @@
         <label for="f-wish">Waar ben je naar op zoek?</label>
         <textarea id="f-wish" name="wens" rows="5" placeholder="Een woonkamer die eindelijk af voelt, een keuken om in te dansen of gewoon hulp bij die ene lege muur…"></textarea>
       </div>
-      <button class="form__submit" type="submit">Verstuur <span aria-hidden="true">→</span></button>
+      <div class="form__actions form__field--full">
+        <button class="form__submit" type="submit">Verstuur <span aria-hidden="true">→</span></button>
+        <div class="palette" role="group" aria-label="Kleuren van de footer">
+          <button type="button" data-palette="roze"  style="--swatch: var(--pink)"        aria-pressed="true"  aria-label="Roze"  title="Roze"></button>
+          <button type="button" data-palette="bruin" style="--swatch: #584a4a"            aria-pressed="false" aria-label="Bruin" title="Bruin"></button>
+          <button type="button" data-palette="blauw" style="--swatch: var(--accent-blue)" aria-pressed="false" aria-label="Blauw" title="Blauw"></button>
+          <button type="button" data-palette="beige" style="--swatch: #d7d5c8"            aria-pressed="false" aria-label="Beige" title="Beige"></button>
+        </div>
+      </div>
     </form>
 
     <img class="contact__hands" src="kaartjeshand-web.png" width="720" height="900" loading="lazy"
          alt="Handen met een waaier visitekaartjes van Li’San collective in de huisstijlkleuren">
-  </div>
-
-  <div class="palette" role="group" aria-label="Kleuren van de footer">
-    <button type="button" data-palette="roze"  style="--swatch: var(--pink)"        aria-pressed="true"  aria-label="Roze"  title="Roze"></button>
-    <button type="button" data-palette="bruin" style="--swatch: #584a4a"            aria-pressed="false" aria-label="Bruin" title="Bruin"></button>
-    <button type="button" data-palette="blauw" style="--swatch: var(--accent-blue)" aria-pressed="false" aria-label="Blauw" title="Blauw"></button>
-    <button type="button" data-palette="beige" style="--swatch: #d7d5c8"            aria-pressed="false" aria-label="Beige" title="Beige"></button>
   </div>
 
   <div class="contact__thanks" role="status" aria-live="polite">
@@ -1327,6 +1330,14 @@
   }
   addEventListener('scroll', () => { if (!logoTick) { logoTick = true; requestAnimationFrame(updateLogo); } }, { passive: true });
   updateLogo();
+
+  // clicking the logo while it is still the logo (not the arrow) reloads the page, replaying the hero entrance
+  siteLogo.addEventListener('click', e => {
+    if (logoIsArrow) return;
+    e.preventDefault();
+    scrollTo(0, 0);
+    location.reload();
+  });
 
   // hovering the arrow: the construction lines reach further toward the top-left corner
   if (matchMedia('(hover: hover)').matches) {
