@@ -790,18 +790,15 @@
     /* footer: the paper form comes down like a garage door on L-shaped rails, as if it is presented to you.
        It starts lying flat overhead; its top edge slides forward along the ceiling rail while its bottom edge
        slides down the front rail (like a ladder sliding down a wall), until it stands upright in its place.
-       --tilt is the angle from upright (90deg = flat overhead); it starts at 72deg, since before ~80deg the sheet
+       The tilt is the angle from upright (90deg = flat overhead); it starts at 72deg, since before ~80deg the sheet
        is above eye level and you would see its back. Meanwhile it slides in from the right at a slight angle and
-       straightens out, like a card being swapped in front of another. Rotating about the top edge by --tilt and pushing
-       that edge back by sin(--tilt) of the sheet's height keeps the bottom edge on the front rail. The push is a
+       straightens out, like a card being swapped in front of another. Rotating about the top edge by the tilt and pushing
+       that edge back by sin(tilt) of the sheet's height keeps the bottom edge on the front rail. The push is a
        translateY(%) turned into depth between two quarter turns, since translateZ takes no percentages; the first
-       translateY puts the eye at the sheet's middle height, so the sheet overhead is seen from below. */
+       translateY puts the eye at the sheet's middle height, so the sheet overhead is seen from below.
+       The keyframes hold these transforms precomputed (plain transforms, so the GPU can run them smoothly). */
     .js-reveal .form { opacity: 0; transform-origin: 50% 0; }
-    .js-reveal .contact.in-view .form {
-      transform: translateY(50%) perspective(1400px) translateY(-50%)
-                 rotateX(-90deg) translateY(calc(sin(var(--tilt)) * 100%)) rotateX(90deg) rotateX(var(--tilt));
-      animation: sheet-down 1.2s cubic-bezier(.5, 0, .2, 1) both;
-    }
+    .js-reveal .contact.in-view .form { animation: sheet-down 1.2s linear both; }
     .form__field:nth-of-type(2) { --n: 1; }
     .form__field:nth-of-type(3) { --n: 2; }
     .form__field:nth-of-type(4) { --n: 3; }
@@ -816,11 +813,28 @@
     /* kick off: each card gives a small swing on its ring as it passes the middle of the screen */
     .usps li.shake { animation: card-shake .8s cubic-bezier(.36, .07, .19, .97); }
   }
-  @property --tilt { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
-  @keyframes sheet-down {
-    0%   { --tilt: 72deg; translate: 10% 4%; rotate: 7deg; opacity: 0; box-shadow: 0 0 0 rgba(0, 0, 0, 0), 0 0 0 -24px rgba(0, 0, 0, 0); }
-    12%  { opacity: 1; }
-    100% { --tilt: 0deg; translate: 0 0; rotate: 0deg; opacity: 1; box-shadow: 0 1px 2px rgba(0, 0, 0, .06), 0 20px 44px -24px rgba(0, 0, 0, .3); }
+  @keyframes sheet-down {   /* generated: the rail motion above, eased with cubic-bezier(.5, 0, .2, 1), every 5% */
+      0% { opacity: 0; transform: translate(10%, 4%) rotate(7deg) translateY(50%) perspective(1400px) translateY(-50%) rotateX(-90deg) translateY(95.11%) rotateX(90deg) rotateX(72deg); }
+      5% { transform: translate(9.96%, 3.99%) rotate(6.97deg) translateY(50%) perspective(1400px) translateY(-50%) rotateX(-90deg) translateY(94.96%) rotateX(90deg) rotateX(71.74deg); }
+     10% { opacity: 1; transform: translate(9.84%, 3.94%) rotate(6.89deg) translateY(50%) perspective(1400px) translateY(-50%) rotateX(-90deg) translateY(94.46%) rotateX(90deg) rotateX(70.84deg); }
+     15% { transform: translate(9.59%, 3.84%) rotate(6.72deg) translateY(50%) perspective(1400px) translateY(-50%) rotateX(-90deg) translateY(93.41%) rotateX(90deg) rotateX(69.08deg); }
+     20% { transform: translate(9.18%, 3.67%) rotate(6.43deg) translateY(50%) perspective(1400px) translateY(-50%) rotateX(-90deg) translateY(91.42%) rotateX(90deg) rotateX(66.1deg); }
+     25% { transform: translate(8.52%, 3.41%) rotate(5.96deg) translateY(50%) perspective(1400px) translateY(-50%) rotateX(-90deg) translateY(87.73%) rotateX(90deg) rotateX(61.32deg); }
+     30% { transform: translate(7.5%, 3%) rotate(5.25deg) translateY(50%) perspective(1400px) translateY(-50%) rotateX(-90deg) translateY(80.89%) rotateX(90deg) rotateX(53.99deg); }
+     35% { transform: translate(6.11%, 2.44%) rotate(4.28deg) translateY(50%) perspective(1400px) translateY(-50%) rotateX(-90deg) translateY(69.48%) rotateX(90deg) rotateX(44.01deg); }
+     40% { transform: translate(4.65%, 1.86%) rotate(3.26deg) translateY(50%) perspective(1400px) translateY(-50%) rotateX(-90deg) translateY(55.17%) rotateX(90deg) rotateX(33.49deg); }
+     45% { transform: translate(3.44%, 1.38%) rotate(2.41deg) translateY(50%) perspective(1400px) translateY(-50%) rotateX(-90deg) translateY(41.94%) rotateX(90deg) rotateX(24.79deg); }
+     50% { transform: translate(2.53%, 1.01%) rotate(1.77deg) translateY(50%) perspective(1400px) translateY(-50%) rotateX(-90deg) translateY(31.31%) rotateX(90deg) rotateX(18.24deg); }
+     55% { transform: translate(1.85%, 0.74%) rotate(1.3deg) translateY(50%) perspective(1400px) translateY(-50%) rotateX(-90deg) translateY(23.08%) rotateX(90deg) rotateX(13.34deg); }
+     60% { transform: translate(1.34%, 0.54%) rotate(0.94deg) translateY(50%) perspective(1400px) translateY(-50%) rotateX(-90deg) translateY(16.74%) rotateX(90deg) rotateX(9.64deg); }
+     65% { transform: translate(0.95%, 0.38%) rotate(0.66deg) translateY(50%) perspective(1400px) translateY(-50%) rotateX(-90deg) translateY(11.87%) rotateX(90deg) rotateX(6.81deg); }
+     70% { transform: translate(0.65%, 0.26%) rotate(0.45deg) translateY(50%) perspective(1400px) translateY(-50%) rotateX(-90deg) translateY(8.13%) rotateX(90deg) rotateX(4.66deg); }
+     75% { transform: translate(0.42%, 0.17%) rotate(0.29deg) translateY(50%) perspective(1400px) translateY(-50%) rotateX(-90deg) translateY(5.29%) rotateX(90deg) rotateX(3.03deg); }
+     80% { transform: translate(0.25%, 0.1%) rotate(0.18deg) translateY(50%) perspective(1400px) translateY(-50%) rotateX(-90deg) translateY(3.19%) rotateX(90deg) rotateX(1.83deg); }
+     85% { transform: translate(0.14%, 0.05%) rotate(0.09deg) translateY(50%) perspective(1400px) translateY(-50%) rotateX(-90deg) translateY(1.7%) rotateX(90deg) rotateX(0.97deg); }
+     90% { transform: translate(0.06%, 0.02%) rotate(0.04deg) translateY(50%) perspective(1400px) translateY(-50%) rotateX(-90deg) translateY(0.72%) rotateX(90deg) rotateX(0.41deg); }
+     95% { transform: translate(0.01%, 0.01%) rotate(0.01deg) translateY(50%) perspective(1400px) translateY(-50%) rotateX(-90deg) translateY(0.17%) rotateX(90deg) rotateX(0.1deg); }
+    100% { transform: translate(0%, 0%) rotate(0deg) translateY(50%) perspective(1400px) translateY(-50%) rotateX(-90deg) translateY(0%) rotateX(90deg) rotateX(0deg); }
   }
   @keyframes card-shake {
     0%, 100% { rotate: 0deg; }
