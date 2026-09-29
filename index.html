@@ -7,7 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Corinthia&family=Nothing+You+Could+Do&family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400&text=%E2%80%9C&display=swap" rel="stylesheet">   <!-- only the “ glyph, for the review quote marks -->
 <script>document.documentElement.classList.add('js-reveal');   /* scroll reveals are armed only when JS runs */</script>
 <style>
   /* ---------- page ---------- */
@@ -409,12 +408,12 @@
   .review::after { border-inline: 1px solid var(--ink); }
   .reviews__track > li + li .review::after { border-left: 0; }   /* shared edge: one line between cards */
   .review blockquote { margin: 0; font-weight: 300; font-size: clamp(17px, 1.5vw, 19px); line-height: 1.65; }
-  /* a big pink serif opening quote mark straddling each card's top line */
-  .review blockquote::before {
-    content: "\201C"; position: absolute; top: 0; left: clamp(16px, 2.2vw, 26px);
-    font-family: "Playfair Display", Didot, serif; font-weight: 400;   /* a Didot-style high-contrast serif */
-    font-size: 200px; line-height: 1; color: var(--pink);
-    translate: 0 -23%; pointer-events: none;   /* centres the glyph on the line */
+  /* a big pink serif opening quote mark straddling each card's top line: the “ of Playfair Display (a Didot-style
+     high-contrast serif) at 200px, as two paths so the scroll reveal can draw their outlines */
+  .review__mark {
+    position: absolute; top: -25px; left: calc(clamp(16px, 2.2vw, 26px) + 12px);
+    width: 62px; height: 50px; overflow: visible; pointer-events: none;
+    fill: var(--pink); stroke: var(--pink); stroke-width: 6;
   }
   .review figcaption { margin-top: auto; color: var(--pink); font-family: Corinthia, cursive; font-size: 44px; line-height: 1; }
 
@@ -752,13 +751,15 @@
       transform: scaleY(0); transform-origin: 0 0;
       transition: transform .6s cubic-bezier(.65, 0, .35, 1) calc(var(--i, 0) * .2s + .35s);
     }
-    /* then in phases per card: the quote mark, the review text, the name */
-    .js-reveal .review blockquote::before {
-      opacity: 0; scale: .85; transform-origin: 30% 30%;
-      transition: opacity .6s ease, scale .8s cubic-bezier(.16, 1, .3, 1);
-      transition-delay: calc(var(--i, 0) * .2s + .6s);
+    /* then in phases per card: the quote mark (outline drawn, one comma after the other, then filled),
+       the review text, the name */
+    .js-reveal .review__mark path {
+      stroke-dasharray: 1; stroke-dashoffset: 1; fill-opacity: 0;
+      transition: stroke-dashoffset .9s cubic-bezier(.65, 0, .35, 1) calc(var(--i, 0) * .2s + .6s),
+                  fill-opacity .6s ease calc(var(--i, 0) * .2s + 1.5s);
     }
-    .js-reveal .review blockquote {   /* fades its text colour, so the quote mark (its ::before) can go first */
+    .js-reveal .review__mark path + path { transition-delay: calc(var(--i, 0) * .2s + .8s), calc(var(--i, 0) * .2s + 1.6s); }
+    .js-reveal .review blockquote {   /* fades its text colour, so the quote mark can go first */
       color: transparent;
       transition: color .8s ease calc(var(--i, 0) * .2s + .9s);
     }
@@ -770,7 +771,7 @@
     .js-reveal .reviews.in-view .review::before { transform: scaleX(1); }
     .js-reveal .reviews.in-view .review::after { transform: scaleY(1); }
     .js-reveal .reviews.in-view .review blockquote { color: var(--ink-soft); }
-    .js-reveal .reviews.in-view .review blockquote::before { opacity: 1; scale: 1; }
+    .js-reveal .reviews.in-view .review__mark path { stroke-dashoffset: 0; fill-opacity: 1; }
     .js-reveal .reviews.in-view .review figcaption { opacity: 1; translate: 0 0; }
 
     /* general text reveal: elements with .reveal fade up when they come into view; --step staggers them */
@@ -786,8 +787,30 @@
     .js-reveal .kickoff__intro > :nth-child(3) { transition-delay: .3s; }
     .js-reveal .kickoff.in-view .kickoff__intro > * { opacity: 1; translate: 0 0; }
 
+    /* footer: the paper form swings down like a garage door seen from the front (hinged at its top edge,
+       the bottom edge coming down from overhead towards you), as if it is presented to you; then the fields appear */
+    .js-reveal .form { opacity: 0; transform-origin: 50% 0; }
+    .js-reveal .contact.in-view .form { animation: sheet-down 1.4s cubic-bezier(.25, .8, .3, 1) both; }
+    .form__field:nth-of-type(2) { --n: 1; }
+    .form__field:nth-of-type(3) { --n: 2; }
+    .form__field:nth-of-type(4) { --n: 3; }
+    .form__field:nth-of-type(5) { --n: 4; }
+    .form__actions { --n: 5; }
+    .js-reveal .form > * {
+      opacity: 0; translate: 0 10px;
+      transition: opacity .7s ease calc(var(--n, 0) * .1s + .8s), translate .8s cubic-bezier(.22, .8, .3, 1) calc(var(--n, 0) * .1s + .8s);
+    }
+    .js-reveal .contact.in-view .form > * { opacity: 1; translate: 0 0; }
+
     /* kick off: each card gives a small swing on its ring as it passes the middle of the screen */
     .usps li.shake { animation: card-shake .8s cubic-bezier(.36, .07, .19, .97); }
+  }
+  @keyframes sheet-down {
+    0%   { opacity: 0; transform: perspective(1400px) rotateX(85deg); box-shadow: 0 0 0 rgba(0, 0, 0, 0), 0 0 0 -24px rgba(0, 0, 0, 0); }
+    20%  { opacity: 1; }
+    75%  { transform: perspective(1400px) rotateX(-4deg); }
+    88%  { transform: perspective(1400px) rotateX(1deg); }
+    100% { opacity: 1; transform: none; box-shadow: 0 1px 2px rgba(0, 0, 0, .06), 0 20px 44px -24px rgba(0, 0, 0, .3); }
   }
   @keyframes card-shake {
     0%, 100% { rotate: 0deg; }
@@ -1066,24 +1089,28 @@
       <ul class="reviews__track" tabindex="0" aria-label="Reviews, scroll horizontaal">
         <li>
           <figure class="review">
+            <svg class="review__mark" viewBox="55 -722 310 252" aria-hidden="true"><g transform="scale(1 -1)"><path pathLength="1" d="M158 722Q105 697 80 657Q55 617 55 568Q55 556 58.5 537.5Q62 519 72 502Q81 488 95 479Q109 470 131 470Q157 470 176 488Q195 506 195 534Q195 564 176 581Q157 598 131 598Q110 598 94 585Q91 594 91 606Q91 635 113.5 663Q136 691 167 704Z"/><path pathLength="1" d="M328 722Q275 697 250 657Q225 617 225 568Q225 556 228.5 537.5Q232 519 242 502Q251 488 265 479Q279 470 301 470Q327 470 346 488Q365 506 365 534Q365 564 346 581Q327 598 301 598Q280 598 264 585Q261 594 261 606Q261 635 283.5 663Q306 691 337 704Z"/></g></svg>
             <blockquote>We zijn wel echt super blij met jullie advies, dus super bedankt daarvoor! Superleuke én mooie ideeën!</blockquote>
             <figcaption>Anouk</figcaption>
           </figure>
         </li>
         <li>
           <figure class="review">
+            <svg class="review__mark" viewBox="55 -722 310 252" aria-hidden="true"><g transform="scale(1 -1)"><path pathLength="1" d="M158 722Q105 697 80 657Q55 617 55 568Q55 556 58.5 537.5Q62 519 72 502Q81 488 95 479Q109 470 131 470Q157 470 176 488Q195 506 195 534Q195 564 176 581Q157 598 131 598Q110 598 94 585Q91 594 91 606Q91 635 113.5 663Q136 691 167 704Z"/><path pathLength="1" d="M328 722Q275 697 250 657Q225 617 225 568Q225 556 228.5 537.5Q232 519 242 502Q251 488 265 479Q279 470 301 470Q327 470 346 488Q365 506 365 534Q365 564 346 581Q327 598 301 598Q280 598 264 585Q261 594 261 606Q261 635 283.5 663Q306 691 337 704Z"/></g></svg>
             <blockquote>Vond het heel leuk om een uurtje met jullie te sparren. Creatieve en goed uitvoerbare ideeën opgedaan waar ik goed mee aan de slag kan. Hartstikke leuk! Bedankt voor jullie enthousiasme!</blockquote>
             <figcaption>Sophie &amp; Daan</figcaption>
           </figure>
         </li>
         <li>
           <figure class="review">
+            <svg class="review__mark" viewBox="55 -722 310 252" aria-hidden="true"><g transform="scale(1 -1)"><path pathLength="1" d="M158 722Q105 697 80 657Q55 617 55 568Q55 556 58.5 537.5Q62 519 72 502Q81 488 95 479Q109 470 131 470Q157 470 176 488Q195 506 195 534Q195 564 176 581Q157 598 131 598Q110 598 94 585Q91 594 91 606Q91 635 113.5 663Q136 691 167 704Z"/><path pathLength="1" d="M328 722Q275 697 250 657Q225 617 225 568Q225 556 228.5 537.5Q232 519 242 502Q251 488 265 479Q279 470 301 470Q327 470 346 488Q365 506 365 534Q365 564 346 581Q327 598 301 598Q280 598 264 585Q261 594 261 606Q261 635 283.5 663Q306 691 337 704Z"/></g></svg>
             <blockquote lang="en">We absolutely loved the presentation you sent us! It was beautiful, very thoughtful, and perfectly aligned with the styles I shared with you. The structure and placement you proposed for the living room and dining area are honestly what is guiding all our decisions now.</blockquote>
             <figcaption>Emma</figcaption>
           </figure>
         </li>
         <li>
           <figure class="review">
+            <svg class="review__mark" viewBox="55 -722 310 252" aria-hidden="true"><g transform="scale(1 -1)"><path pathLength="1" d="M158 722Q105 697 80 657Q55 617 55 568Q55 556 58.5 537.5Q62 519 72 502Q81 488 95 479Q109 470 131 470Q157 470 176 488Q195 506 195 534Q195 564 176 581Q157 598 131 598Q110 598 94 585Q91 594 91 606Q91 635 113.5 663Q136 691 167 704Z"/><path pathLength="1" d="M328 722Q275 697 250 657Q225 617 225 568Q225 556 228.5 537.5Q232 519 242 502Q251 488 265 479Q279 470 301 470Q327 470 346 488Q365 506 365 534Q365 564 346 581Q327 598 301 598Q280 598 264 585Q261 594 261 606Q261 635 283.5 663Q306 691 337 704Z"/></g></svg>
             <blockquote>Prachtige presentatie, hele professionele en smaakvolle uitwerking. Dank jullie wel!</blockquote>
             <figcaption>Lotte</figcaption>
           </figure>
@@ -1251,7 +1278,7 @@
   // Watching that part (not the whole section) keeps it right on phones, where sections are much taller.
   const revealParts = {
     '.about__media': '.about__photo', '.kickoff': '.kickoff__intro', '.plans-section': '.plans',
-    '.insta': '.insta__posts', '.reviews': '.reviews__track',
+    '.insta': '.insta__posts', '.reviews': '.reviews__track', '.contact': '.form',
   };
   const revealIO = new IntersectionObserver(entries => entries.forEach(entry => {
     if (!entry.isIntersecting) return;
