@@ -733,16 +733,16 @@
     }
     .js-reveal .about__media.in-view .about__photo { opacity: 1; rotate: 0deg; translate: 0 0; }
 
-    /* instagram: the phones fade in one by one, each as it comes into view (on phones they sit in a swipe row);
-       --i staggers the ones that appear together and is set by the script */
-    .js-reveal .phone {
-      opacity: 0; translate: 0 32px;
-      transition: opacity 1s ease calc(var(--i, 0) * .18s), translate 1s cubic-bezier(.22, .8, .3, 1) calc(var(--i, 0) * .18s);
-    }
-    .js-reveal .phone.in-view { opacity: 1; translate: 0 0; }
+    /* instagram: the phones fade in one by one */
+    .js-reveal .phone { opacity: 0; translate: 0 32px; transition: opacity 1s ease, translate 1s cubic-bezier(.22, .8, .3, 1); }
+    .js-reveal .phone-slot:nth-child(2) .phone { transition-delay: .18s; }
+    .js-reveal .phone-slot:nth-child(3) .phone { transition-delay: .36s; }
+    .js-reveal .insta.in-view .phone { opacity: 1; translate: 0 0; }
 
-    /* reviews: the outline draws itself card by card, then the text fades in; each card starts as it comes into
-       view (the cards are a swipe row), and --i (set by the script) staggers the cards that appear together */
+    /* reviews: the outline draws itself card by card, then the text fades in */
+    .reviews__track > li:nth-child(2) { --i: 1; }
+    .reviews__track > li:nth-child(3) { --i: 2; }
+    .reviews__track > li:nth-child(4) { --i: 3; }
     .js-reveal .review::before {
       transform: scaleX(0); transform-origin: 0 0;
       transition: transform .7s cubic-bezier(.65, 0, .35, 1) calc(var(--i, 0) * .2s);
@@ -768,11 +768,11 @@
       transition: opacity .7s ease, translate .8s cubic-bezier(.22, .8, .3, 1);
       transition-delay: calc(var(--i, 0) * .2s + 1.25s);
     }
-    .js-reveal .reviews__track > .in-view .review::before { transform: scaleX(1); }
-    .js-reveal .reviews__track > .in-view .review::after { transform: scaleY(1); }
-    .js-reveal .reviews__track > .in-view .review blockquote { color: var(--ink-soft); }
-    .js-reveal .reviews__track > .in-view .review__mark path { stroke-dashoffset: 0; fill-opacity: 1; }
-    .js-reveal .reviews__track > .in-view .review figcaption { opacity: 1; translate: 0 0; }
+    .js-reveal .reviews.in-view .review::before { transform: scaleX(1); }
+    .js-reveal .reviews.in-view .review::after { transform: scaleY(1); }
+    .js-reveal .reviews.in-view .review blockquote { color: var(--ink-soft); }
+    .js-reveal .reviews.in-view .review__mark path { stroke-dashoffset: 0; fill-opacity: 1; }
+    .js-reveal .reviews.in-view .review figcaption { opacity: 1; translate: 0 0; }
 
     /* general text reveal: elements with .reveal fade up when they come into view; --step staggers them */
     .js-reveal .reveal {
@@ -1302,6 +1302,7 @@
   // Watching that part (not the whole section) keeps it right on phones, where sections are much taller.
   const revealParts = {
     '.about__media': '.about__photo', '.kickoff': '.kickoff__intro', '.plans-section': '.plans',
+    '.insta': '.insta__posts', '.reviews': '.reviews__track',
   };
   const revealIO = new IntersectionObserver(entries => entries.forEach(entry => {
     if (!entry.isIntersecting) return;
@@ -1312,19 +1313,6 @@
     const el = document.querySelector(`${section} ${part}`) || document.querySelector(section);
     if (el) revealIO.observe(el);
   });
-  // swipe rows (instagram phones, review cards): each item reveals once it is actually in view, also when it is
-  // swiped in sideways later; items that come into view together get a stagger index (--i) in page order
-  const itemIO = new IntersectionObserver(entries => {
-    entries.filter(entry => entry.isIntersecting)
-      .sort((a, b) => a.target.compareDocumentPosition(b.target) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1)
-      .forEach((entry, i) => {
-        entry.target.style.setProperty('--i', i);
-        entry.target.classList.add('in-view');
-        itemIO.unobserve(entry.target);
-      });
-  }, { rootMargin: '0px 0px -15% 0px', threshold: .3 });
-  document.querySelectorAll('.insta .phone, .reviews__track > li').forEach(el => itemIO.observe(el));
-
   // the footer form comes down only once its top edge is above the lower 40% of the screen,
   // so its whole descent plays in view rather than below the fold
   const formIO = new IntersectionObserver(([entry]) => {
