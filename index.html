@@ -791,7 +791,8 @@
        It starts lying flat overhead; its top edge slides forward along the ceiling rail while its bottom edge
        slides down the front rail (like a ladder sliding down a wall), until it stands upright in its place.
        --tilt is the angle from upright (90deg = flat overhead); it starts at 72deg, since before ~80deg the sheet
-       is above eye level and you would see its back. Rotating about the top edge by --tilt and pushing
+       is above eye level and you would see its back. Meanwhile it slides in from the right at a slight angle and
+       straightens out, like a card being swapped in front of another. Rotating about the top edge by --tilt and pushing
        that edge back by sin(--tilt) of the sheet's height keeps the bottom edge on the front rail. The push is a
        translateY(%) turned into depth between two quarter turns, since translateZ takes no percentages; the first
        translateY puts the eye at the sheet's middle height, so the sheet overhead is seen from below. */
@@ -808,7 +809,7 @@
     .form__actions { --n: 5; }
     .js-reveal .form > * {
       opacity: 0; translate: 0 10px;
-      transition: opacity .7s ease calc(var(--n, 0) * .1s + 1s), translate .8s cubic-bezier(.22, .8, .3, 1) calc(var(--n, 0) * .1s + 1s);
+      transition: opacity .7s ease calc(var(--n, 0) * .1s + .75s), translate .8s cubic-bezier(.22, .8, .3, 1) calc(var(--n, 0) * .1s + .75s);
     }
     .js-reveal .contact.in-view .form > * { opacity: 1; translate: 0 0; }
 
@@ -817,9 +818,9 @@
   }
   @property --tilt { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
   @keyframes sheet-down {
-    0%   { --tilt: 72deg; opacity: 0; box-shadow: 0 0 0 rgba(0, 0, 0, 0), 0 0 0 -24px rgba(0, 0, 0, 0); }
+    0%   { --tilt: 72deg; translate: 10% 4%; rotate: 7deg; opacity: 0; box-shadow: 0 0 0 rgba(0, 0, 0, 0), 0 0 0 -24px rgba(0, 0, 0, 0); }
     12%  { opacity: 1; }
-    100% { --tilt: 0deg; opacity: 1; box-shadow: 0 1px 2px rgba(0, 0, 0, .06), 0 20px 44px -24px rgba(0, 0, 0, .3); }
+    100% { --tilt: 0deg; translate: 0 0; rotate: 0deg; opacity: 1; box-shadow: 0 1px 2px rgba(0, 0, 0, .06), 0 20px 44px -24px rgba(0, 0, 0, .3); }
   }
   @keyframes card-shake {
     0%, 100% { rotate: 0deg; }
@@ -1287,7 +1288,7 @@
   // Watching that part (not the whole section) keeps it right on phones, where sections are much taller.
   const revealParts = {
     '.about__media': '.about__photo', '.kickoff': '.kickoff__intro', '.plans-section': '.plans',
-    '.insta': '.insta__posts', '.reviews': '.reviews__track', '.contact': '.form',
+    '.insta': '.insta__posts', '.reviews': '.reviews__track',
   };
   const revealIO = new IntersectionObserver(entries => entries.forEach(entry => {
     if (!entry.isIntersecting) return;
@@ -1298,6 +1299,14 @@
     const el = document.querySelector(`${section} ${part}`) || document.querySelector(section);
     if (el) revealIO.observe(el);
   });
+  // the footer form comes down only once its top edge is above the lower 40% of the screen,
+  // so its whole descent plays in view rather than below the fold
+  const formIO = new IntersectionObserver(([entry]) => {
+    if (!entry.isIntersecting) return;
+    document.getElementById('contact').classList.add('in-view');
+    formIO.disconnect();
+  }, { rootMargin: '0px 0px -40% 0px' });
+  formIO.observe(document.getElementById('contact-form'));
 
   // general text reveals
   const textIO = new IntersectionObserver(entries => entries.forEach(entry => {
