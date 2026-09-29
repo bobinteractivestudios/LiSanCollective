@@ -733,11 +733,12 @@
     }
     .js-reveal .about__media.in-view .about__photo { opacity: 1; rotate: 0deg; translate: 0 0; }
 
-    /* instagram: the phones fade in one by one */
+    /* instagram: the phones fade in one by one, each only once its post has arrived from Instagram
+       (.is-loaded, set by the script), so the post doesn't pop into an empty phone */
     .js-reveal .phone { opacity: 0; translate: 0 32px; transition: opacity 1s ease, translate 1s cubic-bezier(.22, .8, .3, 1); }
     .js-reveal .phone-slot:nth-child(2) .phone { transition-delay: .18s; }
     .js-reveal .phone-slot:nth-child(3) .phone { transition-delay: .36s; }
-    .js-reveal .insta.in-view .phone { opacity: 1; translate: 0 0; }
+    .js-reveal .insta.in-view .phone.is-loaded { opacity: 1; translate: 0 0; }
 
     /* reviews: the outline draws itself card by card, then the text fades in */
     .reviews__track > li:nth-child(2) { --i: 1; }
@@ -1267,7 +1268,20 @@
   document.fonts.ready.then(drawRope);
   new ResizeObserver(drawRope).observe(ropeList);
 
-  // no form service connected yet: keep the page (and the visitor's details) from submitting anywhere
+  // instagram: the embed script swaps each blockquote for an iframe that loads the post later; mark the phone
+  // as loaded once that iframe is in (plus a moment for Instagram to size it), or after 6s if it never comes
+  document.querySelectorAll('.insta .phone').forEach(phone => {
+    const loaded = () => phone.classList.add('is-loaded');
+    setTimeout(loaded, 6000);
+    const watchFrame = () => {
+      const frame = phone.querySelector('iframe');
+      if (!frame) return false;
+      frame.addEventListener('load', () => setTimeout(loaded, 300), { once: true });
+      return true;
+    };
+    if (!watchFrame()) new MutationObserver((_, mo) => { if (watchFrame()) mo.disconnect(); }).observe(phone, { childList: true, subtree: true });
+  });
+
   // no form service connected yet: keep the page (and the visitor's details) from submitting anywhere,
   // just roll the purple thank-you panel down over the footer
   document.getElementById('contact-form').addEventListener('submit', e => {
