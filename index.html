@@ -798,7 +798,7 @@
        translateY puts the eye at the sheet's middle height, so the sheet overhead is seen from below.
        The keyframes hold these transforms precomputed (plain transforms, so the GPU can run them smoothly). */
     .js-reveal .form { opacity: 0; transform-origin: 50% 0; }
-    .js-reveal .contact.in-view .form { animation: sheet-down 1.2s linear both; }
+    .js-reveal .contact.in-view .form { opacity: 1; animation: sheet-down 1.2s linear both; }
     .form__field:nth-of-type(2) { --n: 1; }
     .form__field:nth-of-type(3) { --n: 2; }
     .form__field:nth-of-type(4) { --n: 3; }
@@ -834,7 +834,7 @@
      85% { transform: translate(0.14%, 0.05%) rotate(0.09deg) translateY(50%) perspective(1400px) translateY(-50%) rotateX(-90deg) translateY(1.7%) rotateX(90deg) rotateX(0.97deg); }
      90% { transform: translate(0.06%, 0.02%) rotate(0.04deg) translateY(50%) perspective(1400px) translateY(-50%) rotateX(-90deg) translateY(0.72%) rotateX(90deg) rotateX(0.41deg); }
      95% { transform: translate(0.01%, 0.01%) rotate(0.01deg) translateY(50%) perspective(1400px) translateY(-50%) rotateX(-90deg) translateY(0.17%) rotateX(90deg) rotateX(0.1deg); }
-    100% { transform: translate(0%, 0%) rotate(0deg) translateY(50%) perspective(1400px) translateY(-50%) rotateX(-90deg) translateY(0%) rotateX(90deg) rotateX(0deg); }
+    100% { opacity: 1; transform: translate(0%, 0%) rotate(0deg) translateY(50%) perspective(1400px) translateY(-50%) rotateX(-90deg) translateY(0%) rotateX(90deg) rotateX(0deg); }
   }
   @keyframes card-shake {
     0%, 100% { rotate: 0deg; }
