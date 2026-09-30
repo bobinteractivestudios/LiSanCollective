@@ -1374,12 +1374,13 @@
   addEventListener('scroll', () => { if (!logoTick) { logoTick = true; requestAnimationFrame(updateLogo); } }, { passive: true });
   updateLogo();
 
-  // clicking the logo while it is still the logo (not the arrow) reloads the page, replaying the hero entrance
+  // clicking the logo while it is still the logo (not the arrow) reloads the home page, replaying the hero entrance;
+  // loaded without any #hash, so it never lands back on e.g. #contact
   siteLogo.addEventListener('click', e => {
     if (logoIsArrow) return;
     e.preventDefault();
     scrollTo(0, 0);
-    location.reload();
+    location.replace(location.pathname + location.search);
   });
 
   // hovering the arrow: the construction lines reach further toward the top-left corner
