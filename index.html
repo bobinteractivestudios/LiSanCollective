@@ -7,7 +7,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Corinthia&family=Nothing+You+Could+Do&family=Parisienne&family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
-<script>document.documentElement.classList.add('js-reveal');   /* scroll reveals are armed only when JS runs */</script>
+<script>
+  document.documentElement.classList.add('js-reveal');   /* scroll reveals are armed only when JS runs */
+  setTimeout(() => document.documentElement.classList.add('hero-landing'), 3000);   /* the hero photo comes down even if the handwriting never loads */
+</script>
 <style>
   /* ---------- page ---------- */
   :root {
@@ -39,8 +42,13 @@
   .hero__img {
     position: absolute; top: 0; left: 50%; translate: -50% 0;
     height: 102.5%; width: auto; max-width: none;   /* extra 2.5% pushes the floor strip out of view */
-    -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
-            mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+    /* the bottom fade hides the floor strip while the photo is still coming down from above */
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent),
+                        linear-gradient(to bottom, #000 92%, transparent 97.5%);
+    -webkit-mask-composite: source-in;
+            mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent),
+                        linear-gradient(to bottom, #000 92%, transparent 97.5%);
+            mask-composite: intersect;
   }
   .site-logo {
     position: fixed; z-index: 11;   /* stays in the corner; once you scroll it becomes a "back to top" arrow */
@@ -90,17 +98,20 @@
     .hero__quote-l .hq-line:last-child { margin-right: 0; }   /* centred like the rest */
     .hero__quote-r { top: auto; bottom: 84px; }   /* just clears the contact button */
   }
-  /* hero entry, the exit played backwards: the photo slides down into place from a blur, and each handwritten line
-     drops in like a balloon coming down (from above, larger, blurred, see-through) while it is being written.
+  /* hero entry, the exit played backwards: the photo and the handwritten lines come down together from the sky,
+     slowing as they land, while they blur and fade in; the lines are written on the way down.
      The entry moves the photo with translate and filter and the exit with transform and opacity, so the two never
-     fight; the lines drop on their inner elements, the exit floats the line around them. The script adds .is-writing
-     to a line as its pen starts */
+     fight; the lines drop on their inner elements, the exit floats the line around them.
+     Photo and lines come down from the same height on the same curve: the script adds .hero-landing to <html>
+     once the handwriting is ready (that's when the photo starts), and .is-writing to each line a beat after it */
+  .hero { --fall: 2.4s; --sky: -36vh; --land: cubic-bezier(.25, .55, .35, 1); }
   @media (prefers-reduced-motion: no-preference) {
-    .hero__img { animation: hero-in 1.4s cubic-bezier(.2, .7, .3, 1) both; }
-    .hero__quote .hq-line.is-writing > * { animation: hero-drop 1.4s cubic-bezier(.2, .7, .3, 1) both; }
+    .hero__img { animation: hero-in var(--fall) var(--land) both; }
+    .js-reveal:not(.hero-landing) .hero__img { animation-play-state: paused; }   /* waits up there for the handwriting */
+    .hero__quote .hq-line.is-writing > * { animation: hero-drop var(--fall) var(--land) both; }
   }
-  @keyframes hero-in { from { translate: -50% -6vh; filter: blur(16px) opacity(0); } }
-  @keyframes hero-drop { from { transform: translateY(-8vh) scale(1.12); opacity: 0; filter: blur(10px); } }
+  @keyframes hero-in   { 0% { translate: -50% var(--sky); filter: blur(16px) opacity(0); } 55% { filter: none; } 100% { translate: -50% 0; filter: none; } }
+  @keyframes hero-drop { 0% { translate: 0 var(--sky); opacity: 0; filter: blur(10px); } 55% { opacity: 1; filter: none; } 100% { translate: 0 0; } }
 
   /* hero exit: scrolling away, the handwriting floats up like balloons, each line a bit faster than the one below it,
      so they drift apart, and dissolves (grows, blurs, fades) while still in view; the photo stays behind (moves up
@@ -109,8 +120,8 @@
   @supports (animation-timeline: view()) {
     @media (prefers-reduced-motion: no-preference) {
       .hero { view-timeline: --hero block; }
-      .hero__img {   /* after the entry (see below), which runs on its own clock */
-        animation: hero-in 1.4s cubic-bezier(.2, .7, .3, 1) both, hero-stay linear both;
+      .hero__img {   /* after the entry (see above), which runs on its own clock */
+        animation: hero-in var(--fall) var(--land) both, hero-stay linear both;
         animation-timeline: auto, --hero; animation-range: normal, exit 0% exit 100%;
       }
       .hero__quote .hq-line {
@@ -1379,9 +1390,10 @@
   // hero lines in handwriting: Tegaki draws each line in its Parisienne font stroke by stroke, the lines starting just after each other and writing side by side.
   // Without Tegaki (offline CDN, old browser) the typed lines in the script font stay in place.
   const quote = document.querySelector('.hero__quote');
-  const START = .4;                    // s after the page began that the first line starts writing
-  const SPEED = 14;                    // one playback speed for all lines; Tegaki's own pace (speed 1) takes ~48s for the sentence
-  const STAGGER = 0.25;                // s between one line starting and the next; after that they write side by side
+  const START = .3;                    // s after the page began that the photo starts coming down
+  const SPEED = 9;                     // one playback speed for all lines; Tegaki's own pace (speed 1) takes ~48s for the sentence
+  const LEAD = 0.25;                   // s the photo starts before the first line
+  const STAGGER = 0.18;                // s between one line and the next; they write side by side
   // each line is one breath out: the pen starts at `start` × Tegaki's pace, swells to ~1.3× in the middle and
   // eases off to `end` × at the last letters. The pace follows a smooth curve (a parabola) whose area is 1,
   // so the line still takes Tegaki's own time; the easing maps that time to how far along the line the pen is
@@ -1417,10 +1429,14 @@
       timing: { strokeEasing },
       onComplete: () => el.pause(),   // stops the line's frame loop, which otherwise keeps ticking after it is written
     }));
-    els.forEach((el, i) => setTimeout(() => write(el), Math.max(0, (START + i * STAGGER) * 1000 - performance.now())));
+    setTimeout(() => {
+      document.documentElement.classList.add('hero-landing');   // the photo starts coming down…
+      els.forEach((el, i) => setTimeout(() => write(el), (LEAD + i * STAGGER) * 1000));   // …and the lines a moment later, one beat apart
+    }, Math.max(0, START * 1000 - performance.now()));
     quote.classList.add('tg');
   } catch (err) {
     quote.classList.add('tg-failed');
+    document.documentElement.classList.add('hero-landing');
     console.warn('Tegaki handwriting unavailable', err);
   }
 </script>
