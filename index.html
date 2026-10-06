@@ -6,7 +6,7 @@
 <title>Li'San collective — interior projects</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Corinthia&family=Nothing+You+Could+Do&family=Parisienne&family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Corinthia&family=Nothing+You+Could+Do&family=Poppins:wght@300;400;700&family=Tangerine&display=swap" rel="stylesheet">
 <script>document.documentElement.classList.add('js-reveal');   /* scroll reveals are armed only when JS runs */</script>
 <style>
   /* ---------- page ---------- */
@@ -58,10 +58,10 @@
   .hero__quote { margin: 0; }
   .hero__quote > span {
     position: absolute; z-index: 1;
-    font-family: Parisienne, cursive;
+    font-family: Tangerine, cursive;
     color: var(--brand); font-weight: 400; line-height: 1.15; letter-spacing: 0;
-    /* fits beside the photo: the widest line ("een goed interieur") is ~6.3em, the space per side is 50vw − 29vh */
-    font-size: min(clamp(32px, 4.4vw, 72px), calc((50vw - 29vh - 40px) / 6.5));
+    /* fits beside the photo: the widest line ("een goed interieur") is ~3.8em, the space per side is 50vw − 29vh */
+    font-size: min(clamp(48px, 7vw, 120px), calc((50vw - 29vh - 40px) / 4.1));
     white-space: nowrap;
   }
   .hero__quote-l { top: 36%; right: calc(50% + 29vh); text-align: right; }
@@ -79,7 +79,7 @@
                           linear-gradient(to bottom, transparent, #000 12%, #000 84%, transparent 97%);   /* fully fades the floor strip at the bottom of the photo */
               mask-composite: intersect;
     }
-    .hero__quote > span { font-size: clamp(40px, 11.5vw, 74px); }
+    .hero__quote > span { font-size: clamp(56px, 19vw, 110px); }
     .hero__quote > span { left: 16px; right: 16px; text-align: center; }
     .hero__quote-l { top: 14%; }
     .hero__quote-r { top: auto; bottom: 84px; }   /* leaves room for the scroll line */
@@ -90,7 +90,7 @@
   .hero { --hero-start: 6.2s; }
   .hero__img { animation: hero-zoom 1.4s cubic-bezier(.77, 0, .18, 1) .2s both; }   /* accelerate, move, decelerate: clicks into place */
   @keyframes hero-zoom { from { scale: 1.25; } to { scale: 1; } }
-  /* each line is a <tegaki-renderer> drawing Tegaki's Parisienne stroke by stroke; the typed text stays for screen
+  /* each line is a <tegaki-renderer> drawing Tegaki's Tangerine stroke by stroke; the typed text stays for screen
      readers and is shown instead if Tegaki can't load. Font size comes from the rules above */
   .hq-line tegaki-renderer { display: none; color: inherit; }
   .hero__quote.tg .hq-line tegaki-renderer { display: inline-block; }
@@ -1241,7 +1241,7 @@
 
 <script async src="https://www.instagram.com/embed.js"></script>
 <script type="module">
-  // hero lines in handwriting: Tegaki draws each line in its Parisienne font stroke by stroke, one line after another.
+  // hero lines in handwriting: Tegaki draws each line in its Tangerine font stroke by stroke, one line after another.
   // Without Tegaki (offline CDN, old browser) the typed lines in the script font stay in place.
   const quote = document.querySelector('.hero__quote');
   const START = 1;                     // s after the page began that the first line starts writing
@@ -1250,10 +1250,9 @@
   try {
     const [{ registerTegakiElement, TegakiEngine }, { default: font }] = await Promise.all([
       import('https://cdn.jsdelivr.net/npm/tegaki@1.0.3/dist/wc/index.mjs'),
-      import('https://cdn.jsdelivr.net/npm/tegaki@1.0.3/dist/fonts/parisienne/bundle.mjs'),
+      import('https://cdn.jsdelivr.net/npm/tegaki@1.0.3/dist/fonts/tangerine/bundle.mjs'),
     ]);
     TegakiEngine.registerBundle(font);
-    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     let t = Math.max(0, START - performance.now() / 1000);
     quote.querySelectorAll('tegaki-renderer').forEach((el, i) => {
       el.setAttribute('font', font.family);
