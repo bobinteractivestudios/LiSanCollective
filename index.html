@@ -579,10 +579,11 @@
   .form label { font-weight: 700; font-size: 13px; letter-spacing: .02em; color: #8a8683; }
   .form input, .form textarea {
     width: 100%; border: 0; border-bottom: 1.5px solid rgba(20, 18, 17, .18); border-radius: 0; background: transparent;
-    padding: 4px 2px 10px; font: 400 21px/1.4 "Nothing You Could Do", cursive; color: #171514;
+    padding: 4px 2px 10px; font: 400 16px/30px Poppins, sans-serif; color: #000;   /* what you type: Poppins, black */
   }
   .form textarea { min-height: 120px; resize: vertical; }
-  .form ::placeholder { color: rgba(20, 18, 17, .3); font-weight: 400; opacity: 1; }
+  /* the placeholders stay handwritten; the fixed 30px line height keeps the field from jumping when typing starts */
+  .form ::placeholder { color: rgba(20, 18, 17, .3); font: 400 21px/30px "Nothing You Could Do", cursive; opacity: 1; }
   .form input:focus-visible, .form textarea:focus-visible { outline: none; border-bottom-color: #171514; }
   .form__actions { display: flex; align-items: center; gap: 16px; }
   .form__submit {
