@@ -6,7 +6,7 @@
 <title>Li'San collective — interior projects</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Corinthia&family=Nothing+You+Could+Do&family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Corinthia&family=Nothing+You+Could+Do&family=Parisienne&family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
 <script>document.documentElement.classList.add('js-reveal');   /* scroll reveals are armed only when JS runs */</script>
 <style>
   /* ---------- page ---------- */
@@ -58,10 +58,10 @@
   .hero__quote { margin: 0; }
   .hero__quote > span {
     position: absolute; z-index: 1;
-    font-family: Corinthia, cursive;
-    color: var(--brand); font-weight: 400; line-height: 1; letter-spacing: 0;
-    /* fits beside the photo: the widest line ("een goed interieur") is ~4.1em, the space per side is 50vw − 29vh */
-    font-size: min(clamp(40px, 5.6vw, 92px), calc((50vw - 29vh - 40px) / 4.3));
+    font-family: Parisienne, cursive;
+    color: var(--brand); font-weight: 400; line-height: 1.15; letter-spacing: 0;
+    /* fits beside the photo: the widest line ("een goed interieur") is ~6.3em, the space per side is 50vw − 29vh */
+    font-size: min(clamp(32px, 4.4vw, 72px), calc((50vw - 29vh - 40px) / 6.5));
     white-space: nowrap;
   }
   .hero__quote-l { top: 36%; right: calc(50% + 29vh); text-align: right; }
@@ -84,28 +84,20 @@
     .hero__quote-l { top: 14%; }
     .hero__quote-r { top: auto; bottom: 84px; }   /* leaves room for the scroll line */
   }
-  /* hero entry: the photo zooms out straight away (alongside the logo); once the logo has finished
-     (--hero-start, ~6.2s) the handwriting writes itself line by line, then the scroll line appears */
+  /* hero entry: the photo zooms out straight away (alongside the logo), the handwriting writes itself
+     line by line (Tegaki, see the script at the end), and once the logo has finished (--hero-start, ~6.2s)
+     the scroll line appears */
   .hero { --hero-start: 6.2s; }
   .hero__img { animation: hero-zoom 1.4s cubic-bezier(.77, 0, .18, 1) .2s both; }   /* accelerate, move, decelerate: clicks into place */
   @keyframes hero-zoom { from { scale: 1.25; } to { scale: 1; } }
-  .hq-line {
-    display: inline-block;
-    clip-path: inset(-30% 100% -40% -15%);   /* extra room so the swashes of the script aren't cut */
-    animation: hq-write var(--d) cubic-bezier(.45, .05, .55, .95) var(--t) forwards;
-  }
-  .hq-1 { --t: var(--hero-start);              --d: 1.2s; }   /* een goed interieur */
-  .hq-2 { --t: calc(var(--hero-start) + 1.2s); --d: .7s; }    /* begint met */
-  .hq-3 { --t: calc(var(--hero-start) + 2.1s); --d: 1.1s; }   /* een goed gesprek */
-  @keyframes hq-write { to { clip-path: inset(-30% -15% -40% -15%); } }
-  /* handwritten version (handwriting.js): each line is a canvas that redraws the recorded pen strokes;
-     the typed text stays for screen readers. Sizes are in em, so the existing font-size rules still apply */
-  .hero__quote.hw .hq-line { clip-path: none; animation: none; }
-  .hq-line canvas { display: none; }
-  .hero__quote.hw .hq-line canvas { display: inline-block; }
-  .hero__quote.hw .hq-text {
+  /* each line is a <tegaki-renderer> drawing Tegaki's Parisienne stroke by stroke; the typed text stays for screen
+     readers and is shown instead if Tegaki can't load. Font size comes from the rules above */
+  .hq-line tegaki-renderer { display: none; color: inherit; }
+  .hero__quote.tg .hq-line tegaki-renderer { display: inline-block; }
+  .hero__quote.tg .hq-text {
     position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
   }
+  .js-reveal .hero__quote:not(.tg, .tg-failed) .hq-text { visibility: hidden; }   /* no flash of typed text while Tegaki loads */
 
   /* scroll cue: a thin vertical line at the bottom of the hero, with a short stroke running down it */
   .hero__scroll {
@@ -130,8 +122,7 @@
     100% { transform: translateY(150%) scaleY(0); transform-origin: bottom; }   /* runs off at the bottom */
   }
   @media (prefers-reduced-motion: reduce) {
-    .hero__img, .hq-line, .hero__scroll, .hero__scroll::after { animation: none; }
-    .hq-line { clip-path: none; }
+    .hero__img, .hero__scroll, .hero__scroll::after { animation: none; }
     .hero__scroll { opacity: 1; }
   }
 
@@ -898,8 +889,8 @@
   </a>
 
   <p class="hero__quote">
-    <span class="hero__quote-l"><span class="hq-line hq-1"><span class="hq-text">een goed interieur</span><canvas aria-hidden="true"></canvas></span><br><span class="hq-line hq-2"><span class="hq-text">begint met</span><canvas aria-hidden="true"></canvas></span></span>
-    <span class="hero__quote-r"><span class="hq-line hq-3"><span class="hq-text">een goed gesprek</span><canvas aria-hidden="true"></canvas></span></span>
+    <span class="hero__quote-l"><span class="hq-line"><span class="hq-text">een goed interieur</span><tegaki-renderer text="een goed interieur" aria-hidden="true"></tegaki-renderer></span><br><span class="hq-line"><span class="hq-text">begint met</span><tegaki-renderer text="begint met" aria-hidden="true"></tegaki-renderer></span></span>
+    <span class="hero__quote-r"><span class="hq-line"><span class="hq-text">een goed gesprek</span><tegaki-renderer text="een goed gesprek" aria-hidden="true"></tegaki-renderer></span></span>
   </p>
 
 <a class="hero__scroll" href="#about" aria-label="Scroll verder"></a>
@@ -1249,7 +1240,35 @@
 </a>
 
 <script async src="https://www.instagram.com/embed.js"></script>
-<script src="handwriting.js"></script>
+<script type="module">
+  // hero lines in handwriting: Tegaki draws each line in its Parisienne font stroke by stroke, one line after another.
+  // Without Tegaki (offline CDN, old browser) the typed lines in the script font stay in place.
+  const quote = document.querySelector('.hero__quote');
+  const START = 1;                     // s after the page began that the first line starts writing
+  const DURATIONS = [1.6, 1, 1.5];     // s per line, whatever the font's own pace
+  const LINE_GAP = 0.15;               // s between one line finishing and the next starting
+  try {
+    const [{ registerTegakiElement, TegakiEngine }, { default: font }] = await Promise.all([
+      import('https://cdn.jsdelivr.net/npm/tegaki@1.0.3/dist/wc/index.mjs'),
+      import('https://cdn.jsdelivr.net/npm/tegaki@1.0.3/dist/fonts/parisienne/bundle.mjs'),
+    ]);
+    TegakiEngine.registerBundle(font);
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let t = Math.max(0, START - performance.now() / 1000);
+    quote.querySelectorAll('tegaki-renderer').forEach((el, i) => {
+      el.setAttribute('font', font.family);
+      el.setAttribute('duration', DURATIONS[i]);
+      el.setAttribute('delay', t);
+      el.setAttribute('reduced-motion', 'user');
+      t += DURATIONS[i] + LINE_GAP;
+    });
+    registerTegakiElement();
+    quote.classList.add('tg');
+  } catch (err) {
+    quote.classList.add('tg-failed');
+    console.warn('Tegaki handwriting unavailable', err);
+  }
+</script>
 <script>
   // rope: threads through the punched holes of the step cards (cards are tilted, so measure the real points)
   const ropeList = document.querySelector('.usps');
@@ -1404,95 +1423,6 @@
     block.addEventListener('mouseenter', () => { if (logoIsArrow) hoverIn.forEach(a => a.beginElement()); });
     block.addEventListener('mouseleave', () => { if (logoIsArrow) hoverOut.forEach(a => a.beginElement()); });
   }
-
-  // hero lines in real handwriting: replays the Apple Pencil strokes from handwriting.js
-  // (recorded with the "Schrijfblok" page). Without that data the typed script font stays in place.
-  (function handwriting() {
-    const data = window.LISAN_HANDWRITING;
-    const quote = document.querySelector('.hero__quote');
-    if (!data || !data.lines || !quote) return;
-    const CAP = 0.62;        // cap height of the handwriting in em of the line's font-size (matches the script font)
-    const MAX_GAP = 250;     // ms: pauses between strokes are shortened to this
-    const LINE_GAP = 150;    // ms between one line finishing and the next starting
-    const START = 1000;      // ms after the page began that the first line starts writing
-    const DURATIONS = [1600, 1000, 1500];   // ms per line: the recording is squeezed into this, whatever its own pace
-    const pen = { width: 0.06, speed: 1.4, ...data.pen };
-    const unflat = a => { const o = []; for (let i = 0; i < a.length; i += 4) o.push(a.slice(i, i + 4)); return o; };
-
-    const lines = [...quote.querySelectorAll('.hq-line')].map((el, i) => {
-      const rec = data.lines[i], strokes = rec && rec.strokes && rec.strokes.length ? rec.strokes.map(unflat) : null;
-      return strokes && { el, canvas: el.querySelector('canvas'), strokes };
-    });
-    if (lines.some(l => !l)) return;   // only switch over once all three lines are written
-
-    lines.forEach((l, i) => {
-      // bounding box (in handwriting units, 1 = baseline to cap line), padded by the pen width
-      const pad = pen.width;
-      let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
-      l.strokes.flat().forEach(([x, y]) => { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); });
-      l.box = { x0: x0 - pad, y0: y0 - pad, w: x1 - x0 + 2 * pad, h: y1 - y0 + 2 * pad };
-      l.canvas.style.width = l.box.w * CAP + 'em';
-      l.canvas.style.height = l.box.h * CAP + 'em';
-      l.canvas.style.verticalAlign = -(y1 + pad) * CAP + 'em';   // the recorded baseline sits on the text baseline
-      // timeline: recorded timing divided by speed, long pauses between strokes shortened
-      let offset = 0, prevEnd = null;
-      l.tl = l.strokes.map(s => {
-        const t0 = s[0][3];
-        if (prevEnd !== null) offset += Math.min(Math.max(t0 - prevEnd, 0), MAX_GAP) - (t0 - prevEnd);
-        prevEnd = s[s.length - 1][3];
-        return { pts: s, times: s.map(p => p[3] + offset) };
-      });
-      const first = l.tl[0].times[0], k = DURATIONS[i] / (l.tl.at(-1).times.at(-1) - first || 1);
-      l.tl.forEach(s => { s.times = s.times.map(t => (t - first) * k); });
-      l.duration = DURATIONS[i];
-      l.progress = 0;
-    });
-    quote.classList.add('hw');
-
-    function draw(l) {
-      const c = l.canvas, r = c.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
-      if (!r.width) return;
-      if (c.width !== Math.round(r.width * dpr)) { c.width = Math.round(r.width * dpr); c.height = Math.round(r.height * dpr); }
-      const ctx = c.getContext('2d'), k = r.width / l.box.w;   // px per handwriting unit
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.clearRect(0, 0, r.width, r.height);
-      ctx.strokeStyle = ctx.fillStyle = getComputedStyle(l.el).color;
-      ctx.lineCap = ctx.lineJoin = 'round';
-      const w = pen.width * k, px = p => [(p[0] - l.box.x0) * k, (p[1] - l.box.y0) * k];
-      for (const s of l.tl) {
-        if (s.times[0] > l.progress) break;
-        if (s.pts.length === 1) {
-          const [x, y] = px(s.pts[0]);
-          ctx.beginPath(); ctx.arc(x, y, w * (0.2 + 0.8 * s.pts[0][2]) / 2, 0, 7); ctx.fill();
-          continue;
-        }
-        // quadratic curves through the midpoints, with each point as the control point, so there are no corners
-        const n = s.pts.length, mid = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
-        for (let i = 1; i < n && s.times[i] <= l.progress; i++) {
-          const a = s.pts[i - 1], b = s.pts[i];
-          const [sx, sy] = i === 1 ? px(a) : mid(px(s.pts[i - 2]), px(a)), [cx, cy] = px(a), [ex, ey] = mid(px(a), px(b));
-          ctx.lineWidth = w * (0.2 + 0.8 * (a[2] + b[2]) / 2);
-          ctx.beginPath(); ctx.moveTo(sx, sy); ctx.quadraticCurveTo(cx, cy, ex, ey);
-          if (i === n - 1) ctx.lineTo(...px(b));
-          ctx.stroke();
-        }
-      }
-    }
-    new ResizeObserver(() => lines.forEach(draw)).observe(quote);
-
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      lines.forEach(l => { l.progress = Infinity; draw(l); });
-      return;
-    }
-    // start START ms after the page began, lines one after another
-    let t = START;
-    lines.forEach(l => { l.start = t; t += l.duration + LINE_GAP; });
-    const end = t;
-    (function frame(now) {
-      lines.forEach(l => { const p = Math.max(0, now - l.start); if (p !== l.progress) { l.progress = p; draw(l); } });
-      if (now < end) requestAnimationFrame(frame);
-    })(performance.now());
-  })();
 
   // play the about header and footer logo animations once each scrolls into view
   const onView = document.querySelectorAll('.lisan-logo--header, .contact__logo');
