@@ -103,8 +103,7 @@
      It springs into view from just above. Then, every 2.6s, the pink line springs down from its top end
      (a real damped spring, written out as a CSS linear() curve, so it overshoots and wobbles into place), rests,
      gathers itself (its top lifts a touch: anticipation) and zips down into its bottom end. Pointing at it gives
-     it a springy "boop" down, a nudge in the scroll direction (the script adds .is-boop for a moment), and once
-     the page is scrolled it fades out of the way (.is-away). */
+     it a springy "boop" down, a nudge in the scroll direction (the script adds .is-boop for a moment). */
   .hero__scroll {
     --boop: linear(0, 0.079, 0.264, 0.487, 0.701, 0.877, 1.005, 1.084, 1.12, 1.125, 1.11, 1.084, 1.056, 1.03, 1.01, 0.996, 0.987, 0.984, 0.985, 0.987, 0.991, 0.994, 0.997, 0.999, 1.001, 1.002, 1.002, 1.002, 1.002, 1.001, 1);
     position: absolute; z-index: 2; left: 50%; bottom: clamp(24px, 5vh, 44px); translate: -50% 0;
@@ -116,9 +115,8 @@
   .hs-line {
     width: 3px; height: 40px; border-radius: 3px; background: var(--pink); transform: scaleY(0);
     animation: hs-run 2.6s calc(var(--hero-start) + 3.5s) infinite;
-    transition: opacity .4s ease, background .2s;
+    transition: background .2s;
   }
-  .hero__scroll.is-away .hs-line { opacity: 0; }
   .hero__scroll:hover .hs-line { background: var(--brand); }
   .hero__scroll:focus-visible { outline: 2px solid var(--brand); outline-offset: 4px; border-radius: 8px; }
   @keyframes hs-in { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: none; } }
@@ -331,7 +329,7 @@
   .insta__link:focus-visible, .insta__follow:focus-visible { outline: 2px solid var(--pink); outline-offset: 6px; }
   .insta__stats { display: flex; flex-wrap: wrap; gap: 4px 22px; margin: 10px 0 6px; padding: 0; list-style: none; font-size: 15px; }
   .insta__stats b { color: var(--pink); }
-  .insta__bio { margin: 0; font-size: 15px; line-height: 1.5; }
+  .insta__bio { margin: 0; font-size: 15px; line-height: 1.5; white-space: pre-line; }   /* keeps the bio's line breaks */
   .insta__follow {
     padding: 12px 22px; border: 1.5px solid var(--pink); border-radius: 999px;
     color: var(--pink); text-decoration: none; font-weight: 700; font-size: 15px; white-space: nowrap;
@@ -1393,10 +1391,10 @@
   const instagram = {
     profile: {
       username: 'lisancollective',
-      name: 'Li’San collective',                                                   // made up: no display name set
-      biography: 'Interieurontwerp met aandacht voor sfeer, vorm en detail · Lisanne & Sanne',   // made up
+      name: '',                                                                    // no display name set
+      biography: 'Li’San collective - interior design\nInfo@lisan.nl',
       profile_picture_url: 'insta-avatar.jpg',
-      followers_count: 369, follows_count: 75, media_count: 54,
+      followers_count: 369, follows_count: 74, media_count: 54,
     },
     media: [
       { id: 'DU6bUeOjIwF', media_type: 'IMAGE', media_url: 'insta-1.jpg', permalink: 'https://www.instagram.com/p/DU6bUeOjIwF/',
@@ -1583,16 +1581,12 @@
     location.replace(location.pathname + location.search);
   });
 
-  // scroll cue: a springy "boop" when you point at it, a quick nudge down that springs back (CSS does the spring),
-  // and it fades out of the way once the page is scrolled, back again at the top
+  // scroll cue: a springy "boop" when you point at it, a quick nudge down that springs back (CSS does the spring)
   const scrollCue = document.querySelector('.hero__scroll');
   scrollCue.addEventListener('pointerenter', () => {
     scrollCue.classList.add('is-boop');
     setTimeout(() => scrollCue.classList.remove('is-boop'), 140);
   });
-  const cueAway = () => scrollCue.classList.toggle('is-away', scrollY > innerHeight * .12);
-  addEventListener('scroll', cueAway, { passive: true });
-  cueAway();
 
   // hovering the arrow: the construction lines reach further toward the top-left corner
   if (matchMedia('(hover: hover)').matches) {
