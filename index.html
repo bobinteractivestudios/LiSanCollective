@@ -870,13 +870,6 @@
     .js-reveal .insta__profile > :nth-child(4) { --step: 3; }
     .js-reveal .insta__profile.is-visible > * { opacity: 1; translate: 0 0; }
 
-    /* footer: the welcome line fades up like the other paragraphs, once the footer logo has drawn its lines */
-    .js-reveal .contact__intro p {
-      opacity: 0; translate: 0 22px;
-      transition: opacity .9s ease 1.8s, translate .9s cubic-bezier(.22, .8, .3, 1) 1.8s;
-    }
-    .js-reveal .contact__logo.in-view ~ p { opacity: 1; translate: 0 0; }
-
     /* general text reveal: elements with .reveal fade up when they come into view; --step staggers them */
     .js-reveal .reveal {
       opacity: 0; translate: 0 22px;
@@ -1255,7 +1248,7 @@
         <text class="word w-tagline"    x="283" y="175" font-size="25" textLength="214" lengthAdjust="spacing">interior projects</text>
       </svg>
       <h2 id="contact-title" class="visually-hidden">Contact</h2>
-      <p>Welkom bij Li’San collective. Laat je gegevens achter, dan plannen we een vrijblijvende afspraak in!</p>
+      <p class="reveal">Welkom bij Li’San collective. Laat je gegevens achter, dan plannen we een vrijblijvende afspraak in!</p>
     </div>
 
     <!-- TODO: connect to a form service (e.g. Formspree / Netlify Forms) via action + method -->
