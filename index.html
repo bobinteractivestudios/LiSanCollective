@@ -313,10 +313,13 @@
   .insta { background: #fff; padding: clamp(72px, 10vw, 140px) 16px; overflow-x: clip; }
   .insta__inner { width: min(100%, 1120px); margin: 0 auto; display: grid; gap: clamp(32px, 4vw, 56px); }
   /* profile header (Instagram profile data), stacked: profile picture (our logo), follow button, handle, then three
-     big counters. Each label is sized by the script to exactly the width of its number */
+     big counters. The labels get one size from the script: the size at which "volgers" spans its number */
   .insta__profile { justify-self: center; display: grid; justify-items: center; gap: clamp(16px, 2vw, 24px); text-align: center; }
-  .insta__avatar { width: clamp(96px, 10vw, 136px); aspect-ratio: 1; border-radius: 50%; padding: 4px; border: 2px solid var(--pink); }
-  .insta__avatar img { display: block; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+  .insta__avatar {   /* equal width and height (not just aspect-ratio), so it is a perfect circle in every browser */
+    --size: clamp(96px, 10vw, 136px); display: block; flex: none; width: var(--size); height: var(--size);
+    border-radius: 50%; padding: 4px; border: 2px solid var(--pink);
+  }
+  .insta__avatar svg, .post__avatar svg { display: block; width: 100%; height: 100%; }
   .insta__follow {
     padding: .7em 1.6em; border: 2px solid var(--pink); border-radius: 999px;
     color: var(--pink); text-decoration: none; font-weight: 700; font-size: clamp(16px, 1.6vw, 20px); white-space: nowrap;
@@ -330,13 +333,15 @@
   .insta__link:hover { color: #c97f9f; }
   .insta__link:focus-visible, .insta__follow:focus-visible { outline: 2px solid var(--pink); outline-offset: 6px; }
   .insta__stats { display: flex; justify-content: center; gap: clamp(32px, 6vw, 80px); margin: clamp(12px, 2vw, 24px) 0 0; padding: 0; list-style: none; }
-  .insta__stats li { display: grid; justify-items: center; gap: 2px; }
+  .insta__stats li { display: grid; justify-items: center; gap: 2px; }   /* each label centred on its counter's axis */
   .insta__stats b, .insta__stats span { color: var(--pink); font-weight: 700; line-height: 1; white-space: nowrap; }
   .insta__stats b {
     font-size: clamp(40px, 6vw, 76px); letter-spacing: -.03em;
     font-variant-numeric: tabular-nums;   /* the digits keep their width while counting up */
+    transition: color 1.4s cubic-bezier(.2, .6, .3, 1);   /* cooling down from purple to pink once it has counted */
   }
-  .insta__stats span { font-size: 16px; }   /* until the script fits it to its number's width */
+  .insta__stats b.is-counting { color: var(--brand); transition: none; }   /* hot while it counts */
+  .insta__stats span { font-size: 16px; }   /* until the script sets the shared size */
   .insta__posts { display: grid; gap: 40px; justify-items: center; align-items: start; }
   .phone-slot { width: 100%; display: flex; justify-content: center; }
   @media (min-width: 1000px) {
@@ -386,7 +391,6 @@
     color: var(--pink); text-decoration: none; line-height: 1.25;
   }
   .post__avatar { width: 30px; height: 30px; flex: none; border-radius: 50%; padding: 1.5px; border: 1px solid var(--pink); }
-  .post__avatar img { display: block; width: 100%; height: 100%; border-radius: 50%; }
   .post__who { display: grid; min-width: 0; }
   .post__user { font-size: 12.5px; font-weight: 700; }
   .post__glyph { width: 22px; height: 22px; flex: none; margin-left: auto; }   /* the Instagram logo, at the right end of the bar */
@@ -945,6 +949,24 @@
 </style>
 </head>
 <body>
+<!-- the Instagram profile picture: our logo on a pink circle, drawn once and reused (<use href="#lisan-avatar">) -->
+<svg width="0" height="0" style="position: absolute" aria-hidden="true">
+  <symbol id="lisan-avatar" viewBox="0 0 200 200">
+    <circle cx="100" cy="100" r="100" fill="#db9bb6"/>
+    <g transform="translate(18.1 73.4) scale(.283)" font-family="Poppins, sans-serif">
+      <g fill="none" stroke="#3b0418" stroke-width="2.4">
+        <line x1="14" y1="37" x2="312" y2="37"/><line x1="55" y1="10" x2="55" y2="172"/>
+        <line x1="35" y1="143" x2="292" y2="143"/><line x1="263" y1="10" x2="263" y2="178"/>
+      </g>
+      <rect x="55" y="37" width="208" height="106" fill="#520521"/>
+      <g font-size="54" font-weight="700" letter-spacing="0.5" fill="#fff">
+        <text x="90" y="124">Li</text><text x="132.7" y="124">’</text><text x="150.1" y="124">San</text>
+      </g>
+      <text x="270" y="124" font-size="54" font-weight="700" letter-spacing="1.5" fill="#fff">collective</text>
+      <text x="283" y="175" font-size="25" font-weight="300" textLength="214" lengthAdjust="spacing" fill="#fff">interior projects</text>
+    </g>
+  </symbol>
+</svg>
 
 <header class="hero" id="top">
   <img class="hero__img" src="Hero.jpg" alt="Lisanne en Sanne van Li’San collective in gesprek op een houten bank">
@@ -1161,7 +1183,7 @@
     <div class="insta__inner">
       <!-- profile header and posts are filled in by the script from the Instagram data (see "instagram" there) -->
       <header class="insta__profile">
-        <span class="insta__avatar"><img data-ig="avatar" src="insta-avatar.jpg" width="100" height="100" alt=""></span>
+        <span class="insta__avatar"><svg viewBox="0 0 200 200" aria-hidden="true"><use href="#lisan-avatar"/></svg></span>
         <a class="insta__follow" data-ig="profile" href="https://www.instagram.com/lisancollective/" target="_blank" rel="noopener">Volg ons</a>
         <a class="insta__link" data-ig="profile" href="https://www.instagram.com/lisancollective/" target="_blank" rel="noopener" data-ig-handle>@lisancollective</a>
         <ul class="insta__stats" data-ig="stats"></ul>
@@ -1394,13 +1416,13 @@
   //   GET /me?fields=username,name,biography,profile_picture_url,followers_count,follows_count,media_count
   //   GET /me/media?fields=id,media_type,media_url,permalink,timestamp,caption,like_count,comments_count
   // Until a server function (or a daily script) fetches it, it lives here. Real values as of 6 Oct 2026, except the
-  // ones marked made up. media_url / profile_picture_url point to copies saved with the site.
+  // ones marked made up. media_url points to copies saved with the site.
   const instagram = {
     profile: {
       username: 'lisancollective',
       name: '',                                                                    // no display name set
       biography: 'Li’San collective - interior design',
-      profile_picture_url: 'insta-avatar.jpg',
+      profile_picture_url: '',   // not used: the site draws our logo (#lisan-avatar) instead of Instagram's small picture
       followers_count: 369, follows_count: 74, media_count: 54,
     },
     media: [
@@ -1423,34 +1445,41 @@
     const num = n => n.toLocaleString('nl-NL');
     const profileUrl = `https://www.instagram.com/${profile.username}/`;
     section.querySelectorAll('[data-ig="profile"]').forEach(a => a.href = profileUrl);
-    section.querySelector('[data-ig="avatar"]').src = profile.profile_picture_url;
     section.querySelector('[data-ig-handle]').textContent = '@' + profile.username;
     const stats = section.querySelector('[data-ig="stats"]');
     stats.innerHTML = [[profile.media_count, 'berichten'], [profile.followers_count, 'volgers'], [profile.follows_count, 'volgend']]
       .map(([n, label]) => `<li><b data-count="${n}">${num(n)}</b><span>${label}</span></li>`).join('');
-    // each label is sized to exactly the width of its number (measured at the final number, which also stays
-    // reserved as the number's width while it counts up); again whenever the layout changes size
+    // the labels all get one size: the size at which "volgers" is exactly as wide as its number. Each number's final
+    // width is measured and stays reserved while it counts up; again whenever the layout changes size
     const items = [...stats.children].map(li => ({ b: li.querySelector('b'), label: li.querySelector('span') }));
-    const fitLabels = () => items.forEach(({ b, label }) => {
-      const shown = b.textContent;
-      b.style.minWidth = ''; b.textContent = num(+b.dataset.count);
-      const w = b.getBoundingClientRect().width;
-      b.style.minWidth = w + 'px'; b.textContent = shown;
+    const fitLabels = () => {
+      items.forEach(({ b }) => {
+        const shown = b.textContent;
+        b.style.minWidth = ''; b.textContent = num(+b.dataset.count);
+        b.style.minWidth = b.getBoundingClientRect().width + 'px'; b.textContent = shown;
+      });
+      const { b, label } = items[1];   // volgers
       label.style.fontSize = '100px';
-      label.style.fontSize = 100 * w / label.getBoundingClientRect().width + 'px';
-    });
+      const size = 100 * parseFloat(b.style.minWidth) / label.getBoundingClientRect().width + 'px';
+      items.forEach(({ label }) => label.style.fontSize = size);
+    };
     document.fonts.ready.then(fitLabels);
     new ResizeObserver(fitLabels).observe(section.querySelector('.insta__profile'));
-    // the counters count up from 0 once they come into view, one after the other (each fast at first, easing into its number)
+    // the counters count up from 0 once they come into view, one after the other (each fast at first, easing into its
+    // number), purple while counting and cooling down to pink when done
     if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
       items.forEach(({ b }) => b.textContent = '0');
       const countUp = i => {
         const { b } = items[i], t0 = performance.now(), dur = 900;
+        b.classList.add('is-counting');   // purple while counting, then it cools down to pink (CSS transition)
         (function tick(now) {
           const t = Math.min(1, (now - t0) / dur);
           b.textContent = num(Math.round(b.dataset.count * (1 - (1 - t) ** 4)));
           if (t < 1) requestAnimationFrame(tick);
-          else if (items[i + 1]) setTimeout(() => countUp(i + 1), 120);
+          else {
+            b.classList.remove('is-counting');
+            if (items[i + 1]) setTimeout(() => countUp(i + 1), 120);
+          }
         })(t0);
       };
       const countIO = new IntersectionObserver(([entry]) => {
@@ -1489,7 +1518,7 @@
               <span class="phone__island" aria-hidden="true"></span>
               <article class="post">
                 <a class="post__head" href="${profileUrl}" target="_blank" rel="noopener">
-                  <span class="post__avatar"><img src="${esc(profile.profile_picture_url)}" width="100" height="100" alt=""></span>
+                  <span class="post__avatar"><svg viewBox="0 0 200 200" aria-hidden="true"><use href="#lisan-avatar"/></svg></span>
                   <span class="post__who"><span class="post__user">@${esc(profile.username)}</span><time class="post__date" datetime="${esc(m.timestamp)}">${date(m.timestamp)}</time></span>${glyph}
                 </a>
                 <a class="post__media" href="${esc(m.permalink)}" target="_blank" rel="noopener"><img class="post__img" src="${esc(m.media_url)}" alt="${esc(title)}: bekijk dit bericht op Instagram" decoding="async"></a>
