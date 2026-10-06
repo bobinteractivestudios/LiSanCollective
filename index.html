@@ -83,7 +83,7 @@
     .hero__quote > span { font-size: clamp(40px, 11.5vw, 74px); }
     .hero__quote > span { left: 16px; right: 16px; text-align: center; }
     .hero__quote-l { top: 14%; }
-    .hero__quote-r { top: auto; bottom: 104px; }   /* leaves room for the scroll cue */
+    .hero__quote-r { top: auto; bottom: 84px; }   /* just clears the contact button */
   }
   /* hero entry: the photo zooms out straight away (alongside the logo), the handwriting writes itself
      line by line (Tegaki, see the script at the end), and once the logo has finished (--hero-start, ~6.2s)
@@ -113,6 +113,7 @@
     transition: translate .8s var(--boop);
   }
   .hero__scroll.is-boop { translate: -50% 8px; transition: translate .12s cubic-bezier(.2, .7, .4, 1); }
+  @media (max-aspect-ratio: 5/4) { .hero__scroll { display: none; } }   /* narrow screens: no room under the last line */
   .hs-line {
     width: 3px; height: 40px; border-radius: 3px; background: var(--grey-mid); transform: scaleY(0);
     animation: hs-run 2.6s calc(var(--hero-start) + 3.5s) infinite;
