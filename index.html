@@ -1239,7 +1239,6 @@
   <span class="visually-hidden">Neem contact op</span>
 </a>
 
-<script async src="https://www.instagram.com/embed.js"></script>
 <script type="module">
   // hero lines in handwriting: Tegaki draws each line in its Parisienne font stroke by stroke, one line after another.
   // Without Tegaki (offline CDN, old browser) the typed lines in the script font stay in place.
@@ -1247,9 +1246,9 @@
   const START = 1;                     // s after the page began that the first line starts writing
   const SPEED = 8;                     // one playback speed for all lines; Tegaki's own pace (speed 1) takes ~48s for the sentence
   const LINE_GAP = 0.35;               // s between one line finishing and the next: a breath
-  // the last line breathes out: Tegaki's pace (a touch quicker) for the first 70%,
+  // the last line breathes out: Tegaki's pace (a touch quicker) for the first 60%,
   // then slowing down to a quarter of it at the last letters
-  const breathe = (a = 0.7, end = 0.25) => {
+  const breathe = (a = 0.6, end = 0.12) => {
     const k = (1 - (1 - a) * end / 2) / (a + (1 - a) / 2);   // pace before the slow-down, so the line still ends at 1
     return x => x <= a ? k * x : k * x + (end - k) * (x - a) ** 2 / (2 * (1 - a));
   };
@@ -1278,7 +1277,10 @@
     els.forEach((el, i) => el.engine?.update({
       timing: { strokeEasing },
       ...(i === els.length - 1 && { time: { mode: 'uncontrolled', speed: SPEED, playing: false, easing: breathe() } }),
-      onComplete: () => els[i + 1] && setTimeout(() => els[i + 1].play(), LINE_GAP * 1000),
+      onComplete: () => {
+        el.pause();   // stops the line's frame loop, which otherwise keeps ticking after it is written
+        if (els[i + 1]) setTimeout(() => els[i + 1].play(), LINE_GAP * 1000);
+      },
     }));
     quote.classList.add('tg');
   } catch (err) {
@@ -1318,11 +1320,22 @@
   const aboutLoaded = () => aboutImg.closest('.about__photo').classList.add('is-loaded');
   (aboutImg.decode ? aboutImg.decode() : Promise.resolve()).then(aboutLoaded, aboutLoaded);   // also on an error: show the card anyway
 
-  // instagram: the embed script swaps each blockquote for an iframe that loads the post later; mark the phone
-  // as loaded once that iframe is in (plus a moment for Instagram to size it), or after 6s if it never comes
+  // instagram: the embed script and its three iframes are heavy, and on iPhones they run on the page's own main thread,
+  // where they made the other reveals stutter or skip. So the script only loads once the posts are about a screen away
+  const instaIO = new IntersectionObserver(([entry]) => {
+    if (!entry.isIntersecting) return;
+    instaIO.disconnect();
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = 'https://www.instagram.com/embed.js';
+    document.body.append(script);
+    document.querySelectorAll('.insta .phone').forEach(phone => setTimeout(() => phone.classList.add('is-loaded'), 6000));
+  }, { rootMargin: '100% 0px' });
+  instaIO.observe(document.querySelector('.insta'));
+  // the embed script swaps each blockquote for an iframe that loads the post later; mark the phone as loaded
+  // once that iframe is in (plus a moment for Instagram to size it), or 6s after the script was added if it never comes
   document.querySelectorAll('.insta .phone').forEach(phone => {
     const loaded = () => phone.classList.add('is-loaded');
-    setTimeout(loaded, 6000);
     const watchFrame = () => {
       const frame = phone.querySelector('iframe');
       if (!frame) return false;
