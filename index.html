@@ -165,7 +165,9 @@
     --boop: linear(0, 0.079, 0.264, 0.487, 0.701, 0.877, 1.005, 1.084, 1.12, 1.125, 1.11, 1.084, 1.056, 1.03, 1.01, 0.996, 0.987, 0.984, 0.985, 0.987, 0.991, 0.994, 0.997, 0.999, 1.001, 1.002, 1.002, 1.002, 1.002, 1.001, 1);
     position: absolute; z-index: 2; left: 50%; bottom: 14px; translate: -50% 0;   /* a fixed distance from the hero's bottom edge */
     display: grid; justify-items: center; width: 32px; height: 56px;   /* wider than the line, so it's easy to click */
-    opacity: 0; animation: hs-in .9s linear(0, 0.075, 0.254, 0.476, 0.696, 0.883, 1.023, 1.112, 1.155, 1.162, 1.144, 1.111, 1.075, 1.04, 1.011, 0.991, 0.979, 0.974, 0.974, 0.978, 0.984, 0.99, 0.995, 0.999, 1.002, 1.004, 1.004, 1.004, 1.003, 1.002, 1.001, 1.001, 1, 1, 0.999, 0.999, 1) var(--hero-start) forwards;
+    opacity: 0;
+    animation: hs-in .9s cubic-bezier(.3, 1.6, .5, 1) var(--hero-start) forwards;   /* for browsers without linear() (Safari before 17.2), which would otherwise drop the line below and never show the cue */
+    animation: hs-in .9s linear(0, 0.075, 0.254, 0.476, 0.696, 0.883, 1.023, 1.112, 1.155, 1.162, 1.144, 1.111, 1.075, 1.04, 1.011, 0.991, 0.979, 0.974, 0.974, 0.978, 0.984, 0.99, 0.995, 0.999, 1.002, 1.004, 1.004, 1.004, 1.003, 1.002, 1.001, 1.001, 1, 1, 0.999, 0.999, 1) var(--hero-start) forwards;
     transition: translate .8s var(--boop);
   }
   .hero__scroll.is-boop { translate: -50% 8px; transition: translate .12s cubic-bezier(.2, .7, .4, 1); }
