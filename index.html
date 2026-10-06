@@ -319,7 +319,7 @@
     justify-self: center; display: grid; grid-template-columns: auto 1fr auto; align-items: center;
     gap: 12px clamp(20px, 3vw, 36px); max-width: 860px; color: var(--ink-soft);
   }
-  .insta__avatar { width: clamp(72px, 8vw, 96px); aspect-ratio: 1; border-radius: 50%; padding: 3px; border: 1.5px solid var(--brand); }
+  .insta__avatar { width: clamp(72px, 8vw, 96px); aspect-ratio: 1; border-radius: 50%; padding: 3px; border: 1.5px solid var(--pink); }
   .insta__avatar img { display: block; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
   .insta__link {
     display: inline-flex; align-items: center; gap: .45em;
@@ -330,14 +330,14 @@
   .insta__link:hover { color: #c97f9f; }
   .insta__link:focus-visible, .insta__follow:focus-visible { outline: 2px solid var(--pink); outline-offset: 6px; }
   .insta__stats { display: flex; flex-wrap: wrap; gap: 4px 22px; margin: 10px 0 6px; padding: 0; list-style: none; font-size: 15px; }
-  .insta__stats b { color: var(--brand); }
+  .insta__stats b { color: var(--pink); }
   .insta__bio { margin: 0; font-size: 15px; line-height: 1.5; }
   .insta__follow {
-    padding: 12px 22px; border: 1.5px solid var(--brand); border-radius: 999px;
-    color: var(--brand); text-decoration: none; font-weight: 700; font-size: 15px; white-space: nowrap;
+    padding: 12px 22px; border: 1.5px solid var(--pink); border-radius: 999px;
+    color: var(--pink); text-decoration: none; font-weight: 700; font-size: 15px; white-space: nowrap;
     transition: background .2s, color .2s;
   }
-  .insta__follow:hover { background: var(--brand); color: #fff; }
+  .insta__follow:hover { background: var(--pink); color: #fff; }
   @media (max-width: 699px) {   /* phones: stacked and centred */
     .insta__profile { grid-template-columns: 1fr; justify-items: center; text-align: center; }
     .insta__stats { justify-content: center; }
@@ -381,32 +381,32 @@
   }
   .phone__island { position: absolute; top: 11px; left: 50%; width: 90px; height: 25px; margin-left: -45px; border-radius: 20px; background: #1f1c1d; }
   /* the post on the screen, as Instagram's API describes it: account bar (picture, handle, date), photo (links to
-     the post), likes and comments, caption. Thin brand lines set the parts apart. Sizes follow the screen width
+     the post), likes and comments, caption. Thin pink lines set the parts apart. Sizes follow the screen width
      (container units), so the caption knows where the photo ends */
   .phone__screen { container-type: inline-size; }
-  .post { --line: color-mix(in srgb, var(--brand) 22%, transparent); --head: 48px; --bar: 40px; position: absolute; inset: 40px 0 0; }
+  .post { --line: color-mix(in srgb, var(--pink) 45%, transparent); --head: 48px; --bar: 40px; position: absolute; inset: 40px 0 0; }
   .post__head {
     display: flex; align-items: center; gap: 9px; height: var(--head); padding: 0 14px;
     border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
-    color: var(--brand); text-decoration: none; line-height: 1.25;
+    color: var(--pink); text-decoration: none; line-height: 1.25;
   }
-  .post__avatar { width: 30px; height: 30px; flex: none; border-radius: 50%; padding: 1.5px; border: 1px solid var(--brand); }
+  .post__avatar { width: 30px; height: 30px; flex: none; border-radius: 50%; padding: 1.5px; border: 1px solid var(--pink); }
   .post__avatar img { display: block; width: 100%; height: 100%; border-radius: 50%; }
   .post__who { display: grid; min-width: 0; }
-  .post__user { display: flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 700; }
-  .post__user svg { width: 13px; height: 13px; flex: none; }
+  .post__user { font-size: 12.5px; font-weight: 700; }
+  .post__glyph { width: 22px; height: 22px; flex: none; margin-left: auto; }   /* the Instagram logo, at the right end of the bar */
   .post__date { font-size: 11px; color: var(--ink-soft); }
   .post__media { display: block; }
   .post__img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; }
   /* under the photo: Instagram's action icons as thin purple linework, with the like and comment counts */
   .post__bar {
     display: flex; align-items: center; gap: 14px; height: var(--bar); padding: 0 14px;
-    color: var(--brand); text-decoration: none; font-size: 12.5px; font-weight: 700;
+    color: var(--pink); text-decoration: none; font-size: 12.5px; font-weight: 700;
   }
   .post__bar span { display: inline-flex; align-items: center; gap: 5px; }
   .post__bar svg { width: 21px; height: 21px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
   .post__bar > svg:last-child { margin-left: auto; }
-  .post a:focus-visible, .post__toggle:focus-visible { outline: 2px solid var(--brand); outline-offset: -2px; }
+  .post a:focus-visible, .post__toggle:focus-visible { outline: 2px solid var(--pink); outline-offset: -2px; }
   /* the caption sits under the photo, cut off with a fade; clicking it slides it up over the photo to show it all */
   .post__caption {
     position: absolute; left: 0; right: 0; bottom: 0; top: calc(var(--head) + 100cqw * 4 / 3 + var(--bar));
@@ -427,11 +427,11 @@
   .post__tags { color: var(--pink); }
   /* the whole caption is the toggle: an invisible button stretched over it */
   .post__toggle { position: absolute; inset: 0; z-index: 1; width: 100%; padding: 0; border: 0; background: none; cursor: pointer; }
-  /* its visible part: a small plus in the top right corner that turns into a minus when the caption is open */
+  /* its visible part: a small plus in the top right corner that becomes a minus when the caption is open */
   .post__plus { position: absolute; top: 15px; right: 14px; width: 14px; height: 14px; }
   .post__plus::before, .post__plus::after {
     content: ""; position: absolute; left: 0; top: 50%; width: 100%; height: 1.5px; margin-top: -.75px;
-    border-radius: 1px; background: var(--brand); transition: rotate .4s cubic-bezier(.65, 0, .35, 1);
+    border-radius: 1px; background: var(--pink);
   }
   .post__plus::after { rotate: 90deg; }
   .post__caption.is-open .post__plus::after { rotate: 0deg; }
@@ -1441,7 +1441,7 @@
     const bubble = 'M20.5 11.5a8.5 8.5 0 0 1-12.4 7.6l-4.6 1.4 1.4-4.4a8.5 8.5 0 1 1 15.6-4.6z';
     const send = 'M21 3 10.2 13.8M21 3l-6.8 18-4-7.2-7.2-4z';
     const save = 'M6 3.5h12v17l-6-4.6-6 4.6z';
-    const glyph = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r=".6" fill="currentColor"/></svg>';
+    const glyph = '<svg class="post__glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r=".6" fill="currentColor"/></svg>';
 
     section.querySelector('.insta__posts').innerHTML = media.filter(m => m.media_type === 'IMAGE').slice(0, 3).map(m => {
       const title = m.caption.split('\n')[0].trim();
@@ -1453,7 +1453,7 @@
               <article class="post">
                 <a class="post__head" href="${profileUrl}" target="_blank" rel="noopener">
                   <span class="post__avatar"><img src="${esc(profile.profile_picture_url)}" width="100" height="100" alt=""></span>
-                  <span class="post__who"><span class="post__user">${glyph}@${esc(profile.username)}</span><time class="post__date" datetime="${esc(m.timestamp)}">${date(m.timestamp)}</time></span>
+                  <span class="post__who"><span class="post__user">@${esc(profile.username)}</span><time class="post__date" datetime="${esc(m.timestamp)}">${date(m.timestamp)}</time></span>${glyph}
                 </a>
                 <a class="post__media" href="${esc(m.permalink)}" target="_blank" rel="noopener"><img class="post__img" src="${esc(m.media_url)}" alt="${esc(title)}: bekijk dit bericht op Instagram" decoding="async"></a>
                 <a class="post__bar" href="${esc(m.permalink)}" target="_blank" rel="noopener" aria-label="${num(m.like_count)} likes, ${num(m.comments_count)} reacties: bekijk op Instagram">
