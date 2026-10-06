@@ -301,7 +301,7 @@
     .plan:last-child > * + *::after { right: -17px; }
   }
 
-  /* instagram: link to the page + three embedded posts */
+  /* instagram: link to the page + three posts (cover photo and caption, saved with the site: no Instagram scripts) */
   .insta { background: #fff; padding: clamp(72px, 10vw, 140px) 16px; overflow-x: clip; }
   .insta__inner { width: min(100%, 1120px); margin: 0 auto; display: grid; gap: clamp(32px, 4vw, 56px); }
   .insta__link {
@@ -350,8 +350,23 @@
     aspect-ratio: 9 / 19.5; padding-top: 40px;   /* status bar area above the post */
   }
   .phone__island { position: absolute; top: 11px; left: 50%; width: 90px; height: 25px; margin-left: -45px; border-radius: 20px; background: #1f1c1d; }
-  /* Instagram's embed script swaps each blockquote for an iframe; let it fill the screen width */
-  .phone .instagram-media { margin: 0 !important; min-width: 0 !important; width: 100% !important; max-width: none !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
+  a.phone { display: block; color: inherit; text-decoration: none; }
+  a.phone:focus-visible { outline: 2px solid var(--pink); outline-offset: 6px; }
+  /* the post on the screen: handle, photo, then the caption, which scrolls inside the screen when it is long */
+  .post { position: absolute; inset: 40px 0 0; display: flex; flex-direction: column; }
+  .post__handle { margin: 0; padding: 4px 16px 10px; font-size: 13px; font-weight: 700; color: var(--ink); }
+  .post__img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; flex: none; }
+  .post__caption {
+    flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none;
+    padding: 14px 16px 28px; font-size: 12.5px; line-height: 1.5; color: var(--ink-soft);
+    -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent);   /* fades out at the bottom edge */
+            mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent);
+  }
+  .post__caption::-webkit-scrollbar { display: none; }
+  .post__caption p { margin: 0 0 .8em; }
+  .post__title { margin: 0 0 .5em; font-size: 15px; font-weight: 700; color: var(--ink); }
+  .post__sign { color: var(--ink); }
+  .post__tags { color: var(--pink); }
 
   /* reviews: horizontal slider of joined, black-outlined cards; names in pink handwriting */
   .reviews {
@@ -733,7 +748,7 @@
     }
     .js-reveal .about__media.in-view .about__photo.is-loaded { opacity: 1; rotate: 0deg; translate: 0 0; }
 
-    /* instagram: the phones fade in one by one, each only once its post has arrived from Instagram
+    /* instagram: the phones fade in one by one, each only once its photo is loaded and decoded
        (.is-loaded, set by the script), so the post doesn't pop into an empty phone */
     .js-reveal .phone { opacity: 0; translate: 0 32px; transition: opacity 1s ease, translate 1s cubic-bezier(.22, .8, .3, 1); }
     .js-reveal .phone-slot:nth-child(2) .phone { transition-delay: .18s; }
@@ -1069,34 +1084,60 @@
       </a>
       <div class="insta__posts">
         <div class="phone-slot">
-          <div class="phone">
+          <a class="phone" href="https://www.instagram.com/p/DU6bUeOjIwF/" target="_blank" rel="noopener">
             <div class="phone__screen">
               <span class="phone__island" aria-hidden="true"></span>
-              <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DU6bUeOjIwF/" data-instgrm-version="14">
-                <a href="https://www.instagram.com/p/DU6bUeOjIwF/" target="_blank" rel="noopener">Bekijk dit bericht op Instagram</a>
-              </blockquote>
+              <article class="post">
+                <p class="post__handle">lisancollective</p>
+                <img class="post__img" src="insta-1.jpg" width="1080" height="1440" alt="" loading="lazy" decoding="async">
+                <div class="post__caption">
+                  <h3 class="post__title">Pen and paper</h3>
+                  <p>Hier start bij ons ieder project, met pen en papier. Niks zo fijn als je creativiteit tot uiting laten op papier. Voor ons een bewuste keuze.</p>
+                  <p>Schetsen, gummen en overnieuw. <br>We horen je denken: ‘is dat wel van deze tijd?’ <br>Voor ons is het dé manier om onze creativiteit tot uiting te brengen.</p>
+                  <p>We nemen je mee in onze gedachten en laten zien dat vakmanschap en eigenheid het allerbelangrijkste zijn voor ons.</p>
+                  <p>We brengen ambacht weer tot leven.</p>
+                  <p class="post__sign">– Li’San</p>
+                  <p class="post__tags">#design #sketch #interiordesign #studio style</p>
+                </div>
+              </article>
             </div>
-          </div>
+          </a>
         </div>
         <div class="phone-slot">
-          <div class="phone">
+          <a class="phone" href="https://www.instagram.com/p/DVLaE5PDBwQ/" target="_blank" rel="noopener">
             <div class="phone__screen">
               <span class="phone__island" aria-hidden="true"></span>
-              <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DVLaE5PDBwQ/" data-instgrm-version="14">
-                <a href="https://www.instagram.com/p/DVLaE5PDBwQ/" target="_blank" rel="noopener">Bekijk dit bericht op Instagram</a>
-              </blockquote>
+              <article class="post">
+                <p class="post__handle">lisancollective</p>
+                <img class="post__img" src="insta-2.jpg" width="1080" height="1440" alt="" loading="lazy" decoding="async">
+                <div class="post__caption">
+                  <h3 class="post__title">Materials</h3>
+                  <p>Naast een schets van de ruimte maken we het project visueel door middel van stalen.</p>
+                  <p>Materialen die gebruikt gaan worden in het project leggen we bij elkaar, schuiven er nog eens mee en uiteindelijk presenteren we deze.</p>
+                  <p>Je kunt het voelen, zien en beleven. Dat is waar het bij ons om draait.</p>
+                  <p>Vloeren, stoffering, kasten en alles wat we maar kunnen bedenken wordt hierin meegenomen. <br>Voor ons een feest om verschillende kleuren en materialen samen te brengen tot een geheel.</p>
+                  <p class="post__sign">– Li’San</p>
+                  <p class="post__tags">#materials #styling #design #studio #interiordesign</p>
+                </div>
+              </article>
             </div>
-          </div>
+          </a>
         </div>
         <div class="phone-slot">
-          <div class="phone">
+          <a class="phone" href="https://www.instagram.com/p/DVqSM5sjLIN/" target="_blank" rel="noopener">
             <div class="phone__screen">
               <span class="phone__island" aria-hidden="true"></span>
-              <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DVqSM5sjLIN/" data-instgrm-version="14">
-                <a href="https://www.instagram.com/p/DVqSM5sjLIN/" target="_blank" rel="noopener">Bekijk dit bericht op Instagram</a>
-              </blockquote>
+              <article class="post">
+                <p class="post__handle">lisancollective</p>
+                <img class="post__img" src="insta-3.jpg" width="1080" height="1440" alt="" loading="lazy" decoding="async">
+                <div class="post__caption">
+                  <h3 class="post__title">Inspiration, pick a side</h3>
+                  <p class="post__sign">– Li’San</p>
+                  <p class="post__tags">#interiordesign #designlovers #thisorthat #studio #interieur</p>
+                </div>
+              </article>
             </div>
-          </div>
+          </a>
         </div>
       </div>
     </div>
@@ -1320,29 +1361,11 @@
   const aboutLoaded = () => aboutImg.closest('.about__photo').classList.add('is-loaded');
   (aboutImg.decode ? aboutImg.decode() : Promise.resolve()).then(aboutLoaded, aboutLoaded);   // also on an error: show the card anyway
 
-  // instagram: the embed script and its three iframes are heavy, and on iPhones they run on the page's own main thread,
-  // where they made the other reveals stutter or skip. So the script only loads once the posts are about a screen away
-  const instaIO = new IntersectionObserver(([entry]) => {
-    if (!entry.isIntersecting) return;
-    instaIO.disconnect();
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = 'https://www.instagram.com/embed.js';
-    document.body.append(script);
-    document.querySelectorAll('.insta .phone').forEach(phone => setTimeout(() => phone.classList.add('is-loaded'), 6000));
-  }, { rootMargin: '100% 0px' });
-  instaIO.observe(document.querySelector('.insta'));
-  // the embed script swaps each blockquote for an iframe that loads the post later; mark the phone as loaded
-  // once that iframe is in (plus a moment for Instagram to size it), or 6s after the script was added if it never comes
+  // instagram: mark each phone once its photo is loaded and decoded, so it fades in with the photo in place
   document.querySelectorAll('.insta .phone').forEach(phone => {
-    const loaded = () => phone.classList.add('is-loaded');
-    const watchFrame = () => {
-      const frame = phone.querySelector('iframe');
-      if (!frame) return false;
-      frame.addEventListener('load', () => setTimeout(loaded, 300), { once: true });
-      return true;
-    };
-    if (!watchFrame()) new MutationObserver((_, mo) => { if (watchFrame()) mo.disconnect(); }).observe(phone, { childList: true, subtree: true });
+    const img = phone.querySelector('img'), loaded = () => phone.classList.add('is-loaded');
+    img.loading = 'eager';   // the reveal waits for it, so fetch it now rather than when it is nearly on screen
+    (img.decode ? img.decode() : Promise.resolve()).then(loaded, loaded);   // also on an error: show the phone anyway
   });
 
   // no form service connected yet: keep the page (and the visitor's details) from submitting anywhere,
