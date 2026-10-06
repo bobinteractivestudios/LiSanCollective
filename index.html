@@ -1245,8 +1245,14 @@
   // Without Tegaki (offline CDN, old browser) the typed lines in the script font stay in place.
   const quote = document.querySelector('.hero__quote');
   const START = 1;                     // s after the page began that the first line starts writing
-  const SPEED = 6;                     // one playback speed for all lines; Tegaki's own pace (speed 1) takes ~48s for the sentence
+  const SPEED = 8;                     // one playback speed for all lines; Tegaki's own pace (speed 1) takes ~48s for the sentence
   const LINE_GAP = 0.35;               // s between one line finishing and the next: a breath
+  // the last line breathes out: Tegaki's pace (a touch quicker) for the first 70%,
+  // then slowing down to a quarter of it at the last letters
+  const breathe = (a = 0.7, end = 0.25) => {
+    const k = (1 - (1 - a) * end / 2) / (a + (1 - a) / 2);   // pace before the slow-down, so the line still ends at 1
+    return x => x <= a ? k * x : k * x + (end - k) * (x - a) ** 2 / (2 * (1 - a));
+  };
   // every pen stroke eases in and out: Tegaki's "ease-in-out-quad" preset
   // (its studio/CLI curves aren't exported to the browser, so it's copied here; Tegaki's default is ease-out-quad)
   const strokeEasing = t => t < .5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2;
@@ -1271,6 +1277,7 @@
     // so hand the easing and the hand-over to the next line straight to each engine
     els.forEach((el, i) => el.engine?.update({
       timing: { strokeEasing },
+      ...(i === els.length - 1 && { time: { mode: 'uncontrolled', speed: SPEED, playing: false, easing: breathe() } }),
       onComplete: () => els[i + 1] && setTimeout(() => els[i + 1].play(), LINE_GAP * 1000),
     }));
     quote.classList.add('tg');
