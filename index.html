@@ -18,6 +18,7 @@
     --accent: rgb(194, 121, 25);
     --accent-blue: rgb(148, 170, 178);
     --pink: #db9bb6;
+    --grey-mid: #8a8a8a;   /* hero handwriting and scroll cue */
   }
   *, *::before, *::after { box-sizing: border-box; }
   html, body { margin: 0; }
@@ -59,7 +60,7 @@
   .hero__quote > span {
     position: absolute; z-index: 1;
     font-family: Parisienne, cursive;
-    color: var(--pink); font-weight: 400; line-height: 1.15; letter-spacing: 0;
+    color: var(--grey-mid); font-weight: 400; line-height: 1.15; letter-spacing: 0;
     /* fits beside the photo: the widest line ("Een goed interieur") is ~6.4em, the space per side is 50vw − 29vh */
     font-size: min(clamp(32px, 4.4vw, 72px), calc((50vw - 29vh - 40px) / 6.6));
     white-space: nowrap;
@@ -100,7 +101,7 @@
   .js-reveal .hero__quote:not(.tg, .tg-failed) .hq-text { visibility: hidden; }   /* no flash of typed text while Tegaki loads */
 
   /* scroll cue, in the playful spirit of Josh Comeau's motion work: physics instead of fixed curves.
-     It springs into view from just above. Then, every 2.6s, the pink line springs down from its top end
+     It springs into view from just above. Then, every 2.6s, the grey line springs down from its top end
      (a real damped spring, written out as a CSS linear() curve, so it overshoots and wobbles into place), rests,
      gathers itself (its top lifts a touch: anticipation) and zips down into its bottom end. Pointing at it gives
      it a springy "boop" down, a nudge in the scroll direction (the script adds .is-boop for a moment). */
@@ -113,7 +114,7 @@
   }
   .hero__scroll.is-boop { translate: -50% 8px; transition: translate .12s cubic-bezier(.2, .7, .4, 1); }
   .hs-line {
-    width: 3px; height: 40px; border-radius: 3px; background: var(--pink); transform: scaleY(0);
+    width: 3px; height: 40px; border-radius: 3px; background: var(--grey-mid); transform: scaleY(0);
     animation: hs-run 2.6s calc(var(--hero-start) + 3.5s) infinite;
     transition: background .2s;
   }
@@ -614,14 +615,14 @@
     right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom));
     width: 60px; height: 60px; border-radius: 50%;
     display: grid; place-items: center;
-    background: var(--pink); color: var(--brand);
-    border: 1px solid var(--brand);   /* keeps it visible on top of the pink footer */
-    box-shadow: 0 6px 20px rgba(82, 5, 33, .25);
+    background: #3a3a3a; color: #f2f2f2;
+    border: 1px solid #f2f2f2;   /* light ring keeps it distinct on dark and light backgrounds */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, .25);
     transition: background-color .2s, transform .2s;
   }
   .cta svg { width: 26px; height: 26px; }
-  .cta:hover { background: #d386a7; transform: scale(1.06); }
-  .cta:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }
+  .cta:hover { background: #2a2a2a; transform: scale(1.06); }
+  .cta:focus-visible { outline: 2px solid #3a3a3a; outline-offset: 3px; }
   .visually-hidden {
     position: absolute; width: 1px; height: 1px; overflow: hidden;
     clip-path: inset(50%); white-space: nowrap;
@@ -1316,8 +1317,8 @@
 
 <a class="cta" href="#contact" title="Neem contact op">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="M4 5.5h16v10H9.5L5.5 19v-3.5H4z"/>
-    <path d="M8 9.5h8M8 12.5h5"/>
+    <path d="M15.5 4.5l4 4L9 19l-5 1 1-5z"/>
+    <path d="M13.5 6.5l4 4"/>
   </svg>
   <span class="visually-hidden">Neem contact op</span>
 </a>
