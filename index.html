@@ -106,7 +106,7 @@
      it a springy "boop" down, a nudge in the scroll direction (the script adds .is-boop for a moment). */
   .hero__scroll {
     --boop: linear(0, 0.079, 0.264, 0.487, 0.701, 0.877, 1.005, 1.084, 1.12, 1.125, 1.11, 1.084, 1.056, 1.03, 1.01, 0.996, 0.987, 0.984, 0.985, 0.987, 0.991, 0.994, 0.997, 0.999, 1.001, 1.002, 1.002, 1.002, 1.002, 1.001, 1);
-    position: absolute; z-index: 2; left: 50%; bottom: clamp(24px, 5vh, 44px); translate: -50% 0;
+    position: absolute; z-index: 2; left: 50%; bottom: 14px; translate: -50% 0;   /* a fixed distance from the hero's bottom edge */
     display: grid; justify-items: center; width: 32px; height: 56px;   /* wider than the line, so it's easy to click */
     opacity: 0; animation: hs-in .9s linear(0, 0.075, 0.254, 0.476, 0.696, 0.883, 1.023, 1.112, 1.155, 1.162, 1.144, 1.111, 1.075, 1.04, 1.011, 0.991, 0.979, 0.974, 0.974, 0.978, 0.984, 0.99, 0.995, 0.999, 1.002, 1.004, 1.004, 1.004, 1.003, 1.002, 1.001, 1.001, 1, 1, 0.999, 0.999, 1) calc(var(--hero-start) + 3.5s) forwards;
     transition: translate .8s var(--boop);
@@ -329,7 +329,7 @@
   .insta__link:focus-visible, .insta__follow:focus-visible { outline: 2px solid var(--pink); outline-offset: 6px; }
   .insta__stats { display: flex; flex-wrap: wrap; gap: 4px 22px; margin: 10px 0 6px; padding: 0; list-style: none; font-size: 15px; }
   .insta__stats b { color: var(--pink); }
-  .insta__bio { margin: 0; font-size: 15px; line-height: 1.5; white-space: pre-line; }   /* keeps the bio's line breaks */
+  .insta__bio { margin: 0; font-size: 15px; line-height: 1.5; white-space: pre-line; }   /* keeps any line breaks in the bio */
   .insta__follow {
     padding: 12px 22px; border: 1.5px solid var(--pink); border-radius: 999px;
     color: var(--pink); text-decoration: none; font-weight: 700; font-size: 15px; white-space: nowrap;
@@ -858,6 +858,25 @@
     .js-reveal .reviews.in-view .review__mark path { stroke-dashoffset: 0; fill-opacity: 1; }
     .js-reveal .reviews.in-view .review figcaption { opacity: 1; translate: 0 0; }
 
+    /* instagram profile header: once it is in view (.is-visible) the picture pops in on a small spring, then the
+       handle, numbers and bio fade up, then the follow button */
+    .js-reveal .insta__profile > * {
+      opacity: 0; translate: 0 22px;
+      transition: opacity .9s ease calc(var(--step, 0) * .15s), translate .9s cubic-bezier(.22, .8, .3, 1) calc(var(--step, 0) * .15s),
+                  scale .8s linear(0, 0.079, 0.264, 0.487, 0.701, 0.877, 1.005, 1.084, 1.12, 1.125, 1.11, 1.084, 1.056, 1.03, 1.01, 0.996, 0.987, 0.984, 0.985, 0.987, 0.991, 0.994, 0.997, 0.999, 1.001, 1.002, 1.002, 1.002, 1.002, 1.001, 1);
+    }
+    .js-reveal .insta__avatar { scale: .6; translate: 0 0; }
+    .js-reveal .insta__profile > :nth-child(2) { --step: 1; }
+    .js-reveal .insta__profile > :nth-child(3) { --step: 2; }
+    .js-reveal .insta__profile.is-visible > * { opacity: 1; translate: 0 0; scale: 1; }
+
+    /* footer: the welcome line fades up, its soft blur clearing, once the footer logo has drawn its lines */
+    .js-reveal .contact__intro p {
+      opacity: 0; translate: 0 18px; filter: blur(6px);
+      transition: opacity 1s ease 1.8s, translate 1.1s cubic-bezier(.22, .8, .3, 1) 1.8s, filter 1s ease 1.8s;
+    }
+    .js-reveal .contact__logo.in-view ~ p { opacity: 1; translate: 0 0; filter: none; }
+
     /* general text reveal: elements with .reveal fade up when they come into view; --step staggers them */
     .js-reveal .reveal {
       opacity: 0; translate: 0 22px;
@@ -1226,7 +1245,7 @@
         <text class="word w-tagline"    x="283" y="175" font-size="25" textLength="214" lengthAdjust="spacing">interior projects</text>
       </svg>
       <h2 id="contact-title" class="visually-hidden">Contact</h2>
-      <p class="reveal">Welkom bij Li’San collective. Laat je gegevens achter, dan plannen we een vrijblijvende afspraak in!</p>
+      <p>Welkom bij Li’San collective. Laat je gegevens achter, dan plannen we een vrijblijvende afspraak in!</p>
     </div>
 
     <!-- TODO: connect to a form service (e.g. Formspree / Netlify Forms) via action + method -->
@@ -1392,7 +1411,7 @@
     profile: {
       username: 'lisancollective',
       name: '',                                                                    // no display name set
-      biography: 'Li’San collective - interior design\nInfo@lisan.nl',
+      biography: 'Li’San collective - interior design',
       profile_picture_url: 'insta-avatar.jpg',
       followers_count: 369, follows_count: 74, media_count: 54,
     },
@@ -1538,7 +1557,7 @@
   const textIO = new IntersectionObserver(entries => entries.forEach(entry => {
     if (entry.isIntersecting) { entry.target.classList.add('is-visible'); textIO.unobserve(entry.target); }
   }), { threshold: .6 });   // 60% visible: also reachable for the contact links at the very bottom of the page
-  document.querySelectorAll('.reveal').forEach(el => textIO.observe(el));
+  document.querySelectorAll('.reveal, .insta__profile').forEach(el => textIO.observe(el));
 
   // kick off cards: a small shake each time a card crosses the middle of the screen
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
