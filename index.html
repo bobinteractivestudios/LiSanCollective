@@ -1245,20 +1245,9 @@
   // Without Tegaki (offline CDN, old browser) the typed lines in the script font stay in place.
   const quote = document.querySelector('.hero__quote');
   const START = 1;                     // s after the page began that the first line starts writing
-  const DURATIONS = [1.9, 1.2, 1.8];   // s per line, whatever the font's own pace
+  const SPEED = 6;                     // one playback speed for all lines; Tegaki's own pace (speed 1) takes ~48s for the sentence
   const LINE_GAP = 0.35;               // s between one line finishing and the next: a breath
-  // each line eases like one stroke of the pen: a soft start, flowing on, slowing down at the end
-  const EASE = [0.3, 0, 0.2, 1];       // cubic-bezier, as in CSS
-  const easing = (([x1, y1, x2, y2]) => {
-    const bez = (a, b, t) => 3 * a * t * (1 - t) ** 2 + 3 * b * t * t * (1 - t) + t ** 3;
-    return x => {
-      if (x <= 0 || x >= 1) return x;
-      let lo = 0, hi = 1, t = x;
-      for (let i = 0; i < 24; i++) { t = (lo + hi) / 2; if (bez(x1, x2, t) < x) lo = t; else hi = t; }
-      return bez(y1, y2, t);
-    };
-  })(EASE);
-  // and within the line every pen stroke eases in and out: Tegaki's "ease-in-out-quad" preset
+  // every pen stroke eases in and out: Tegaki's "ease-in-out-quad" preset
   // (its studio/CLI curves aren't exported to the browser, so it's copied here; Tegaki's default is ease-out-quad)
   const strokeEasing = t => t < .5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2;
   try {
@@ -1268,20 +1257,21 @@
     ]);
     TegakiEngine.registerBundle(font);
     const els = [...quote.querySelectorAll('tegaki-renderer')];
-    let t = Math.max(0, START - performance.now() / 1000);
-    const delays = els.map((el, i) => {
+    // Tegaki sets the pace (its own timing per letter, stroke and space, sped up by SPEED); the first line waits for START,
+    // the others wait for the line before them to finish
+    els.forEach((el, i) => {
       el.setAttribute('font', font.family);
-      el.setAttribute('duration', DURATIONS[i]);
-      el.setAttribute('delay', t);
+      el.setAttribute('speed', SPEED);
       el.setAttribute('reduced-motion', 'user');
-      t += DURATIONS[i] + LINE_GAP;
-      return t - DURATIONS[i] - LINE_GAP;
+      if (i === 0) el.setAttribute('delay', Math.max(0, START - performance.now() / 1000));
+      else el.setAttribute('playing', 'false');
     });
     registerTegakiElement();
-    // the element has no attribute for easing (and its timing property would reset the time), so hand both to its engine
+    // the element has no attribute for stroke easing, and its property setters would reset the other options,
+    // so hand the easing and the hand-over to the next line straight to each engine
     els.forEach((el, i) => el.engine?.update({
-      time: { mode: 'uncontrolled', duration: DURATIONS[i], delay: delays[i], easing },
       timing: { strokeEasing },
+      onComplete: () => els[i + 1] && setTimeout(() => els[i + 1].play(), LINE_GAP * 1000),
     }));
     quote.classList.add('tg');
   } catch (err) {
