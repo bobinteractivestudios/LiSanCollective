@@ -312,34 +312,31 @@
   /* instagram: profile header + the latest three posts, built from Instagram-API-shaped data by the script (no Instagram scripts) */
   .insta { background: #fff; padding: clamp(72px, 10vw, 140px) 16px; overflow-x: clip; }
   .insta__inner { width: min(100%, 1120px); margin: 0 auto; display: grid; gap: clamp(32px, 4vw, 56px); }
-  /* profile header (Instagram profile data): picture, handle, numbers, bio and a follow button */
-  .insta__profile {
-    justify-self: center; display: grid; grid-template-columns: auto 1fr auto; align-items: center;
-    gap: 12px clamp(20px, 3vw, 36px); max-width: 860px; color: var(--ink-soft);
-  }
-  .insta__avatar { width: clamp(72px, 8vw, 96px); aspect-ratio: 1; border-radius: 50%; padding: 3px; border: 1.5px solid var(--pink); }
-  .insta__avatar img { display: block; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+  /* profile header (Instagram profile data): the handle and a follow button, big, with three big counters below */
+  .insta__profile { justify-self: center; display: grid; justify-items: center; gap: clamp(28px, 4vw, 48px); }
+  .insta__top { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px clamp(20px, 3vw, 36px); }
   .insta__link {
-    display: inline-flex; align-items: center; gap: .45em;
+    display: inline-flex; align-items: center; gap: .4em;
     color: var(--pink); text-decoration: none;
-    font-weight: 700; font-size: clamp(26px, 3.4vw, 44px); letter-spacing: -.01em; line-height: 1.1;
+    font-weight: 700; font-size: clamp(30px, 4.6vw, 60px); letter-spacing: -.02em; line-height: 1.1;
   }
-  .insta__link svg { width: 1em; height: 1em; flex: none; }
+  .insta__link svg { width: .95em; height: .95em; flex: none; }
   .insta__link:hover { color: #c97f9f; }
   .insta__link:focus-visible, .insta__follow:focus-visible { outline: 2px solid var(--pink); outline-offset: 6px; }
-  .insta__stats { display: flex; flex-wrap: wrap; gap: 4px 22px; margin: 10px 0 6px; padding: 0; list-style: none; font-size: 15px; }
-  .insta__stats b { color: var(--pink); }
-  .insta__bio { margin: 0; font-size: 15px; line-height: 1.5; white-space: pre-line; }   /* keeps any line breaks in the bio */
   .insta__follow {
-    padding: 12px 22px; border: 1.5px solid var(--pink); border-radius: 999px;
-    color: var(--pink); text-decoration: none; font-weight: 700; font-size: 15px; white-space: nowrap;
+    padding: .7em 1.5em; border: 2px solid var(--pink); border-radius: 999px;
+    color: var(--pink); text-decoration: none; font-weight: 700; font-size: clamp(16px, 1.6vw, 20px); white-space: nowrap;
     transition: background .2s, color .2s;
   }
   .insta__follow:hover { background: var(--pink); color: #fff; }
-  @media (max-width: 699px) {   /* phones: stacked and centred */
-    .insta__profile { grid-template-columns: 1fr; justify-items: center; text-align: center; }
-    .insta__stats { justify-content: center; }
+  .insta__stats { display: grid; grid-template-columns: repeat(3, auto); margin: 0; padding: 0; list-style: none; }
+  .insta__stats li { display: grid; justify-items: center; gap: 4px; padding: 0 clamp(20px, 4vw, 56px); }
+  .insta__stats li + li { border-left: 1.5px solid color-mix(in srgb, var(--pink) 45%, transparent); }   /* thin pink dividers */
+  .insta__stats b {
+    color: var(--pink); font-size: clamp(40px, 6vw, 76px); line-height: 1; letter-spacing: -.03em;
+    font-variant-numeric: tabular-nums;   /* the digits keep their width while counting up */
   }
+  .insta__stats span { font-size: clamp(13px, 1.2vw, 16px); color: var(--ink-soft); }
   .insta__posts { display: grid; gap: 40px; justify-items: center; align-items: start; }
   .phone-slot { width: 100%; display: flex; justify-content: center; }
   @media (min-width: 1000px) {
@@ -858,17 +855,14 @@
     .js-reveal .reviews.in-view .review__mark path { stroke-dashoffset: 0; fill-opacity: 1; }
     .js-reveal .reviews.in-view .review figcaption { opacity: 1; translate: 0 0; }
 
-    /* instagram profile header: once it is in view (.is-visible) the picture pops in on a small spring, then the
-       handle, numbers and bio fade up, then the follow button */
+    /* instagram profile header: once it is in view (.is-visible) the handle and button fade up, then the counters
+       (which count up, see the script) */
     .js-reveal .insta__profile > * {
       opacity: 0; translate: 0 22px;
-      transition: opacity .9s ease calc(var(--step, 0) * .15s), translate .9s cubic-bezier(.22, .8, .3, 1) calc(var(--step, 0) * .15s),
-                  scale .8s linear(0, 0.079, 0.264, 0.487, 0.701, 0.877, 1.005, 1.084, 1.12, 1.125, 1.11, 1.084, 1.056, 1.03, 1.01, 0.996, 0.987, 0.984, 0.985, 0.987, 0.991, 0.994, 0.997, 0.999, 1.001, 1.002, 1.002, 1.002, 1.002, 1.001, 1);
+      transition: opacity .9s ease calc(var(--step, 0) * .2s), translate .9s cubic-bezier(.22, .8, .3, 1) calc(var(--step, 0) * .2s);
     }
-    .js-reveal .insta__avatar { scale: .6; translate: 0 0; }
     .js-reveal .insta__profile > :nth-child(2) { --step: 1; }
-    .js-reveal .insta__profile > :nth-child(3) { --step: 2; }
-    .js-reveal .insta__profile.is-visible > * { opacity: 1; translate: 0 0; scale: 1; }
+    .js-reveal .insta__profile.is-visible > * { opacity: 1; translate: 0 0; }
 
     /* footer: the welcome line fades up, its soft blur clearing, once the footer logo has drawn its lines */
     .js-reveal .contact__intro p {
@@ -1165,18 +1159,16 @@
     <div class="insta__inner">
       <!-- profile header and posts are filled in by the script from the Instagram data (see "instagram" there) -->
       <header class="insta__profile">
-        <span class="insta__avatar"><img data-ig="avatar" src="insta-avatar.jpg" width="100" height="100" alt=""></span>
-        <div>
+        <div class="insta__top">
           <a class="insta__link" data-ig="profile" href="https://www.instagram.com/lisancollective/" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
               <rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r=".6" fill="currentColor"/>
             </svg>
             <span data-ig="handle">@lisancollective</span>
           </a>
-          <ul class="insta__stats" data-ig="stats"></ul>
-          <p class="insta__bio" data-ig="bio"></p>
+          <a class="insta__follow" data-ig="profile" href="https://www.instagram.com/lisancollective/" target="_blank" rel="noopener">Volg ons</a>
         </div>
-        <a class="insta__follow" data-ig="profile" href="https://www.instagram.com/lisancollective/" target="_blank" rel="noopener">Volg ons</a>
+        <ul class="insta__stats" data-ig="stats"></ul>
       </header>
       <div class="insta__posts"></div>
     </div>
@@ -1435,11 +1427,26 @@
     const num = n => n.toLocaleString('nl-NL');
     const profileUrl = `https://www.instagram.com/${profile.username}/`;
     section.querySelectorAll('[data-ig="profile"]').forEach(a => a.href = profileUrl);
-    section.querySelector('[data-ig="avatar"]').src = profile.profile_picture_url;
     section.querySelector('[data-ig="handle"]').textContent = '@' + profile.username;
-    section.querySelector('[data-ig="stats"]').innerHTML =
-      `<li><b>${num(profile.media_count)}</b> berichten</li><li><b>${num(profile.followers_count)}</b> volgers</li><li><b>${num(profile.follows_count)}</b> volgend</li>`;
-    section.querySelector('[data-ig="bio"]').textContent = profile.biography;
+    const stats = section.querySelector('[data-ig="stats"]');
+    stats.innerHTML = [[profile.media_count, 'berichten'], [profile.followers_count, 'volgers'], [profile.follows_count, 'volgend']]
+      .map(([n, label]) => `<li><b data-count="${n}">${num(n)}</b><span>${label}</span></li>`).join('');
+    // the counters count up from 0 once they come into view (fast at first, easing into the real number)
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const counters = [...stats.querySelectorAll('b')];
+      counters.forEach(b => b.textContent = '0');
+      const countIO = new IntersectionObserver(([entry]) => {
+        if (!entry.isIntersecting) return;
+        countIO.disconnect();
+        const t0 = performance.now(), dur = 1600;
+        (function tick(now) {
+          const t = Math.min(1, (now - t0) / dur), eased = 1 - (1 - t) ** 4;
+          counters.forEach(b => b.textContent = num(Math.round(b.dataset.count * eased)));
+          if (t < 1) requestAnimationFrame(tick);
+        })(t0);
+      }, { threshold: .6 });
+      countIO.observe(stats);
+    }
 
     const day = new Intl.DateTimeFormat('nl-NL', { day: 'numeric', month: 'long' });
     const dayYear = new Intl.DateTimeFormat('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' });
