@@ -90,6 +90,18 @@
     .hero__quote-l .hq-line:last-child { margin-right: 0; }   /* centred like the rest */
     .hero__quote-r { top: auto; bottom: 84px; }   /* just clears the contact button */
   }
+  /* hero entry, the exit played backwards: the photo slides down into place from a blur, and each handwritten line
+     drops in like a balloon coming down (from above, larger, blurred, see-through) while it is being written.
+     The entry moves the photo with translate and filter and the exit with transform and opacity, so the two never
+     fight; the lines drop on their inner elements, the exit floats the line around them. The script adds .is-writing
+     to a line as its pen starts */
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__img { animation: hero-in 1.4s cubic-bezier(.2, .7, .3, 1) both; }
+    .hero__quote .hq-line.is-writing > * { animation: hero-drop 1.4s cubic-bezier(.2, .7, .3, 1) both; }
+  }
+  @keyframes hero-in { from { translate: -50% -6vh; filter: blur(16px) opacity(0); } }
+  @keyframes hero-drop { from { transform: translateY(-8vh) scale(1.12); opacity: 0; filter: blur(10px); } }
+
   /* hero exit: scrolling away, the handwriting floats up like balloons, each line a bit faster than the one below it,
      so they drift apart, and dissolves (grows, blurs, fades) while still in view; the photo stays behind (moves up
      slower than the page) and fades a little, so the hero has depth as the about section comes in.
@@ -97,7 +109,10 @@
   @supports (animation-timeline: view()) {
     @media (prefers-reduced-motion: no-preference) {
       .hero { view-timeline: --hero block; }
-      .hero__img { animation: hero-stay linear both; animation-timeline: --hero; animation-range: exit 0% exit 100%; }
+      .hero__img {   /* after the entry (see below), which runs on its own clock */
+        animation: hero-in 1.4s cubic-bezier(.2, .7, .3, 1) both, hero-stay linear both;
+        animation-timeline: auto, --hero; animation-range: normal, exit 0% exit 100%;
+      }
       .hero__quote .hq-line {
         --rise: -12vh; --end: 32%;   /* how far a line floats up beyond the scroll, and when (in % of the hero scrolled) it is gone */
         animation: hero-float linear both; animation-timeline: --hero; animation-range: exit 0% exit var(--end);
@@ -1394,6 +1409,7 @@
       el.setAttribute('reduced-motion', 'user');
     });
     registerTegakiElement();
+    const write = el => { el.parentElement.classList.add('is-writing'); el.play(); };   // the line drops in as its pen starts
     // the element has no attributes for easing, and its property setters would reset the other options,
     // so hand the easings and the hand-over to the next line straight to each engine
     els.forEach((el, i) => el.engine?.update({
@@ -1401,10 +1417,10 @@
       timing: { strokeEasing },
       onComplete: () => {
         el.pause();   // stops the line's frame loop, which otherwise keeps ticking after it is written
-        if (els[i + 1]) setTimeout(() => els[i + 1].play(), LINE_GAP * 1000);
+        if (els[i + 1]) setTimeout(() => write(els[i + 1]), LINE_GAP * 1000);
       },
     }));
-    setTimeout(() => els[0].play(), Math.max(0, START * 1000 - performance.now()));
+    setTimeout(() => write(els[0]), Math.max(0, START * 1000 - performance.now()));
     quote.classList.add('tg');
   } catch (err) {
     quote.classList.add('tg-failed');
