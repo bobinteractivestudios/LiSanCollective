@@ -99,29 +99,48 @@
   }
   .js-reveal .hero__quote:not(.tg, .tg-failed) .hq-text { visibility: hidden; }   /* no flash of typed text while Tegaki loads */
 
-  /* scroll cue: a pink line that grows downward from its top, then shrinks downward into its bottom end, over and
-     over, with a subtle cartoon ease: a little overshoot as it grows, a little pull back before it goes */
+  /* scroll cue, in the playful spirit of Josh Comeau's motion work: physics instead of fixed curves.
+     Each 2.6s loop the pink line springs down from its top end (a real damped spring, as a CSS linear() curve,
+     so it overshoots and wobbles into place), rests, gathers itself (its top lifts a touch: anticipation), then
+     zips down into its bottom end, and a little ink drop falls off and fades. Pointing at it gives it a springy
+     "boop" (the script adds .is-boop for a moment). */
   .hero__scroll {
+    --boop:   linear(0, 0.079, 0.264, 0.487, 0.701, 0.877, 1.005, 1.084, 1.12, 1.125, 1.11, 1.084, 1.056, 1.03, 1.01, 0.996, 0.987, 0.984, 0.985, 0.987, 0.991, 0.994, 0.997, 0.999, 1.001, 1.002, 1.002, 1.002, 1.002, 1.001, 1);
     position: absolute; z-index: 2; left: 50%; bottom: clamp(24px, 5vh, 44px); translate: -50% 0;
-    display: grid; justify-items: center; width: 32px; height: 48px;   /* wider than the line, so it's easy to click */
+    display: grid; justify-items: center; width: 32px; height: 56px;   /* wider than the line, so it's easy to click */
     opacity: 0; animation: hero-scroll-in .6s ease calc(var(--hero-start) + 3.5s) forwards;
+    transform-origin: 50% 0; transition: scale .7s var(--boop);
   }
+  .hero__scroll.is-boop { scale: 1.25 1.3; transition: scale .12s cubic-bezier(.2, .7, .4, 1); }
+  .hs-line, .hs-drop { grid-area: 1 / 1; background: var(--pink); }
   .hs-line {
-    width: 3px; height: 40px; border-radius: 3px; background: var(--pink); transform: scaleY(0);
-    animation: hs-run 2.2s calc(var(--hero-start) + 3.5s) infinite;
+    width: 3px; height: 40px; border-radius: 3px; transform: scaleY(0);
+    animation: hs-run 2.6s calc(var(--hero-start) + 3.5s) infinite;
   }
-  .hero__scroll:hover .hs-line { background: var(--brand); }
+  .hs-drop {   /* the ink drop, starting where the line ends */
+    width: 5px; height: 5px; margin-top: 37px; border-radius: 50%; opacity: 0;
+    animation: hs-drop 2.6s calc(var(--hero-start) + 3.5s) infinite;
+  }
+  .hero__scroll:hover :is(.hs-line, .hs-drop) { background: var(--brand); }
   .hero__scroll:focus-visible { outline: 2px solid var(--brand); outline-offset: 4px; border-radius: 8px; }
   @keyframes hero-scroll-in { to { opacity: 1; } }
   @keyframes hs-run {
-    0%   { transform: scaleY(0); transform-origin: 50% 0;    animation-timing-function: cubic-bezier(.3, 0, .3, 1.35); }   /* grows down, a touch too far */
-    45%  { transform: scaleY(1); transform-origin: 50% 0; }
-    50%  { transform: scaleY(1); transform-origin: 50% 100%; animation-timing-function: cubic-bezier(.55, -.35, .7, .9); }  /* pulls back, then shrinks down */
-    90%, 100% { transform: scaleY(0); transform-origin: 50% 100%; }
+    0%   { transform: scaleY(0);    transform-origin: 50% 0;    animation-timing-function: linear(0, 0.075, 0.254, 0.476, 0.696, 0.883, 1.023, 1.112, 1.155, 1.162, 1.144, 1.111, 1.075, 1.04, 1.011, 0.991, 0.979, 0.974, 0.974, 0.978, 0.984, 0.99, 0.995, 0.999, 1.002, 1.004, 1.004, 1.004, 1.003, 1.002, 1.001, 1.001, 1, 1, 0.999, 0.999, 1); }   /* springs down */
+    38%  { transform: scaleY(1);    transform-origin: 50% 0; }
+    56%  { transform: scaleY(1);    transform-origin: 50% 100%; animation-timing-function: cubic-bezier(.3, 0, .4, 1); }
+    63%  { transform: scaleY(1.1);  transform-origin: 50% 100%; animation-timing-function: cubic-bezier(.7, 0, .85, .25); }  /* gathers... */
+    76%, 100% { transform: scaleY(0); transform-origin: 50% 100%; }                                                         /* ...and zips down */
+  }
+  @keyframes hs-drop {
+    0%, 75%  { opacity: 0; transform: translateY(0) scale(.4); }
+    77%      { opacity: 1; transform: translateY(0) scale(1); animation-timing-function: cubic-bezier(.5, 0, .9, .6); }   /* falls, speeding up */
+    92%      { opacity: 0; transform: translateY(16px) scale(.5, .9); }
+    100%     { opacity: 0; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .hero__img, .hero__scroll, .hs-line { animation: none; }
-    .hero__scroll { opacity: 1; }
+    .hero__img, .hero__scroll, .hs-line, .hs-drop { animation: none; }
+    .hero__scroll { opacity: 1; transition: none; }
+    .hero__scroll.is-boop { scale: none; }
     .hs-line { transform: none; }
   }
 
@@ -967,7 +986,7 @@
     <span class="hero__quote-r"><span class="hq-line"><span class="hq-text">een goed gesprek.</span><tegaki-renderer text="een goed gesprek." aria-hidden="true"></tegaki-renderer></span></span>
   </p>
 
-<a class="hero__scroll" href="#about" aria-label="Scroll verder"><span class="hs-line"></span></a>
+<a class="hero__scroll" href="#about" aria-label="Scroll verder"><span class="hs-line"></span><span class="hs-drop"></span></a>
 </header>
 
 <main>
@@ -1568,6 +1587,13 @@
     e.preventDefault();
     scrollTo(0, 0);
     location.replace(location.pathname + location.search);
+  });
+
+  // scroll cue: a springy "boop" when you point at it, it stretches for a moment and springs back (CSS does the spring)
+  const scrollCue = document.querySelector('.hero__scroll');
+  scrollCue.addEventListener('pointerenter', () => {
+    scrollCue.classList.add('is-boop');
+    setTimeout(() => scrollCue.classList.remove('is-boop'), 140);
   });
 
   // hovering the arrow: the construction lines reach further toward the top-left corner
