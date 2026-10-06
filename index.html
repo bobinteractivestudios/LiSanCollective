@@ -1470,22 +1470,22 @@
     if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
       items.forEach(({ b }) => b.textContent = '0');
       const countUp = i => {
-        const { b } = items[i], t0 = performance.now(), dur = 900;
+        const { b } = items[i], t0 = performance.now(), dur = 1500;
         b.classList.add('is-counting');   // purple while counting, then it cools down to pink (CSS transition)
         (function tick(now) {
           const t = Math.min(1, (now - t0) / dur);
-          b.textContent = num(Math.round(b.dataset.count * (1 - (1 - t) ** 4)));
+          b.textContent = num(Math.round(b.dataset.count * (1 - (1 - t) ** 3)));   // ease-out (cubic)
           if (t < 1) requestAnimationFrame(tick);
           else {
             b.classList.remove('is-counting');
-            if (items[i + 1]) setTimeout(() => countUp(i + 1), 120);
+            if (items[i + 1]) setTimeout(() => countUp(i + 1), 250);
           }
         })(t0);
       };
       const countIO = new IntersectionObserver(([entry]) => {
         if (!entry.isIntersecting) return;
         countIO.disconnect();
-        countUp(0);
+        setTimeout(() => countUp(0), 600);   // once the counters have faded in
       }, { threshold: .6 });
       countIO.observe(stats);
     }
