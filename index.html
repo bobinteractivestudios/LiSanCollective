@@ -68,7 +68,7 @@
   .hero__quote-l { top: 36%; right: calc(50% + 25.6vh); text-align: right; }   /* her shoulder reaches further out than the bench on the right, so this side sits closer to keep both gaps equal */
   .hero__quote-r { top: 58%; left:  calc(50% + 29vh); }
   /* the two left lines are placed one by one: "begint met" sits lower, where her back curves inward, so it moves in further */
-  .hero__quote-l .hq-line { display: block; }
+  .hero__quote .hq-line { display: block; }   /* also lets each line float off on its own when scrolling away */
   .hero__quote-l br { display: none; }   /* the <br> only matters without CSS */
   .hero__quote-l .hq-line:last-child { margin-right: -1.6vh; }
 
@@ -90,6 +90,34 @@
     .hero__quote-l .hq-line:last-child { margin-right: 0; }   /* centred like the rest */
     .hero__quote-r { top: auto; bottom: 84px; }   /* just clears the contact button */
   }
+  /* hero exit: scrolling away, the handwriting floats up like balloons, each line a bit faster than the one below it,
+     so they drift apart, and dissolves (grows, blurs, fades) while still in view; the photo stays behind (moves up
+     slower than the page) and fades a little, so the hero has depth as the about section comes in.
+     Scroll-driven, so it only plays while scrolling and follows the scroll both ways; without support it's a plain scroll */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .hero { view-timeline: --hero block; }
+      .hero__img { animation: hero-stay linear both; animation-timeline: --hero; animation-range: exit 0% exit 100%; }
+      .hero__quote .hq-line {
+        --rise: -12vh; --end: 32%;   /* how far a line floats up beyond the scroll, and when (in % of the hero scrolled) it is gone */
+        animation: hero-float linear both; animation-timeline: --hero; animation-range: exit 0% exit var(--end);
+      }
+      .hero__quote-l .hq-line:first-child { --rise: -16vh; }
+      .hero__quote-l .hq-line:last-child  { --rise: -11vh; }
+      .hero__quote-r .hq-line             { --rise: -7vh; --end: 42%; }   /* lowest, so it has the longest way up */
+      @media (max-aspect-ratio: 5/4) {   /* the top lines sit near the top edge here, so they float off sooner */
+        .hero__quote-l .hq-line { --end: 14%; }
+        .hero__quote-r .hq-line { --end: 50%; }
+      }
+    }
+  }
+  @keyframes hero-stay { to { transform: translateY(30vh); opacity: .45; } }
+  @keyframes hero-float {
+    0%       { transform: none; opacity: 1; filter: blur(0); }
+    30%      { opacity: 1; filter: blur(0); }
+    100%     { transform: translateY(var(--rise)) scale(1.12); opacity: 0; filter: blur(10px); }
+  }
+
   /* hero entry: the logo builds while the handwriting writes itself line by line (Tegaki, see the script at the end);
      once both have finished (--hero-start, ~4.6s) the scroll line appears */
   .hero { --hero-start: 4.6s; }
